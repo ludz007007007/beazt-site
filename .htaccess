@@ -1,0 +1,6 @@
+<IfModule mod_passenger.c>
+  PassengerEnabled On
+  PassengerAppType wsgi
+  PassengerStartupFile passenger_wsgi.py
+  PassengerFriendlyErrorPages On
+</IfModule>

@@ -1,0 +1,29 @@
+{#- Empty state: icon (optional lucide name) + title + one sentence + a way
+    forward. The ONE empty-state component — never a bare "No results.".
+    Vars: `empty_title`, `empty_text`; optional `empty_icon`,
+    `empty_aria_label`, primary action `empty_action_href` /
+    `empty_action_label` / `empty_action_class` (btn variant, default
+    btn-secondary), `empty_action_tag` ("button" for JS hooks; default "a"),
+    `empty_action_id` (button id), `empty_action_external` /
+    `empty_action2_external` (target=_blank + rel=noopener) and one optional
+    secondary link `empty_action2_href` / `empty_action2_label` /
+    `empty_action2_class`. -#}
+<div class="empty-state" role="status"{% if empty_aria_label %} aria-label="{{ empty_aria_label }}"{% endif %}>
+  {% if empty_icon %}
+  <div class="empty-icon" aria-hidden="true"><span class="icon" data-lucide="{{ empty_icon }}"></span></div>
+  {% endif %}
+  <h3 class="empty-title">{{ empty_title }}</h3>
+  <p class="empty-text">{{ empty_text }}</p>
+  {% if empty_action_href or empty_action_tag == "button" %}
+  <div class="empty-state-actions">
+    {% if empty_action_tag == "button" %}
+    <button type="button"{% if empty_action_id %} id="{{ empty_action_id }}"{% endif %} class="btn {{ empty_action_class or 'btn-secondary' }}">{{ empty_action_label or 'Continue' }}</button>
+    {% else %}
+    <a href="{{ empty_action_href }}" class="btn {{ empty_action_class or 'btn-secondary' }}"{% if empty_action_external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ empty_action_label or 'Continue' }}</a>
+    {% endif %}
+    {% if empty_action2_href %}
+    <a href="{{ empty_action2_href }}" class="btn {{ empty_action2_class or 'btn-ghost' }}"{% if empty_action2_external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ empty_action2_label or 'Learn more' }}</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>

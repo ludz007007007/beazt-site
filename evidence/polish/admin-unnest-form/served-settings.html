@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060A14">
+  <title>Admin | BEAZT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script defer src="/static/js/vendor/alpine.min.js"></script>
+  <script defer src="/static/js/vendor/lucide.min.js"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/admin.css?v=2">
+</head>
+<body>
+  <div class="main-content">
+    <header class="navbar">
+      <div class="container nav-inner">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <a href="/" class="nav-logo"><img src="/static/icons/logo.svg" alt="BEAZT" class="nav-logo-img">BEAZT</a>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-l);letter-spacing:0.1em;text-transform:uppercase;">Admin</span>
+        </div>
+        <nav class="nav-links">
+          <a href="/" class="nav-link">Site</a>
+          <a href="/auth/logout" class="nav-link">Logout</a>
+        </nav>
+      </div>
+    </header>
+
+    
+      
+    
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <h3>Navigation</h3>
+        <a href="/admin/" class="">
+          <span class="icon icon-sm" data-lucide="layout-dashboard"></span> Dashboard
+        </a>
+        <a href="/admin/users" class="">
+          <span class="icon icon-sm" data-lucide="users"></span> Users
+        </a>
+        <a href="/admin/keys" class="">
+          <span class="icon icon-sm" data-lucide="key-round"></span> Keys
+        </a>
+        <a href="/admin/products" class="">
+          <span class="icon icon-sm" data-lucide="boxes"></span> Products
+        </a>
+        <a href="/admin/orders" class="">
+          <span class="icon icon-sm" data-lucide="receipt"></span> Orders
+        </a>
+        <a href="/admin/chairfbi" class="">
+          <span class="icon icon-sm" data-lucide="cloud"></span> ChairFBI
+        </a>
+        <a href="/admin/settings" class="active">
+          <span class="icon icon-sm" data-lucide="settings"></span> Settings
+        </a>
+      </aside>
+      <div class="admin-main" role="main">
+        
+<div class="page-header-admin">
+  <h1>Settings</h1>
+  <p>Configure Ivno + NOWPayments + ChairFBI. Values save to the database and override <code>.env</code> settings.</p>
+</div>
+
+<div x-data="{ reveal: {} }">
+  <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="776f4559e630147577e18e893d9ddada9a043bd150c044f6d40c3f8a09b324dd">
+    <div style="display:flex;flex-direction:column;gap:2.5rem;max-width:640px;">
+
+      <!-- ===== IVNO SECTION ===== -->
+      <div>
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+            <span class="icon icon-sm" data-lucide="credit-card"></span> Ivno (Cards)
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API Key</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.ivno_key ? 'text' : 'password'" name="ivno_api_key" value="" placeholder="iv_live_..." style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.ivno_key = !reveal.ivno_key" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.ivno_key ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--error);">Required for card payments.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API Secret</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.ivno_secret ? 'text' : 'password'" name="ivno_api_secret" value="" placeholder="iv_secret_..." style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.ivno_secret = !reveal.ivno_secret" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.ivno_secret ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--warn);">Required for card payments.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== PAYFAST SECTION ===== -->
+      <div>
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="banknote"></span> PayFast
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Merchant ID</label>
+            <input type="text" name="payfast_merchant_id" value="" placeholder="Your PayFast merchant ID" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--text-mut);">From PayFast Dashboard.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Merchant Key</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.payfast_key ? 'text' : 'password'" name="payfast_merchant_key" value="" placeholder="Your PayFast merchant key" style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.payfast_key = !reveal.payfast_key" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.payfast_key ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">From PayFast Dashboard.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Passphrase <span style="font-weight:400;">(optional)</span></label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.payfast_pass ? 'text' : 'password'" name="payfast_passphrase" value="" placeholder="PayFast passphrase" style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.payfast_pass = !reveal.payfast_pass" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.payfast_pass ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">Optional for extra security.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Checkout Label <span style="font-weight:400;">(discreet)</span></label>
+            <input type="text" name="payfast_item_name" value="" placeholder="Private Development" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--text-mut);">Shown to buyers on the PayFast checkout page instead of the product name. Leave blank to use <strong>Private Development</strong>.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== CHAIRFBI SECTION ===== -->
+      <div>
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="network"></span> ChairFBI Integration
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API Token</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.cf_token ? 'text' : 'password'" name="chairfbi_api_token" value="" placeholder="Bearer token from ChairFBI panel" style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.cf_token = !reveal.cf_token" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.cf_token ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">Get this from ChairFBI Store Settings.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API Base URL</label>
+            <input type="text" name="chairfbi_api_base" value="https://access.chairfbi.com" placeholder="https://access.chairfbi.com" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--text-mut);">ChairFBI API endpoint.</span>
+          </div>
+
+          <div>
+            <button type="submit" form="chairfbi-test-form" class="btn-xs" style="background:var(--surface);color:var(--accent-l);border:1px solid var(--accent);padding:0.35rem 0.85rem;font-size:0.75rem;font-weight:600;cursor:pointer;border-radius:3px;font-family:var(--font);">
+              Test Connection
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== LOADER SECTION ===== -->
+      <div>
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="download"></span> Loader
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Loader Token</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.loader_token ? 'text' : 'password'" name="loader_token" value="" placeholder="Loader authentication token" style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.loader_token = !reveal.loader_token" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.loader_token ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">Shown to customers on their My Keys page.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Public Loader <span style="font-weight:400;">(deprecated)</span></label>
+            <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap;">
+              <input type="file" name="loader_public_file" accept=".exe,.zip,.rar,.7z" style="font-size:0.72rem;color:var(--text-dim);flex:1;min-width:200px;">
+              <button type="submit" name="upload_loader_public" value="1" class="btn-xs" style="background:var(--accent);color:#fff;border:none;padding:0.6rem 0.9rem;white-space:nowrap;">Upload</button>
+              
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">Admin-only fallback. Customers now get the loader attached to each product &mdash; set it in the product editor.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Private Loader <span style="font-weight:400;">(deprecated)</span></label>
+            <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap;">
+              <input type="file" name="loader_private_file" accept=".exe,.zip,.rar,.7z" style="font-size:0.72rem;color:var(--text-dim);flex:1;min-width:200px;">
+              <button type="submit" name="upload_loader_private" value="1" class="btn-xs" style="background:var(--accent);color:#fff;border:none;padding:0.6rem 0.9rem;white-space:nowrap;">Upload</button>
+              
+            </div>
+            <span style="font-size:0.68rem;color:var(--text-mut);">Admin-only fallback. Attach the Rust Beazt External loader to its product in the product editor instead.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== DISCORD SECTION ===== -->
+      <div>
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="message-circle"></span> Discord
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Public Discord URL</label>
+            <input type="text" name="discord_public_url" value="https://discord.gg/bU4tFA43KK" placeholder="https://discord.gg/bU4tFA43KK" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--success);">Set.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Private Discord URL</label>
+            <input type="text" name="discord_private_url" value="" placeholder="https://discord.gg/..." style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--warn);">Only shown to users with active private keys.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== LICENSE API SECTION ===== -->
+      <div id="license-api">
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="key-round"></span> License API (Project Infinity)
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API Token</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input :type="reveal.license_token ? 'text' : 'password'" name="license_api_token" value="" placeholder="Panel API token" style="flex:1;padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <button type="button" @click="reveal.license_token = !reveal.license_token" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.license_token ? 'HIDE' : 'SHOW'"></button>
+            </div>
+            <span style="font-size:0.68rem;color:var(--warn);">Not set &mdash; key generation via API will fail.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">API URL</label>
+            <input type="text" name="license_api_url" value="http://panel.projectinfinity.co.za:3845" placeholder="http://panel.projectinfinity.co.za:3845" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+            <span style="font-size:0.68rem;color:var(--text-mut);">Backend API URL (HTTP, port 3845). The https://...:443 host is the web panel and will reject tokens.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <label style="font-family:var(--font);font-size:0.72rem;font-weight:600;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;">Auth Scheme</label>
+            <select name="license_api_auth_scheme" style="padding:0.6rem 0.85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:0.82rem;outline:none;">
+              <option value="raw" selected>Raw token (Authorization: ...)</option>
+              <option value="bearer" >Bearer token (Authorization: Bearer ...)</option>
+            </select>
+            <span style="font-size:0.68rem;color:var(--text-mut);">The CatNip panel uses <strong>Raw</strong>. Run "Test Project Infinity API" on the product to verify.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== EMAIL / SMTP SECTION ===== -->
+      <div id="email">
+        <h3 style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;">
+          <span class="icon icon-sm" data-lucide="mail"></span> Email (Key Delivery)
+        </h3>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div class="cf-alert" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18);">
+            <span style="font-size:0.72rem;color:var(--text-dim);">When a key is assigned (auto on purchase or manually via the order page), the buyer is emailed their key, expiry, loader link and Discord. If SMTP is not configured, emails are skipped silently — key assignment still succeeds.</span>
+          </div>
+
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">SMTP Host</label>
+              <input type="text" name="smtp_host" value="" placeholder="smtp.yourhost.com or localhost" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+            </div>
+            <div style="flex:0 0 100px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">Port</label>
+              <input type="number" name="smtp_port" value="587" placeholder="587" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+            </div>
+            <div style="flex:0 0 120px;display:flex;flex-direction:column;justify-content:flex-end;">
+              <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;padding:0.6rem 0;">
+                <input type="checkbox" name="smtp_use_tls" value="1" checked>
+                <input type="hidden" name="smtp_use_tls" value="0">
+                Use TLS
+              </label>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">SMTP Username</label>
+              <input type="text" name="smtp_user" value="" placeholder="you@yourhost.com" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+            </div>
+            <div style="flex:1;min-width:180px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">SMTP Password</label>
+              <div style="display:flex;gap:0.3rem;">
+                <input :type="reveal.smtp_pass ? 'text' : 'password'" name="smtp_pass" value="" placeholder="••••••••" style="flex:1;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+                <button type="button" @click="reveal.smtp_pass = !reveal.smtp_pass" style="padding:0 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;" x-text="reveal.smtp_pass ? 'HIDE' : 'SHOW'"></button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">From Email</label>
+              <input type="text" name="smtp_from_email" value="" placeholder="no-reply@beazt.com" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+            </div>
+            <div style="flex:1;min-width:180px;">
+              <label style="display:block;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;">From Name</label>
+              <input type="text" name="smtp_from_name" value="BEAZT" placeholder="BEAZT" style="width:100%;padding:0.6rem 0.8rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.82rem;">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="align-self:flex-start;">
+        <span class="icon" data-lucide="save"></span>
+        Save settings
+      </button>
+    </div>
+  </form>
+
+  <!-- Test Connection form: a SIBLING of the settings form above (a form
+       nested inside another form is silently discarded by browsers). The
+       Test Connection button targets this form via its `form` attribute.
+       Must stay AFTER the settings form so document.querySelector() in the
+       :value bindings below resolves to the settings form's inputs. -->
+  <form id="chairfbi-test-form" method="POST" action="/admin/settings/chairfbi-test" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="776f4559e630147577e18e893d9ddada9a043bd150c044f6d40c3f8a09b324dd">
+    <input type="hidden" name="chairfbi_api_token" :value="document.querySelector('input[name=chairfbi_api_token]').value">
+    <input type="hidden" name="chairfbi_api_base" :value="document.querySelector('input[name=chairfbi_api_base]').value">
+  </form>
+</div>
+
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

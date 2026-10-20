@@ -1,0 +1,5 @@
+{#- Status pill: the ONE risk taxonomy (Undetected/Updating/Risky/Detected/
+    Down — utils/catalogue.py STATUS_LABELS). Expects `status` (key) and
+    `label`. Availability (In stock/Sold out/Private build) is a separate
+    component — partials/availability_badge.html — never merged in here. -#}
+<span class="status-pill status-pill--{{ status }}"><span class="status-pill-dot" aria-hidden="true"></span><span class="status-pill-label">{{ label }}</span></span>

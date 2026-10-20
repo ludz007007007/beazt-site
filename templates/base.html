@@ -1,0 +1,54 @@
+{% from "partials/copy.html" import delivery_promise %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101318">
+  <meta name="description" content="{% block meta_description %}BEAZT sells access keys for game cheats, with a public status page for every product. {{ delivery_promise() }}{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}BEAZT — Game cheats with honest status{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Access keys for game cheats, with live detection status and history for every product.{% endblock %}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ request.base_url }}{% endblock %}">
+  {# Default OG brand card (scripts/make_og_card.py regenerates the PNG).
+     Product and game pages override the og_image block with their cover. #}
+  <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/og-default.png', _external=True) }}{% endblock %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="BEAZT — game cheats with honest status">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}BEAZT — Game cheats with honest status{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Access keys for game cheats, with live detection status and history for every product.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='images/og-default.png', _external=True) }}{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ request.base_url }}{% endblock %}">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="icon" href="/static/icons/logo.svg" type="image/svg+xml">
+  <title>{% block title %}BEAZT{% endblock %}</title>
+  <!-- Fonts are self-hosted. Only the heading weight is preloaded; the rest
+       swap in on demand (font-display: swap). Alpine + Lucide are injected
+       after load by script.js so they never compete with the CSS. -->
+  <link rel="preload" href="/static/fonts/Archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css?v=51">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  {% if session.get('_impersonator_id') %}
+  <div class="impersonation-bar" role="status">
+    <strong>Viewing as {{ current_user.username }}.</strong>
+    <span>You are impersonating this user.</span>
+    <a href="{{ url_for('admin.stop_impersonating') }}">Return to admin</a>
+  </div>
+  {% endif %}
+
+  {% include "partials/site_header.html" %}
+  {% include "partials/flash_toasts.html" %}
+
+  <main id="main-content" class="site-main" tabindex="-1">{% block content %}{% endblock %}</main>
+
+  {% include "partials/site_footer.html" %}
+
+  <script defer src="/static/js/script.js?v=19"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

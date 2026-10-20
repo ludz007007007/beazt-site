@@ -1,0 +1,9 @@
+{#- Admin filter chips (shared). One chip row component for every admin list
+    page. Vars: `chips` — list of dicts: label, href, active.
+    The active chip carries aria-current="page". Optional `chips_label`
+    gives the group its accessible name (default "Filters"). -#}
+<div class="chips" role="group" aria-label="{{ chips_label or 'Filters' }}">
+  {%- for chip in chips -%}
+  <a href="{{ chip.href }}" class="chip{{ ' chip--active' if chip.active }}"{% if chip.active %} aria-current="page"{% endif %}>{{ chip.label }}</a>
+  {%- endfor -%}
+</div>

@@ -1,0 +1,13 @@
+{#- Approved review from a verified buyer. Expects `r` (models.Review). -#}
+<article class="review-card">
+  <div class="review-card-stars" role="img" aria-label="Rated {{ r.rating }} out of 5">
+    <span aria-hidden="true">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</span>
+  </div>
+  {% if r.title %}<h3 class="review-card-title">{{ r.title }}</h3>{% endif %}
+  <p class="review-card-body">{{ r.body }}</p>
+  <footer class="review-card-footer">
+    <span class="review-card-name">{{ r.display_name }}</span>
+    <span class="review-card-verified">Verified buyer{% if r.product %} &middot; {{ r.product.name }}{% endif %}</span>
+    <time class="review-card-date" datetime="{{ r.created_at.strftime('%Y-%m-%d') }}">{{ format_date(r.created_at) }}</time>
+  </footer>
+</article>

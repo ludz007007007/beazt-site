@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Browse cheats by game | BEAZT{% endblock %}
+{% block meta_description %}Pick a game to see every BEAZT product for it, with current detection status and starting prices.{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ url_for('main.index') }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Games</span>
+    </nav>
+    <header class="page-header">
+      <p class="section-eyebrow">Games</p>
+      <h1 class="t-h1">Browse by game</h1>
+      <p class="text-secondary">Pick a game to see every product we sell for it, with current status and starting prices.</p>
+    </header>
+    {% if games %}
+    <div class="game-grid">
+      {% for g in games %}{% include "partials/game_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    {% set empty_title = "No games listed yet" %}
+    {% set empty_text = "Games appear here as soon as a product for them goes on sale." %}
+    {% set empty_action_href = url_for('main.status_page') %}
+    {% set empty_action_label = "View status page" %}
+    {% include "partials/empty_state.html" %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

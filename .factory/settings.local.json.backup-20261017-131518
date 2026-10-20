@@ -1,0 +1,341 @@
+{
+    "customModels":  [
+                         {
+                             "model":  "local-model",
+                             "id":  "custom:LOCAL-MODEL-0",
+                             "index":  0,
+                             "baseUrl":  "http://127.0.0.1:11437/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL MODEL",
+                             "maxOutputTokens":  16384,
+                             "extraArgs":  {
+                                               "reasoning_effort":  "high"
+                                           },
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-24k:latest",
+                             "id":  "custom:qwen3-coder-24k:latest-0",
+                             "index":  1,
+                             "baseUrl":  "http://127.0.0.1:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "qwen3-coder-24k:latest",
+                             "maxOutputTokens":  64000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-24k:latest",
+                             "id":  "custom:qwen3-coder-24k:latest-(2)-0",
+                             "index":  2,
+                             "baseUrl":  "http://127.0.0.1:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "qwen3-coder-24k:latest (2)",
+                             "maxOutputTokens":  64000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "huggingface.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:UD-Q3_K_XL",
+                             "id":  "custom:Qwen3-Coder-30B-A3B-Unsloth-Q3-XL-0",
+                             "index":  3,
+                             "baseUrl":  "http://127.0.0.1:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "Qwen3 Coder 30B A3B Unsloth Q3 XL",
+                             "maxOutputTokens":  64000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen35-flash-256k",
+                             "id":  "custom:LOCAL-FLASH-256K---Qwen3.5-9B---NORMAL-0",
+                             "index":  4,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL FLASH 256K - Qwen3.5 9B - NORMAL",
+                             "maxOutputTokens":  16384,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen35-flash-uncensored-256k",
+                             "id":  "custom:LOCAL-FLASH-256K---Qwen3.5-9B---UNCENSORED-/-HERETIC-0",
+                             "index":  5,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL FLASH 256K - Qwen3.5 9B - UNCENSORED / HERETIC",
+                             "maxOutputTokens":  16384,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-24k",
+                             "id":  "custom:LOCAL-CODER-24K---Qwen3-Coder-30B-A3B---NORMAL---RECOMMENDED-0",
+                             "index":  6,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL CODER 24K - Qwen3-Coder 30B-A3B - NORMAL - RECOMMENDED",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-heretic-24k",
+                             "id":  "custom:LOCAL-CODER-24K---Qwen3-Coder-30B-A3B---UNCENSORED-/-HERETIC-0",
+                             "index":  7,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL CODER 24K - Qwen3-Coder 30B-A3B - UNCENSORED / HERETIC",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-256k",
+                             "id":  "custom:LOCAL-CODER-MAX-256K---Qwen3-Coder-30B-A3B---NORMAL-0",
+                             "index":  8,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL CODER MAX 256K - Qwen3-Coder 30B-A3B - NORMAL",
+                             "maxOutputTokens":  16384,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-heretic-256k",
+                             "id":  "custom:LOCAL-CODER-MAX-256K---Qwen3-Coder-30B-A3B---UNCENSORED-/-HERETIC-0",
+                             "index":  9,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL CODER MAX 256K - Qwen3-Coder 30B-A3B - UNCENSORED / HERETIC",
+                             "maxOutputTokens":  16384,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-16k",
+                             "id":  "custom:LOCAL-ADVANCED---CODER-TURBO-16K---NORMAL-0",
+                             "index":  10,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL ADVANCED - CODER TURBO 16K - NORMAL",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-turbo",
+                             "id":  "custom:LOCAL-ADVANCED---CODER-LARGE-32K---NORMAL-0",
+                             "index":  11,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL ADVANCED - CODER LARGE 32K - NORMAL",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-heretic-16k",
+                             "id":  "custom:LOCAL-ADVANCED---CODER-TURBO-16K---UNCENSORED-/-HERETIC-0",
+                             "index":  12,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL ADVANCED - CODER TURBO 16K - UNCENSORED / HERETIC",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3-coder-heretic-32k",
+                             "id":  "custom:LOCAL-ADVANCED---CODER-LARGE-32K---UNCENSORED-/-HERETIC-0",
+                             "index":  13,
+                             "baseUrl":  "http://localhost:11434/v1",
+                             "apiKey":  "ollama",
+                             "displayName":  "LOCAL ADVANCED - CODER LARGE 32K - UNCENSORED / HERETIC",
+                             "maxOutputTokens":  8192,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-flash",
+                             "id":  "custom:Verboo---DeepSeek-V4-Flash-0",
+                             "index":  14,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Flash",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-flash-0731",
+                             "id":  "custom:Verboo---DeepSeek-V4-Flash-0731-0",
+                             "index":  15,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Flash 0731",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-pro",
+                             "id":  "custom:Verboo---DeepSeek-V4-Pro-0",
+                             "index":  16,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Pro",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-pro-0813",
+                             "id":  "custom:Verboo---DeepSeek-V4-Pro-0813-0",
+                             "index":  17,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Pro 0813",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4.1-flash",
+                             "id":  "custom:Verboo---DeepSeek-V4.1-Flash-0",
+                             "index":  18,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4.1 Flash",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "glm-5.2",
+                             "id":  "custom:Verboo---GLM-5.2-0",
+                             "index":  19,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - GLM 5.2",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "glm-5.3",
+                             "id":  "custom:Verboo---GLM-5.3-0",
+                             "index":  20,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - GLM 5.3",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "glm-5.3-flash",
+                             "id":  "custom:Verboo---GLM-5.3-Flash-0",
+                             "index":  21,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - GLM 5.3 Flash",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "mimo-v2.5",
+                             "id":  "custom:Verboo---MiMo-V2.5-0",
+                             "index":  22,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - MiMo V2.5",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "minimax-m3",
+                             "id":  "custom:Verboo---MiniMax-M3-0",
+                             "index":  23,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - MiniMax M3",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3.8-27b",
+                             "id":  "custom:Verboo---Qwen-3.8-27B-0",
+                             "index":  24,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - Qwen 3.8 27B",
+                             "maxOutputTokens":  16384,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "jev-router",
+                             "id":  "custom:Verboo---Jev-Router-0",
+                             "index":  25,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - Jev Router",
+                             "maxOutputTokens":  32000,
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-flash-0731",
+                             "id":  "custom:Verboo---DeepSeek-V4-Flash-0731-(Reasoning,-Max-Effort)-0",
+                             "index":  26,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Flash 0731 (Reasoning, Max Effort)",
+                             "maxOutputTokens":  32000,
+                             "extraArgs":  {
+                                               "reasoning_effort":  "high"
+                                           },
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "deepseek-v4-pro-0813",
+                             "id":  "custom:Verboo---DeepSeek-V4-Pro-0813-(Reasoning,-Max-Effort)-0",
+                             "index":  27,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - DeepSeek V4 Pro 0813 (Reasoning, Max Effort)",
+                             "maxOutputTokens":  32000,
+                             "extraArgs":  {
+                                               "reasoning_effort":  "high"
+                                           },
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         },
+                         {
+                             "model":  "qwen3.8-27b",
+                             "id":  "custom:Verboo---Qwen-3.8-27B-(High-Reasoning)-0",
+                             "index":  28,
+                             "baseUrl":  "https://code.verboo.ai/router/v1",
+                             "apiKey":  "vbk_max_24ca1add643f6ff6d3846123d8ea970799c5f4e9",
+                             "displayName":  "Verboo - Qwen 3.8 27B (High Reasoning)",
+                             "maxOutputTokens":  16384,
+                             "extraArgs":  {
+                                               "reasoning_effort":  "high"
+                                           },
+                             "noImageSupport":  true,
+                             "provider":  "generic-chat-completion-api"
+                         }
+                     ],
+    "sessionDefaultSettings":  {
+                                   "interactionMode":  "auto",
+                                   "autonomyLevel":  "high",
+                                   "reasoningEffort":  "high",
+                                   "model":  "custom:Verboo---DeepSeek-V4-Flash-0"
+                               }
+}

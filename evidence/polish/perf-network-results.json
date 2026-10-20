@@ -1,0 +1,207 @@
+{
+  "home": {
+    "path": "/",
+    "totalRequests": 10,
+    "externalRequests": [],
+    "externalFontOrCdn": [],
+    "fontRequests": [
+      "http://127.0.0.1:5000/static/fonts/Inter-latin-var.woff2",
+      "http://127.0.0.1:5000/static/fonts/JetBrainsMono-500-latin.woff2"
+    ],
+    "imgAudit": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/images/header_mockup.svg",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": "lazy",
+        "inInitialViewport": false
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": false
+      }
+    ],
+    "imgAuditFull": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      },
+      {
+        "src": "/static/images/header_mockup.svg",
+        "loading": null
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": "lazy"
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      }
+    ]
+  },
+  "cheats": {
+    "path": "/cheats",
+    "totalRequests": 9,
+    "externalRequests": [],
+    "externalFontOrCdn": [],
+    "fontRequests": [
+      "http://127.0.0.1:5000/static/fonts/Inter-latin-var.woff2",
+      "http://127.0.0.1:5000/static/fonts/JetBrainsMono-500-latin.woff2"
+    ],
+    "imgAudit": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": "lazy",
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      }
+    ],
+    "imgAuditFull": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": "lazy"
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      }
+    ]
+  },
+  "product": {
+    "path": "/product/rust-external-private",
+    "totalRequests": 9,
+    "externalRequests": [],
+    "externalFontOrCdn": [],
+    "fontRequests": [
+      "http://127.0.0.1:5000/static/fonts/Inter-latin-var.woff2",
+      "http://127.0.0.1:5000/static/fonts/JetBrainsMono-500-latin.woff2"
+    ],
+    "imgAudit": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": false
+      }
+    ],
+    "imgAuditFull": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": null
+      },
+      {
+        "src": "/static/icons/rust_placeholder.jpg",
+        "loading": null
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      }
+    ]
+  },
+  "faq": {
+    "path": "/faq",
+    "totalRequests": 8,
+    "externalRequests": [],
+    "externalFontOrCdn": [],
+    "fontRequests": [
+      "http://127.0.0.1:5000/static/fonts/Inter-latin-var.woff2",
+      "http://127.0.0.1:5000/static/fonts/JetBrainsMono-500-latin.woff2"
+    ],
+    "imgAudit": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": false
+      }
+    ],
+    "imgAuditFull": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      }
+    ]
+  },
+  "login": {
+    "path": "/login",
+    "totalRequests": 8,
+    "externalRequests": [],
+    "externalFontOrCdn": [],
+    "fontRequests": [
+      "http://127.0.0.1:5000/static/fonts/Inter-latin-var.woff2",
+      "http://127.0.0.1:5000/static/fonts/JetBrainsMono-500-latin.woff2"
+    ],
+    "imgAudit": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null,
+        "inInitialViewport": true
+      }
+    ],
+    "imgAuditFull": [
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      },
+      {
+        "src": "/static/images/Logo.webp",
+        "loading": null
+      }
+    ]
+  }
+}

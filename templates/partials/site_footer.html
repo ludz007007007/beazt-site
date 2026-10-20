@@ -1,0 +1,60 @@
+{#- Site footer: real links only, plain facts about payment and delivery. -#}
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <a href="/" class="brand" aria-label="BEAZT home">
+          <img src="/static/icons/logo.svg" alt="" class="brand__logo" width="28" height="28" loading="lazy">
+          <span class="brand__name">BEAZT</span>
+        </a>
+        <p>Access keys for game cheats, with a public status page for every product so you can check detection risk before you buy.</p>
+      </div>
+
+      <nav aria-labelledby="footer-shop">
+        <h2 class="site-footer__heading" id="footer-shop">Shop</h2>
+        <ul class="site-footer__links">
+          <li><a href="{{ url_for('main.cheats') }}">All cheats</a></li>
+          <li><a href="{{ url_for('main.games_index') }}">Browse by game</a></li>
+          <li><a href="{{ url_for('main.status_page') }}">Status</a></li>
+          <li><a href="{{ url_for('main.feedback') }}">Reviews</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-help">
+        <h2 class="site-footer__heading" id="footer-help">Help</h2>
+        <ul class="site-footer__links">
+          <li><a href="{{ url_for('main.faq') }}">FAQ</a></li>
+          <li><a href="{{ url_for('main.loader') }}">Loader &amp; setup guide</a></li>
+          <li><a href="{{ url_for('main.my_keys') }}">My Keys</a></li>
+          {% if discord_public_url %}
+          <li><a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer">Discord</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-legal">
+        <h2 class="site-footer__heading" id="footer-legal">Legal</h2>
+        <ul class="site-footer__links">
+          <li><a href="{{ url_for('main.terms') }}">Terms of Service</a></li>
+          <li><a href="{{ url_for('main.privacy') }}">Privacy Policy</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <ul class="site-footer__facts" aria-label="How buying works">
+      <li>Prices in GBP</li>
+      <li>Pay with PayFast or card</li>
+      {%- from "partials/copy.html" import delivery_promise %}
+      <li>{{ delivery_promise() }}</li>
+      {%- set footer_stats = honest_stats() %}
+      {%- if footer_stats.orders_delivered %}
+      <li data-footer-stat="orders_delivered">{{ footer_stats.orders_delivered }} order{{ '' if footer_stats.orders_delivered == 1 else 's' }} delivered so far</li>
+      {%- endif %}
+    </ul>
+
+    <div class="site-footer__bottom">
+      <span>&copy; 2026 BEAZT</span>
+      <p>Using third-party software in online games can break the game's terms of service and may get your account banned. Check a product's status history before you buy.</p>
+    </div>
+  </div>
+</footer>

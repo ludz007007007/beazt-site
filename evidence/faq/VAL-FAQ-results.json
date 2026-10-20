@@ -1,0 +1,83 @@
+{
+  "url": "http://127.0.0.1:5000/faq",
+  "viewports": [
+    {
+      "name": "mobile-320",
+      "width": 320,
+      "height": 720,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "tablet-768",
+      "width": 768,
+      "height": 1024,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "desktop-1440",
+      "width": 1440,
+      "height": 900,
+      "horizontalOverflowPx": 0
+    }
+  ],
+  "consoleErrors": [],
+  "dom": {
+    "itemCount": 10,
+    "answerIds": [
+      "faq-answer-1",
+      "faq-answer-2",
+      "faq-answer-4",
+      "faq-answer-9",
+      "faq-answer-5",
+      "faq-answer-3",
+      "faq-answer-6",
+      "faq-answer-7",
+      "faq-answer-8",
+      "faq-answer-10"
+    ],
+    "missingIds": [],
+    "groupCount": 4,
+    "groupTitles": [
+      "Before you buy",
+      "Buy & payment",
+      "Delivery & setup",
+      "Updates & Discord support"
+    ],
+    "missingGroups": [],
+    "questionCount": 10,
+    "ariaControlsOk": true,
+    "searchPresent": true
+  },
+  "interactions": {
+    "firstOpen": true,
+    "exclusiveToggle": true,
+    "collapseToggle": true,
+    "searchVisible": 1,
+    "searchKeepsRefund": 1,
+    "searchCountText": "1 match for \"refund\"",
+    "searchCleared": 10,
+    "emptyStateVisible": 1,
+    "deepLinkOpen": 1,
+    "deepLinkAria": "true",
+    "keyboardFocusClass": "faq-question",
+    "keyboardToggle": 1,
+    "collapsedHeights": [
+      0,
+      46,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,225 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Settings</h1>
+  <p>Configure Ivno + NOWPayments + ChairFBI. Values save to the database and override <code>.env</code> settings.</p>
+</div>
+
+<div x-data="{ reveal: {} }" class="admin-settings">
+  <form method="POST" enctype="multipart/form-data" class="admin-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- ===== IVNO SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-ivno">
+        <h3 class="admin-card-title" id="settings-ivno"><span class="icon icon-sm" data-lucide="credit-card"></span> Ivno (Cards)</h3>
+        <div class="form-group">
+          <label class="form-label" for="ivno_api_key">API Key</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.ivno_key ? 'text' : 'password'" id="ivno_api_key" name="ivno_api_key" value="{{ ivno_api_key }}" placeholder="iv_live_...">
+            <button type="button" class="input-reveal" @click="reveal.ivno_key = !reveal.ivno_key" x-text="reveal.ivno_key ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if ivno_api_key %}<span class="form-hint form-hint--ok">Set ({{ ivno_api_key[:12] }}...)</span>{% else %}<span class="form-hint form-hint--warn">Required for card payments.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ivno_api_secret">API Secret</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.ivno_secret ? 'text' : 'password'" id="ivno_api_secret" name="ivno_api_secret" value="{{ ivno_api_secret }}" placeholder="iv_secret_...">
+            <button type="button" class="input-reveal" @click="reveal.ivno_secret = !reveal.ivno_secret" x-text="reveal.ivno_secret ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if ivno_api_secret %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint form-hint--warn">Required for card payments.</span>{% endif %}
+        </div>
+      </section>
+
+      <!-- ===== PAYFAST SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-payfast">
+        <h3 class="admin-card-title" id="settings-payfast"><span class="icon icon-sm" data-lucide="banknote"></span> PayFast</h3>
+        <div class="form-group">
+          <label class="form-label" for="payfast_merchant_id">Merchant ID</label>
+          <input class="form-input" type="text" id="payfast_merchant_id" name="payfast_merchant_id" value="{{ payfast_merchant_id }}" placeholder="Your PayFast merchant ID">
+          {% if payfast_merchant_id %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint">From PayFast Dashboard.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="payfast_merchant_key">Merchant Key</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.payfast_key ? 'text' : 'password'" id="payfast_merchant_key" name="payfast_merchant_key" value="{{ payfast_merchant_key }}" placeholder="Your PayFast merchant key">
+            <button type="button" class="input-reveal" @click="reveal.payfast_key = !reveal.payfast_key" x-text="reveal.payfast_key ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if payfast_merchant_key %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint">From PayFast Dashboard.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="payfast_passphrase">Passphrase <span class="form-hint">(optional)</span></label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.payfast_pass ? 'text' : 'password'" id="payfast_passphrase" name="payfast_passphrase" value="{{ payfast_passphrase }}" placeholder="PayFast passphrase">
+            <button type="button" class="input-reveal" @click="reveal.payfast_pass = !reveal.payfast_pass" x-text="reveal.payfast_pass ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if payfast_passphrase %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint">Optional for extra security.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="payfast_item_name">Checkout Label <span class="form-hint">(discreet)</span></label>
+          <input class="form-input" type="text" id="payfast_item_name" name="payfast_item_name" value="{{ payfast_item_name }}" placeholder="Private Development">
+          <span class="form-hint">Shown to buyers on the PayFast checkout page instead of the product name. Leave blank to use <strong>Private Development</strong>.</span>
+        </div>
+      </section>
+
+      <!-- ===== CHAIRFBI SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-chairfbi">
+        <h3 class="admin-card-title" id="settings-chairfbi"><span class="icon icon-sm" data-lucide="network"></span> ChairFBI Integration</h3>
+        <div class="form-group">
+          <label class="form-label" for="chairfbi_api_token">API Token</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.cf_token ? 'text' : 'password'" id="chairfbi_api_token" name="chairfbi_api_token" value="{{ chairfbi_api_token }}" placeholder="Bearer token from ChairFBI panel">
+            <button type="button" class="input-reveal" @click="reveal.cf_token = !reveal.cf_token" x-text="reveal.cf_token ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if chairfbi_api_token %}<span class="form-hint form-hint--ok">Set ({{ chairfbi_api_token[:12] }}...)</span>{% else %}<span class="form-hint">Get this from ChairFBI Store Settings.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="chairfbi_api_base">API Base URL</label>
+          <input class="form-input" type="text" id="chairfbi_api_base" name="chairfbi_api_base" value="{{ chairfbi_api_base }}" placeholder="https://access.chairfbi.com">
+          <span class="form-hint">ChairFBI API endpoint.</span>
+        </div>
+        <div class="admin-actions">
+          <button type="submit" form="chairfbi-test-form" class="btn-xs btn-secondary">Test Connection</button>
+        </div>
+      </section>
+
+      <!-- ===== LOADER SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-loader">
+        <h3 class="admin-card-title" id="settings-loader"><span class="icon icon-sm" data-lucide="download"></span> Loader</h3>
+        <div class="form-group">
+          <label class="form-label" for="loader_token">Loader Token</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.loader_token ? 'text' : 'password'" id="loader_token" name="loader_token" value="{{ loader_token }}" placeholder="Loader authentication token">
+            <button type="button" class="input-reveal" @click="reveal.loader_token = !reveal.loader_token" x-text="reveal.loader_token ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if loader_token %}<span class="form-hint form-hint--ok">Set ({{ loader_token[:12] }}...)</span>{% else %}<span class="form-hint">Shown to customers on their My Keys page.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <span class="form-label">Public Loader <span class="form-hint">(deprecated)</span></span>
+          <div class="admin-actions">
+            <input class="admin-file" type="file" name="loader_public_file" accept=".exe,.zip,.rar,.7z">
+            <button type="submit" name="upload_loader_public" value="1" class="btn-xs btn-primary">Upload</button>
+            {% if loader_public_url %}
+            <a href="{{ loader_public_url }}" target="_blank" rel="noopener" class="admin-note">Download current</a>
+            {% endif %}
+          </div>
+          <span class="form-hint">Admin-only fallback. Customers now get the loader attached to each product &mdash; set it in the product editor.</span>
+        </div>
+        <div class="form-group">
+          <span class="form-label">Private Loader <span class="form-hint">(deprecated)</span></span>
+          <div class="admin-actions">
+            <input class="admin-file" type="file" name="loader_private_file" accept=".exe,.zip,.rar,.7z">
+            <button type="submit" name="upload_loader_private" value="1" class="btn-xs btn-primary">Upload</button>
+            {% if loader_private_url %}
+            <a href="{{ loader_private_url }}" target="_blank" rel="noopener" class="admin-note">Download current</a>
+            {% endif %}
+          </div>
+          <span class="form-hint">Admin-only fallback. Attach the Rust Beazt External loader to its product in the product editor instead.</span>
+        </div>
+      </section>
+
+      <!-- ===== DISCORD SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-discord">
+        <h3 class="admin-card-title" id="settings-discord"><span class="icon icon-sm" data-lucide="message-circle"></span> Discord</h3>
+        <div class="form-group">
+          <label class="form-label" for="discord_public_url">Public Discord URL</label>
+          <input class="form-input" type="text" id="discord_public_url" name="discord_public_url" value="{{ discord_public_url }}" placeholder="https://discord.gg/bU4tFA43KK">
+          {% if discord_public_url %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint">Default: https://discord.gg/bU4tFA43KK</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="discord_private_url">Private Discord URL</label>
+          <input class="form-input" type="text" id="discord_private_url" name="discord_private_url" value="{{ discord_private_url }}" placeholder="https://discord.gg/...">
+          {% if discord_private_url %}<span class="form-hint form-hint--ok">Set.</span>{% else %}<span class="form-hint form-hint--warn">Only shown to users with active private keys.</span>{% endif %}
+        </div>
+      </section>
+
+      <!-- ===== LICENSE API SECTION ===== -->
+      <section class="admin-card" id="license-api" aria-labelledby="settings-license">
+        <h3 class="admin-card-title" id="settings-license"><span class="icon icon-sm" data-lucide="key-round"></span> License API (Project Infinity)</h3>
+        <div class="form-group">
+          <label class="form-label" for="license_api_token">API Token</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.license_token ? 'text' : 'password'" id="license_api_token" name="license_api_token" value="{{ license_api_token }}" placeholder="Panel API token">
+            <button type="button" class="input-reveal" @click="reveal.license_token = !reveal.license_token" x-text="reveal.license_token ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if license_api_token %}<span class="form-hint form-hint--ok">Set ({{ license_api_token[:10] }}...)</span>{% else %}<span class="form-hint form-hint--warn">Not set &mdash; key generation via API will fail.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="license_api_url">API URL</label>
+          <input class="form-input" type="text" id="license_api_url" name="license_api_url" value="{{ license_api_url }}" placeholder="http://panel.projectinfinity.co.za:3845">
+          <span class="form-hint">Backend API URL (HTTP, port 3845). The https://...:443 host is the web panel and will reject tokens.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="license_api_auth_scheme">Auth Scheme</label>
+          <select class="form-select" id="license_api_auth_scheme" name="license_api_auth_scheme">
+            <option value="raw" {% if license_api_auth_scheme == 'raw' %}selected{% endif %}>Raw token (Authorization: ...)</option>
+            <option value="bearer" {% if license_api_auth_scheme == 'bearer' %}selected{% endif %}>Bearer token (Authorization: Bearer ...)</option>
+          </select>
+          <span class="form-hint">The CatNip panel uses <strong>Raw</strong>. Run "Test Project Infinity API" on the product to verify.</span>
+        </div>
+      </section>
+
+      <!-- ===== EMAIL / SMTP SECTION ===== -->
+      <section class="admin-card" id="email" aria-labelledby="settings-email">
+        <h3 class="admin-card-title" id="settings-email"><span class="icon icon-sm" data-lucide="mail"></span> Email (Key Delivery)</h3>
+        <div class="cf-alert cf-alert-warn">
+          <span class="admin-note">When a key is assigned (auto on purchase or manually via the order page), the buyer is emailed their key, expiry, loader link and Discord. If SMTP is not configured, emails are skipped silently — key assignment still succeeds.</span>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="form-label" for="smtp_host">SMTP Host</label>
+            <input class="form-input" type="text" id="smtp_host" name="smtp_host" value="{{ smtp_host }}" placeholder="smtp.yourhost.com or localhost">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="smtp_port">Port</label>
+            <input class="form-input" type="number" id="smtp_port" name="smtp_port" value="{{ smtp_port }}" placeholder="587">
+          </div>
+          <div class="form-group">
+            <label class="form-label admin-checkbox"><input type="checkbox" name="smtp_use_tls" value="1" {% if smtp_use_tls %}checked{% endif %}> Use TLS</label>
+            <input type="hidden" name="smtp_use_tls" value="0">
+          </div>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="form-label" for="smtp_user">SMTP Username</label>
+            <input class="form-input" type="text" id="smtp_user" name="smtp_user" value="{{ smtp_user }}" placeholder="you@yourhost.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="smtp_pass">SMTP Password</label>
+            <div class="input-group">
+              <input class="form-input" :type="reveal.smtp_pass ? 'text' : 'password'" id="smtp_pass" name="smtp_pass" value="{{ smtp_pass }}" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <button type="button" class="input-reveal" @click="reveal.smtp_pass = !reveal.smtp_pass" x-text="reveal.smtp_pass ? 'Hide' : 'Show'"></button>
+            </div>
+          </div>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="form-label" for="smtp_from_email">From Email</label>
+            <input class="form-input" type="text" id="smtp_from_email" name="smtp_from_email" value="{{ smtp_from_email }}" placeholder="no-reply@beazt.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="smtp_from_name">From Name</label>
+            <input class="form-input" type="text" id="smtp_from_name" name="smtp_from_name" value="{{ smtp_from_name }}" placeholder="BEAZT">
+          </div>
+        </div>
+      </section>
+
+      <div class="admin-actions">
+        <button type="submit" class="btn btn-primary">
+          <span class="icon" data-lucide="save"></span>
+          Save settings
+        </button>
+      </div>
+    </form>
+
+    <!-- Test Connection form: a SIBLING of the settings form above (a form
+         nested inside another form is silently discarded by browsers). The
+         Test Connection button targets this form via its `form` attribute.
+         Must stay AFTER the settings form so document.querySelector() in the
+         :value bindings below resolves to the settings form's inputs. -->
+    <form id="chairfbi-test-form" method="POST" action="{{ url_for('admin.test_chairfbi') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="chairfbi_api_token" :value="document.querySelector('input[name=chairfbi_api_token]').value">
+      <input type="hidden" name="chairfbi_api_base" :value="document.querySelector('input[name=chairfbi_api_base]').value">
+    </form>
+  </div>
+{% endblock %}

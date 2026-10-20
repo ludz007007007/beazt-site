@@ -1,0 +1,20 @@
+{#- Game tile for /games and the homepage. Expects `g` from
+    utils/catalogue.py group_games(). Counts come straight from the DB;
+    the strip shows one segment per product in its real status. -#}
+<article class="game-card">
+  <div class="game-card__media">
+    {# Per-game typographic cover (utils/covers.py via /game-image/<slug>):
+       deterministic per game, so no two games share art. Intrinsic dims +
+       lazy — tiles sit below the hero on /games and the homepage. #}
+    <img src="{{ url_for('main.game_image', game_slug=g.slug) }}" alt="" loading="lazy" decoding="async" width="1200" height="675">
+  </div>
+  <h3 class="game-card__title"><a class="game-card__link" href="{{ url_for('main.game_page', game_slug=g.slug) }}">{{ g.name }}</a></h3>
+  <p class="game-card__meta">
+    <span>{{ g.count }} product{{ '' if g.count == 1 else 's' }}</span>
+    {% if g.tier_count %}<span>{{ g.tier_count }} plan{{ '' if g.tier_count == 1 else 's' }}</span>{% endif %}
+    {% if g.price_min is not none %}<span>From £{{ "%.2f"|format(g.price_min) }}</span>{% endif %}
+  </p>
+  {% with %}{% include "partials/status_ratio.html" %}{% endwith %}
+  <p class="game-card__status">{{ g.undetected }} of {{ g.count }} undetected right now</p>
+  <span class="game-card__arrow" aria-hidden="true">&rarr;</span>
+</article>

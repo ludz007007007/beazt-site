@@ -1,0 +1,63 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <div>
+    <a href="{{ url_for('admin.users') }}" class="admin-back">&larr; Back to Users</a>
+    <h1>{{ target_user.username }}</h1>
+    <p>{{ target_user.email }} &middot; {{ 'Admin' if target_user.is_admin else 'User' }} &middot; {{ 'Active' if target_user.is_active else 'Disabled' }}</p>
+    {% if not target_user.is_admin and target_user.is_active %}
+    <form method="POST" action="{{ url_for('admin.impersonate_user', user_id=target_user.id) }}" data-confirm="Log in as {{ target_user.username }} to see their keys and dashboard?" data-confirm-title="Impersonate user">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn-xs btn-secondary">
+        <span class="icon icon-sm" data-lucide="user-round"></span> Login as this user
+      </button>
+    </form>
+    {% elif not target_user.is_admin and not target_user.is_active %}
+    <p class="admin-note admin-note--warn">Enable this user to log in as them.</p>
+    {% endif %}
+  </div>
+</div>
+
+<h3 class="admin-subheading">Keys ({{ keys|length }})</h3>
+{% if keys %}
+<table class="admin-table">
+  <thead><tr><th>Key</th><th>Product</th><th>Status</th><th>Created</th><th>Expires</th></tr></thead>
+  <tbody>
+    {% for k in keys %}
+    <tr>
+      <td><code class="admin-key-code">{{ k.key_value }}</code></td>
+      <td>{{ k.product.name if k.product else '-' }}</td>
+      <td><span class="badge-sm {{ 'badge-green' if k.is_active else 'badge-red' }}">{{ 'Active' if k.is_active else 'Expired' }}</span></td>
+      <td>{{ k.created_at.strftime('%d %b %Y') }}</td>
+      <td>{{ k.expires_at.strftime('%d %b %Y') if k.expires_at else '-' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% with empty_icon = 'key-round', empty_title = 'No keys found', empty_text = 'This account holds no license keys.' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% endif %}
+
+<h3 class="admin-subheading">Orders ({{ orders|length }})</h3>
+{% if orders %}
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Product</th><th>Status</th><th>Date</th></tr></thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td><a href="{{ url_for('admin.order_detail', order_id=o.id) }}">#{{ o.id }}</a></td>
+      <td>{{ o.tier.product.name if o.tier and o.tier.product else '-' }} ({{ o.tier.label if o.tier else '-' }})</td>
+      <td><span class="badge-sm {{ 'badge-green' if o.status == 'completed' else ('badge-blue' if o.status == 'pending' else 'badge-orange') }}">{{ o.status.replace('_', ' ') }}</span></td>
+      <td>{{ o.created_at.strftime('%d %b %Y') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% with empty_icon = 'receipt', empty_title = 'No orders found', empty_text = 'This account has not placed any orders yet.' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% endif %}
+{% endblock %}

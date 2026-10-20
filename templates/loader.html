@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}{% if product %}{{ product.name }} Loader Setup | BEAZT{% else %}Loader Setup | BEAZT{% endif %}{% endblock %}
+
+{% block head %}
+<meta name="description" content="{% if product %}Download and set up the {{ product.name }} loader: prerequisites, step-by-step setup, key activation and troubleshooting.{% else %}Set up your BEAZT loader: prerequisites, numbered setup steps, loader downloads, key activation and troubleshooting.{% endif %}">
+<meta property="og:title" content="{% if product %}{{ product.name }} Loader Setup | BEAZT{% else %}Loader Setup | BEAZT{% endif %}">
+<meta property="og:description" content="{% if product %}Product-specific {{ product.name }} loader download instructions and setup guide.{% else %}Prerequisites, numbered setup guide, loader downloads and key activation.{% endif %}">
+<meta property="og:type" content="article">
+<link rel="canonical" href="{% if product %}{{ url_for('main.loader_product', slug=product.slug, _external=True) }}{% else %}{{ url_for('main.loader', _external=True) }}{% endif %}">
+{% endblock %}
+
+{% block content %}
+{# Loader guide surface: /loader (generic) and /loader/<slug> (product-specific,
+   VAL-CON-002). Presentation-only: routes/main.py passes product (or None),
+   products, and loader_* URLs; all bindings below must be preserved. No Alpine
+   x-if is used on this page (single-root rule); the numbered steps use a CSS
+   counter so numbering can never drift. No inline styles — page CSS lives in
+   site.css under "Page: Loader guide". Loader URLs may be unconfigured
+   locally: every download state below degrades to the My Keys card, never a
+   dead link. #}
+{% set _loader_url = loader_url if loader_url is defined else '' %}
+{% set _loader_public = loader_public_url if loader_public_url is defined else '' %}
+{% set _loader_private = loader_private_url if loader_private_url is defined else '' %}
+{% set prod_loader = product.loader_url if product and product.loader_url else None %}
+{% if product and product.visibility == 'private' %}
+{% set global_loader = _loader_private or _loader_url %}
+{% else %}
+{% set global_loader = _loader_public or _loader_url %}
+{% endif %}
+{% set loader_href = prod_loader or global_loader %}
+{% set game_name = product.display_game if product and product.display_game else None %}
+<section class="page-section">
+  <div class="container">
+    <div class="page-header reveal loader-doc-hero">
+      <span class="section-eyebrow">Setup &middot; Docs</span>
+      {% if product %}
+      <h1 class="t-h1">{{ product.name }} Loader Guide</h1>
+      <p class="text-muted">Product-specific download instructions and setup steps for {{ product.name }}. Your loader binary and license key live on your key card.</p>
+      {% else %}
+      <h1 class="t-h1">Loader Guide</h1>
+      <p class="text-muted">Follow the steps below to get your loader running. Prerequisites must be installed first.</p>
+      {% endif %}
+      <div class="loader-doc-meta">
+        {% if product and product.status %}
+        {% set pstat = product.status %}
+        <span class="badge {{ 'badge-success' if pstat in ['undetected', 'online'] else ('badge-warning' if pstat in ['updating', 'maintenance'] else 'badge-error') }}">{{ pstat|title }}</span>
+        {% endif %}
+        <span class="badge badge-info">Windows 10 / 11</span>
+        <span class="badge badge-success badge-dot">Key delivery in seconds</span>
+      </div>
+    </div>
+
+    <div class="loader-doc">
+      {% if product %}
+      <div class="loader-card reveal" role="region" aria-label="Product download">
+        <h2 class="loader-card-title"><span class="icon" data-lucide="download"></span>Download for {{ product.name }}</h2>
+        <p class="loader-note text-muted">Loaders are attached to each product. After purchasing, the loader for {{ product.name }} appears on your key card{% if loader_href %} — a direct download is also configured below{% endif %}.</p>
+        <div class="loader-step-actions loader-step-actions--flush">
+          {% if loader_href %}
+          <a href="{{ loader_href }}" class="btn btn-primary">
+            <span class="icon icon-sm" data-lucide="download"></span> Download {{ product.name }} Loader
+          </a>
+          {% endif %}
+          <a href="{{ url_for('main.my_keys') }}" class="btn {% if not loader_href %}btn-primary{% else %}btn-ghost{% endif %}">
+            <span class="icon icon-sm" data-lucide="key-round"></span> Go to My Keys
+          </a>
+          {% if not current_user.is_authenticated %}
+          <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign in</a>
+          {% endif %}
+        </div>
+        {% if product.buyer_notes %}
+        <div class="loader-notes">
+          <span class="section-eyebrow">Product notes</span>
+          <ul class="prereq-list">
+            {% for line in product.buyer_notes.splitlines() %}
+            {% if line.strip() %}
+            <li><span class="icon" data-lucide="info"></span><span>{{ line.strip() }}</span></li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="loader-doc-grid">
+        <div class="loader-doc-main">
+          <div class="loader-card reveal" id="prerequisites" role="region" aria-labelledby="prereq-heading">
+            <h2 class="loader-card-title" id="prereq-heading"><span class="icon" data-lucide="list-checks"></span>Prerequisites</h2>
+            <ul class="prereq-list">
+              <li><span class="icon" data-lucide="check-circle-2"></span><span>Windows 10 / 11 64-bit with the latest updates installed.</span></li>
+              <li><span class="icon" data-lucide="check-circle-2"></span><span>An active license key — find it on the <a href="{{ url_for('main.my_keys') }}">My Keys</a> page after purchase.</span></li>
+              <li><span class="icon" data-lucide="check-circle-2"></span><span>RivaTuner Statistics Server (required for the overlay) — see Downloads below.</span></li>
+              <li><span class="icon" data-lucide="check-circle-2"></span><span>Administrator access on your PC — right-click the loader and choose <code>Run as administrator</code>.</span></li>
+              <li><span class="icon" data-lucide="check-circle-2"></span><span>A stable {% if game_name %}{{ game_name }} install{% else %}install of the game you're playing{% endif %} and a reboot after any driver or Windows update.</span></li>
+            </ul>
+          </div>
+
+          <div class="loader-card reveal" id="downloads" role="region" aria-labelledby="downloads-heading">
+            <h2 class="loader-card-title" id="downloads-heading"><span class="icon" data-lucide="hard-drive-download"></span>Downloads</h2>
+            <div class="loader-download-grid">
+              <div class="loader-download-card">
+                <div class="loader-download-icon"><span class="icon" data-lucide="package"></span></div>
+                <div class="loader-download-name">{% if product %}{{ product.name }} Loader{% else %}BEAZT Loader{% endif %}</div>
+                <p class="loader-download-desc">{% if product %}Product build for {{ product.name }}. Grab it from your key card{% if loader_href %} or via direct download{% endif %}.{% else %}Product builds are attached to each purchase. Download yours from your key card after checkout.{% endif %}</p>
+                {% if loader_href %}
+                <a href="{{ loader_href }}" class="btn btn-primary">
+                  <span class="icon icon-sm" data-lucide="download"></span> Download Loader
+                </a>
+                {% endif %}
+                <a href="{{ url_for('main.my_keys') }}" class="btn {% if loader_href %}btn-ghost{% else %}btn-primary{% endif %}">
+                  <span class="icon icon-sm" data-lucide="key-round"></span> Go to My Keys
+                </a>
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign in</a>
+                {% endif %}
+              </div>
+              <div class="loader-download-card">
+                <div class="loader-download-icon"><span class="icon" data-lucide="monitor"></span></div>
+                <div class="loader-download-name">RivaTuner Statistics Server</div>
+                <p class="loader-download-desc">Required for the overlay to function correctly. Install the latest version from the official mirror before launching.</p>
+                <a href="https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/" target="_blank" rel="noopener" class="btn btn-ghost">
+                  <span class="icon icon-sm" data-lucide="external-link"></span> Download RivaTuner
+                </a>
+              </div>
+              <div class="loader-download-card">
+                <div class="loader-download-icon"><span class="icon" data-lucide="life-buoy"></span></div>
+                <div class="loader-download-name">Setup Support</div>
+                <p class="loader-download-desc">Stuck on a step? The team staffs the Discord around the clock for setup, HWID resets, and tuning questions.</p>
+                <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+                  <span class="icon icon-sm" data-lucide="message-circle"></span> Ask in Discord
+                </a>
+                <a href="{{ url_for('main.faq') }}" class="btn btn-ghost">
+                  <span class="icon icon-sm" data-lucide="help-circle"></span> Read the FAQ
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="loader-callout loader-callout--warn reveal" role="note" aria-label="Antivirus warning">
+            <span class="icon" data-lucide="triangle-alert"></span>
+            <div>
+              <strong>Disable real-time protection first</strong>
+              <p>Windows Defender and most antivirus software flag game loaders as false positives. Temporarily turn off real-time protection before downloading and running the loader, then re-enable it afterwards. Path: <code>Settings &rarr; Privacy &amp; Security &rarr; Virus &amp; Threat Protection &rarr; Manage Settings</code>.</p>
+            </div>
+          </div>
+
+          <div class="loader-callout loader-callout--info reveal" role="note" aria-label="Key delivery info">
+            <span class="icon" data-lucide="info"></span>
+            <div>
+              <strong>Keys appear on My Keys</strong>
+              <p>{{ delivery_promise() }} Copy the key from your key card on <a href="{{ url_for('main.my_keys') }}" class="loader-callout__link">My Keys</a> and paste it into the loader to activate. Never share your key.</p>
+            </div>
+          </div>
+
+          <nav class="loader-card reveal" aria-label="Setup steps" id="steps">
+            <h2 class="loader-card-title"><span class="icon" data-lucide="route"></span>Step-by-step setup</h2>
+            <ol class="loader-guide-steps">
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Get your loader</h3>
+                  <p>Loaders are attached to each product. After purchasing{% if product %} {{ product.name }}{% endif %}, download the loader from the <a href="{{ url_for('main.my_keys') }}">My Keys</a> page — it appears on your key card{% if loader_href %} (or use the direct download above){% endif %}.</p>
+                  <div class="loader-step-actions">
+                    <a href="{{ url_for('main.my_keys') }}" class="btn btn-primary">Go to My Keys</a>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign in</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </li>
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Install RivaTuner Statistics Server</h3>
+                  <p>Required for the overlay to function correctly. Install the latest version from the official mirror and keep default settings unless support tells you otherwise.</p>
+                  <div class="loader-step-actions">
+                    <a href="https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/" target="_blank" rel="noopener" class="btn btn-ghost">
+                      <span class="icon icon-sm" data-lucide="external-link"></span> Download RivaTuner
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Disable antivirus real-time protection</h3>
+                  <p>Windows Defender and most antivirus software will flag game cheats as false positives. Temporarily disable real-time protection before downloading and running the loader.</p>
+                  <p><strong>Windows Defender:</strong> <code>Settings &rarr; Privacy &amp; Security &rarr; Virus &amp; Threat Protection &rarr; Manage Settings &rarr; Turn off Real-time Protection</code></p>
+                </div>
+              </li>
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Run the loader as administrator</h3>
+                  <p>Extract the loader anywhere except system folders, right-click it, and choose <code>Run as administrator</code>. Keep RivaTuner installed with default settings while the loader starts.</p>
+                </div>
+              </li>
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Enter your license key</h3>
+                  <p>After purchasing a license, find your key on the <a href="{{ url_for('main.my_keys') }}">My Keys</a> page. Copy it and paste it into the loader to activate. Keys are case-sensitive — copy, don't retype.</p>
+                  <div class="loader-step-actions">
+                    <a href="{{ url_for('main.my_keys') }}" class="btn btn-ghost">Go to My Keys</a>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign in</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </li>
+              <li class="loader-guide-step">
+                <span class="loader-guide-num" aria-hidden="true"></span>
+                <div class="loader-step-body">
+                  <h3>Launch {% if game_name %}{{ game_name }}{% else %}your game{% endif %} and verify the overlay</h3>
+                  <p>Start {% if game_name %}{{ game_name }}{% else %}the game{% endif %} after the loader reports success. If the overlay does not appear, reboot, re-run as administrator, and ask the team in Discord with a screenshot of the loader window.</p>
+                  <div class="loader-step-actions">
+                    <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+                      <span class="icon icon-sm" data-lucide="message-circle"></span> Get help in Discord
+                    </a>
+                    <a href="{{ url_for('main.faq') }}" class="btn btn-ghost">Read the FAQ</a>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
+
+        <aside class="loader-doc-side" aria-label="Guide sidebar">
+          <div class="loader-card reveal">
+            <h2 class="loader-card-title"><span class="icon" data-lucide="list"></span>On this page</h2>
+            <ul class="loader-toc">
+              <li><a href="#prerequisites">Prerequisites</a></li>
+              <li><a href="#downloads">Downloads</a></li>
+              <li><a href="#steps">Step-by-step setup</a></li>
+              <li><a href="{{ url_for('main.my_keys') }}">My Keys — find your key</a></li>
+            </ul>
+          </div>
+          <div class="loader-card reveal">
+            <h2 class="loader-card-title"><span class="icon" data-lucide="key-round"></span>Your key</h2>
+            <p class="loader-side-note text-muted">Purchased already? Your key and loader live on your key card.</p>
+            <a href="{{ url_for('main.my_keys') }}" class="btn btn-primary">Go to My Keys</a>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign in</a>
+            {% endif %}
+          </div>
+          {% if products is defined and products %}
+          <div class="loader-card reveal">
+            <h2 class="loader-card-title"><span class="icon" data-lucide="package"></span>Product guides</h2>
+            <ul class="loader-product-list">
+              {% for p in products %}
+              <li>
+                <a href="{{ url_for('main.loader_product', slug=p.slug) }}" class="{{ 'is-current' if product and p.slug == product.slug else '' }}" {% if product and p.slug == product.slug %}aria-current="page"{% endif %}>
+                  <span>{{ p.name }}</span>
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

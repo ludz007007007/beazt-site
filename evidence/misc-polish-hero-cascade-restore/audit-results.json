@@ -1,0 +1,200 @@
+{
+  "expectedDiffs": [
+    {
+      "page": "/",
+      "url": "http://localhost:5000/",
+      "selector": ".nav-logo",
+      "state": "normal",
+      "diffs": {
+        "block-size": {
+          "old": "40px",
+          "new": "44px"
+        },
+        "height": {
+          "old": "40px",
+          "new": "44px"
+        },
+        "min-block-size": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-height": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-inline-size": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-width": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "perspective-origin": {
+          "old": "64.7188px 20px",
+          "new": "64.7188px 22px"
+        },
+        "transform-origin": {
+          "old": "64.7188px 20px",
+          "new": "64.7188px 22px"
+        }
+      },
+      "reason": "intentional a42afb9 44px touch target (previously verified)"
+    },
+    {
+      "page": "/",
+      "url": "http://localhost:5000/",
+      "selector": ".nav-logo",
+      "state": "hover",
+      "diffs": {
+        "block-size": {
+          "old": "40px",
+          "new": "44px"
+        },
+        "height": {
+          "old": "40px",
+          "new": "44px"
+        },
+        "min-block-size": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-height": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-inline-size": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "min-width": {
+          "old": "auto",
+          "new": "44px"
+        },
+        "perspective-origin": {
+          "old": "64.7188px 20px",
+          "new": "64.7188px 22px"
+        },
+        "transform-origin": {
+          "old": "64.7188px 20px",
+          "new": "64.7188px 22px"
+        }
+      },
+      "reason": "intentional a42afb9 44px touch target (previously verified)"
+    }
+  ],
+  "unexpectedDiffs": [],
+  "assertions": [
+    {
+      "label": "hero-stats max-width 700px",
+      "sel": ".hero-stats",
+      "state": "normal",
+      "prop": "max-width",
+      "expected": "700px",
+      "got": "700px",
+      "ok": true
+    },
+    {
+      "label": "hero-stat padding-left 20px",
+      "sel": ".hero-stat",
+      "state": "normal",
+      "prop": "padding-left",
+      "expected": "20px",
+      "got": "20px",
+      "ok": true
+    },
+    {
+      "label": "hero-stat padding-right 20px",
+      "sel": ".hero-stat",
+      "state": "normal",
+      "prop": "padding-right",
+      "expected": "20px",
+      "got": "20px",
+      "ok": true
+    },
+    {
+      "label": "hero-stat:hover border-color --border-accent-subtle",
+      "sel": ".hero-stat",
+      "state": "hover",
+      "prop": "border-top-color",
+      "expected": "rgba(22,139,255,0.2)",
+      "got": "rgba(22, 139, 255, 0.2)",
+      "ok": true
+    },
+    {
+      "label": "hero-stat:hover translateY(-2px)",
+      "sel": ".hero-stat",
+      "state": "hover",
+      "prop": "transform",
+      "expected": "matrix(1, 0, 0, 1, 0, -2)",
+      "got": "matrix(1, 0, 0, 1, 0, -2)",
+      "ok": true
+    },
+    {
+      "label": "hero-stat:hover box-shadow uses --glow-accent-subtle (0 0 15px rgba(22,139,255,0.15))",
+      "got": "rgba(0, 0, 0, 0.5) 0px 8px 24px 0px, rgba(0, 0, 0, 0.35) 0px 4px 8px 0px, rgba(22, 139, 255, 0.15) 0px 0px 15px 0px",
+      "ok": true
+    },
+    {
+      "label": "nav-logo min-height 44px (a42afb9 touch target, previously verified)",
+      "got": "44px",
+      "ok": true
+    },
+    {
+      "label": "BASELINE sanity: .hero-stats max-width 700px",
+      "got": "700px",
+      "ok": true
+    },
+    {
+      "label": "BASELINE sanity: .hero-stat padding-left 20px",
+      "got": "20px",
+      "ok": true
+    },
+    {
+      "label": "BASELINE sanity: .hero-stat:hover border-color subtle",
+      "got": "rgba(22, 139, 255, 0.2)",
+      "ok": true
+    },
+    {
+      "label": "BASELINE sanity: .hero-stat:hover translateY -2",
+      "got": "matrix(1, 0, 0, 1, 0, -2)",
+      "ok": true
+    },
+    {
+      "label": "BASELINE sanity: .hero-stat:hover box-shadow subtle glow",
+      "got": "rgba(0, 0, 0, 0.5) 0px 8px 24px 0px, rgba(0, 0, 0, 0.35) 0px 4px 8px 0px, rgba(22, 139, 255, 0.15) 0px 0px 15px 0px",
+      "ok": true
+    }
+  ],
+  "consoleErrors": [],
+  "overflow": [
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "innerWidth": 768,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflow": false
+    }
+  ],
+  "notes": [
+    "missing on /product/rust-external-private: .form-input (normal)",
+    "missing on /cheats: [class*=\"badge\"] (normal)"
+  ]
+}

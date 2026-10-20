@@ -1,0 +1,8 @@
+{#- Availability badge: stock/access facts, ALWAYS separate from the status
+    pill (partials/status_pill.html is the one risk taxonomy — never merge
+    the two). Keys: in_stock, sold_out, private. "In stock" renders only
+    when show_in_stock=true so cards stay quiet by default. -#}
+{%- set availability_labels = {"in_stock": "In stock", "sold_out": "Sold out", "private": "Private build"} -%}
+{%- if availability in availability_labels and (availability != "in_stock" or show_in_stock) -%}
+<span class="badge badge-sm badge-availability badge-availability--{{ availability }}">{{ availability_labels[availability] }}</span>
+{%- endif -%}

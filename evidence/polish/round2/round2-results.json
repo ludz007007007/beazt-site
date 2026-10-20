@@ -1,0 +1,360 @@
+{
+  "generatedAt": "2026-09-17T02:05:54.346Z",
+  "base": "http://127.0.0.1:5000",
+  "touchTargets": {
+    "home": {
+      ".nav-logo": {
+        "found": true,
+        "visible": true,
+        "width": 129.4,
+        "height": 44
+      },
+      ".nav-burger": {
+        "found": true,
+        "visible": true,
+        "width": 44,
+        "height": 44
+      }
+    },
+    "cheats": {
+      ".nav-logo": {
+        "found": true,
+        "visible": true,
+        "width": 129.4,
+        "height": 44
+      },
+      ".nav-burger": {
+        "found": true,
+        "visible": true,
+        "width": 44,
+        "height": 44
+      }
+    },
+    "product": {
+      ".nav-logo": {
+        "found": true,
+        "visible": true,
+        "width": 129.4,
+        "height": 44
+      },
+      "a.pd-back": {
+        "found": true,
+        "visible": true,
+        "width": 121.3,
+        "height": 44
+      },
+      ".nav-burger": {
+        "found": true,
+        "visible": true,
+        "width": 44,
+        "height": 44
+      },
+      ".pd-qty-btn": {
+        "found": true,
+        "visible": true,
+        "width": 44,
+        "height": 44
+      },
+      ".pd-qty-input": {
+        "found": true,
+        "visible": true,
+        "width": 54,
+        "height": 44
+      }
+    },
+    "faq": {
+      ".nav-logo": {
+        "found": true,
+        "visible": true,
+        "width": 129.4,
+        "height": 44
+      },
+      ".nav-burger": {
+        "found": true,
+        "visible": true,
+        "width": 44,
+        "height": 44
+      }
+    }
+  },
+  "overflow": {
+    "home": {
+      "320": {
+        "htmlScrollW": 320,
+        "htmlClientW": 320,
+        "bodyScrollW": 320,
+        "bodyClientW": 320,
+        "overflow": false
+      },
+      "390": {
+        "htmlScrollW": 390,
+        "htmlClientW": 390,
+        "bodyScrollW": 390,
+        "bodyClientW": 390,
+        "overflow": false
+      },
+      "768": {
+        "htmlScrollW": 768,
+        "htmlClientW": 768,
+        "bodyScrollW": 768,
+        "bodyClientW": 768,
+        "overflow": false
+      },
+      "1440": {
+        "htmlScrollW": 1440,
+        "htmlClientW": 1440,
+        "bodyScrollW": 1440,
+        "bodyClientW": 1440,
+        "overflow": false
+      },
+      "1920": {
+        "htmlScrollW": 1920,
+        "htmlClientW": 1920,
+        "bodyScrollW": 1920,
+        "bodyClientW": 1920,
+        "overflow": false
+      }
+    },
+    "cheats": {
+      "320": {
+        "htmlScrollW": 320,
+        "htmlClientW": 320,
+        "bodyScrollW": 320,
+        "bodyClientW": 320,
+        "overflow": false
+      },
+      "390": {
+        "htmlScrollW": 390,
+        "htmlClientW": 390,
+        "bodyScrollW": 390,
+        "bodyClientW": 390,
+        "overflow": false
+      },
+      "768": {
+        "htmlScrollW": 768,
+        "htmlClientW": 768,
+        "bodyScrollW": 768,
+        "bodyClientW": 768,
+        "overflow": false
+      },
+      "1440": {
+        "htmlScrollW": 1440,
+        "htmlClientW": 1440,
+        "bodyScrollW": 1440,
+        "bodyClientW": 1440,
+        "overflow": false
+      },
+      "1920": {
+        "htmlScrollW": 1920,
+        "htmlClientW": 1920,
+        "bodyScrollW": 1920,
+        "bodyClientW": 1920,
+        "overflow": false
+      }
+    },
+    "product": {
+      "320": {
+        "htmlScrollW": 320,
+        "htmlClientW": 320,
+        "bodyScrollW": 320,
+        "bodyClientW": 320,
+        "overflow": false
+      },
+      "390": {
+        "htmlScrollW": 390,
+        "htmlClientW": 390,
+        "bodyScrollW": 390,
+        "bodyClientW": 390,
+        "overflow": false
+      },
+      "768": {
+        "htmlScrollW": 768,
+        "htmlClientW": 768,
+        "bodyScrollW": 768,
+        "bodyClientW": 768,
+        "overflow": false
+      },
+      "1440": {
+        "htmlScrollW": 1440,
+        "htmlClientW": 1440,
+        "bodyScrollW": 1440,
+        "bodyClientW": 1440,
+        "overflow": false
+      },
+      "1920": {
+        "htmlScrollW": 1920,
+        "htmlClientW": 1920,
+        "bodyScrollW": 1920,
+        "bodyClientW": 1920,
+        "overflow": false
+      }
+    },
+    "faq": {
+      "320": {
+        "htmlScrollW": 320,
+        "htmlClientW": 320,
+        "bodyScrollW": 320,
+        "bodyClientW": 320,
+        "overflow": false
+      },
+      "390": {
+        "htmlScrollW": 390,
+        "htmlClientW": 390,
+        "bodyScrollW": 390,
+        "bodyClientW": 390,
+        "overflow": false
+      },
+      "768": {
+        "htmlScrollW": 768,
+        "htmlClientW": 768,
+        "bodyScrollW": 768,
+        "bodyClientW": 768,
+        "overflow": false
+      },
+      "1440": {
+        "htmlScrollW": 1440,
+        "htmlClientW": 1440,
+        "bodyScrollW": 1440,
+        "bodyClientW": 1440,
+        "overflow": false
+      },
+      "1920": {
+        "htmlScrollW": 1920,
+        "htmlClientW": 1920,
+        "bodyScrollW": 1920,
+        "bodyClientW": 1920,
+        "overflow": false
+      }
+    }
+  },
+  "stickyPanel": {
+    "viewport": "1440x900",
+    "beforeScroll": {
+      "found": true,
+      "position": "sticky",
+      "top": 439
+    },
+    "afterScroll": {
+      "found": true,
+      "position": "sticky",
+      "top": 96,
+      "scrollY": 800,
+      "inViewport": false
+    }
+  },
+  "mobileBuyBar": {
+    "found": true,
+    "display": "flex",
+    "position": "fixed",
+    "top": 595,
+    "bottom": 680,
+    "width": 320,
+    "height": 85,
+    "atViewportBottom": true,
+    "visible": true
+  },
+  "hamburger": {
+    "home": {
+      "burgerVisible": true,
+      "burgerBox": {
+        "x": 260,
+        "y": 14,
+        "width": 44,
+        "height": 44
+      },
+      "openState": {
+        "menuFound": true,
+        "isOpen": true,
+        "visibility": "visible",
+        "opacity": "1",
+        "pointerEvents": "auto"
+      },
+      "closeState": {
+        "isOpen": false,
+        "visibility": "hidden"
+      },
+      "clickedHref": "/",
+      "afterNavUrl": "http://127.0.0.1:5000/",
+      "navigated": true,
+      "menuClosedAfterNav": true
+    },
+    "cheats": {
+      "burgerVisible": true,
+      "burgerBox": {
+        "x": 260,
+        "y": 14,
+        "width": 44,
+        "height": 44
+      },
+      "openState": {
+        "menuFound": true,
+        "isOpen": true,
+        "visibility": "visible",
+        "opacity": "1",
+        "pointerEvents": "auto"
+      },
+      "closeState": {
+        "isOpen": false,
+        "visibility": "hidden"
+      },
+      "clickedHref": "/",
+      "afterNavUrl": "http://127.0.0.1:5000/",
+      "navigated": true,
+      "menuClosedAfterNav": true
+    },
+    "product": {
+      "burgerVisible": true,
+      "burgerBox": {
+        "x": 260,
+        "y": 14,
+        "width": 44,
+        "height": 44
+      },
+      "openState": {
+        "menuFound": true,
+        "isOpen": true,
+        "visibility": "visible",
+        "opacity": "1",
+        "pointerEvents": "auto"
+      },
+      "closeState": {
+        "isOpen": false,
+        "visibility": "hidden"
+      },
+      "clickedHref": "/",
+      "afterNavUrl": "http://127.0.0.1:5000/",
+      "navigated": true,
+      "menuClosedAfterNav": true
+    },
+    "faq": {
+      "burgerVisible": true,
+      "burgerBox": {
+        "x": 260,
+        "y": 14,
+        "width": 44,
+        "height": 44
+      },
+      "openState": {
+        "menuFound": true,
+        "isOpen": true,
+        "visibility": "visible",
+        "opacity": "1",
+        "pointerEvents": "auto"
+      },
+      "closeState": {
+        "isOpen": false,
+        "visibility": "hidden"
+      },
+      "clickedHref": "/",
+      "afterNavUrl": "http://127.0.0.1:5000/",
+      "navigated": true,
+      "menuClosedAfterNav": true
+    }
+  },
+  "consoleErrors": {
+    "home": [],
+    "cheats": [],
+    "product": [],
+    "faq": []
+  }
+}

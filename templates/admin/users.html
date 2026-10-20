@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Users</h1>
+  <p>Manage all registered accounts.</p>
+</div>
+
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>ID</th><th>Username</th><th>Email</th><th>Admin</th><th>Active</th>
+      <th>Created</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in users.items %}
+    <tr>
+      <td>{{ u.id }}</td>
+      <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}">{{ u.username }}</a></td>
+      <td>{{ u.email }}</td>
+      <td><span class="badge-sm {{ 'badge-blue' if u.is_admin else 'badge-neutral' }}">{{ 'Admin' if u.is_admin else '-' }}</span></td>
+      <td><span class="badge-sm {{ 'badge-green' if u.is_active else 'badge-red' }}">{{ 'Active' if u.is_active else 'Disabled' }}</span></td>
+      <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+      <td>
+        <div class="admin-actions">
+        <form method="POST" action="{{ url_for('admin.toggle_user', user_id=u.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-xs {{ 'btn-danger' if u.is_active else 'btn-success-sm' }}">
+            {{ 'Disable' if u.is_active else 'Enable' }}
+          </button>
+        </form>
+        {% if not u.is_admin %}
+          <form method="POST" action="{{ url_for('admin.impersonate_user', user_id=u.id) }}" data-confirm="Log in as {{ u.username }} to see their keys and dashboard?" data-confirm-title="Impersonate user">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-secondary">Login as</button>
+          </form>
+          <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}" data-confirm="Delete this user permanently?" data-confirm-title="Delete user">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-danger">Delete</button>
+          </form>
+        {% endif %}
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if not users.items %}
+{% with empty_icon = 'users', empty_title = 'No users yet', empty_text = 'Accounts appear here as customers sign up.', empty_action_href = url_for('admin.dashboard'), empty_action_label = 'Back to dashboard' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% endif %}
+
+{% with pg = users %}
+{% include "partials/admin_pagination.html" %}
+{% endwith %}
+{% endblock %}

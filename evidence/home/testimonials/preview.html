@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050507">
+  <title>BEAZT — Testimonials section preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/style.css?v=6">
+  <style>
+    body { background: var(--bg-base); }
+  </style>
+</head>
+<body>
+  <div class="main-content" id="main-content">
+    <!-- Section rendered exactly as templates/index.html emits it for an
+         anonymous visitor with the current (review-less) database: -->
+    <section class="section" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">Proof</span>
+          <h2 class="t-h2" id="testimonials-heading">Verified buyer feedback</h2>
+        </div>
+        <div class="rating-summary">
+          <span class="rating-score">4.9</span>
+          <span class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="rating-count">based on 2,400+ verified orders</span>
+        </div>
+        <div class="empty-state" role="status" aria-label="No verified reviews yet">
+          <div class="empty-icon" aria-hidden="true">
+            <span class="icon" data-lucide="message-square-quote"></span>
+          </div>
+          <h3 class="empty-title">No verified reviews yet</h3>
+          <p class="empty-text">Buyer reviews will appear here once verified purchases are submitted. Read operator proof and support quality on the proof page.</p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+            <a href="/feedback" class="btn btn-primary">
+              <span class="icon icon-sm" data-lucide="receipt-text"></span>
+              Read buyer proof
+            </a>
+            <a href="https://discord.gg/bU4tFA43KK" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+              <span class="icon icon-sm" data-lucide="message-circle"></span>
+              Ask buyers in Discord
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    window.addEventListener("load", function () {
+      if (window.lucide && typeof window.lucide.createIcons === "function") {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

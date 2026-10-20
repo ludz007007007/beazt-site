@@ -1,0 +1,44 @@
+{
+  "url": "http://127.0.0.1:5000/feedback",
+  "viewports": [
+    {
+      "name": "mobile-320",
+      "width": 320,
+      "height": 720,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "tablet-768",
+      "width": 768,
+      "height": 1024,
+      "horizontalOverflowPx": 0
+    },
+    {
+      "name": "desktop-1440",
+      "width": 1440,
+      "height": 900,
+      "horizontalOverflowPx": 0
+    }
+  ],
+  "consoleErrors": [],
+  "dom": {
+    "emptyState": 1,
+    "emptyTitle": "No verified reviews yet",
+    "reviewCards": 0,
+    "ratingSummary": 0,
+    "proofCards": 4,
+    "fabricatedNames": [],
+    "discordCta": 1,
+    "discordHref": "https://discord.gg/bU4tFA43KK",
+    "browseCta": 1,
+    "browseHref": "/cheats",
+    "firstTabFocus": "Skip to main content",
+    "emptyStateIconSvg": 0
+  }
+}

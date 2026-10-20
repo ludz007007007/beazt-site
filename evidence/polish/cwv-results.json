@@ -1,0 +1,42 @@
+{
+  "unthrottled": {
+    "home": {
+      "lcpMs": 160,
+      "lcpElement": "H1.hero-brand",
+      "cls": 0.01,
+      "wallMs": 2676
+    },
+    "cheats": {
+      "lcpMs": 56,
+      "lcpElement": "IMG.",
+      "cls": 0,
+      "wallMs": 2557
+    },
+    "product": {
+      "lcpMs": 48,
+      "lcpElement": "IMG.",
+      "cls": 0.008,
+      "wallMs": 2601
+    }
+  },
+  "slow3g": {
+    "home": {
+      "lcpMs": 10088,
+      "lcpElement": "H1.hero-brand",
+      "cls": 0.01,
+      "wallMs": 57276
+    },
+    "cheats": {
+      "lcpMs": 1752,
+      "lcpElement": "IMG.",
+      "cls": 0.002,
+      "wallMs": 5736
+    },
+    "product": {
+      "lcpMs": 2956,
+      "lcpElement": "IMG.",
+      "cls": 0.008,
+      "wallMs": 7225
+    }
+  }
+}

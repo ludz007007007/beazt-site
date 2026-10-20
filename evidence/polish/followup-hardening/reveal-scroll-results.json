@@ -1,0 +1,12 @@
+{
+  "check": "homepage .reveal elements all reveal on scroll (default motion)",
+  "before": {
+    "total": 16,
+    "visible": 0
+  },
+  "after": {
+    "total": 16,
+    "visible": 16
+  },
+  "pass": true
+}

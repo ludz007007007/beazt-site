@@ -1,0 +1,259 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <div>
+    <a href="{{ url_for('admin.products') }}" class="admin-back">&larr; Products</a>
+    <h1>{{ product.name }}</h1>
+    <p>Manage pricing tiers and ChairFBI integration for this product.</p>
+  </div>
+</div>
+
+<div class="admin-card">
+  <form method="POST" enctype="multipart/form-data" class="admin-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h3 class="admin-card-title">Product Settings</h3>
+
+    {% if not product.license_api_app_id and pool_count == 0 and product.key_source != 'chairfbi' %}
+    <div class="cf-alert cf-alert-warn">
+      <span class="icon icon-sm" data-lucide="alert-triangle"></span>
+      <strong>Auto-fulfillment won't work for this product.</strong>
+      It has no License App ID and no pool keys uploaded. Purchases will be stuck in "awaiting keys" until you assign one manually.
+      Set a License App ID below, or <a href="{{ url_for('admin.product_keys', product_id=product.id) }}">upload pool keys &rarr;</a>
+    </div>
+    {% endif %}
+
+    <div class="admin-form-grid">
+      <div class="form-group">
+        <label class="form-label" for="key_source">Key Source</label>
+        <select class="form-select" id="key_source" name="key_source">
+          <option value="chairfbi" {% if product.key_source == 'chairfbi' and not product.license_api_app_id %}selected{% endif %}>ChairFBI API</option>
+          <option value="license" {% if product.license_api_app_id %}selected{% endif %}>Project Infinity (API)</option>
+          <option value="pool" {% if product.key_source == 'pool' %}selected{% endif %}>Pool Only (upload)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="chairfbi_cheat_id">ChairFBI Cheat ID</label>
+        <input class="form-input" type="text" id="chairfbi_cheat_id" name="chairfbi_cheat_id" value="{{ product.chairfbi_cheat_id or '' }}" placeholder="e.g. rust-external">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="license_app_id_val">License App ID</label>
+        <div class="input-group">
+          <input class="form-input" type="text" id="license_app_id_val" value="{{ product.license_api_app_id or '' }}" placeholder="App ID from license dashboard">
+          <button type="button" class="btn-xs" id="set-license-app" data-url="{{ url_for('admin.set_license_app', product_id=product.id) }}">Set</button>
+        </div>
+        <div class="admin-actions">
+          <button type="button" class="btn-xs btn-secondary" id="test-license-api" data-url="{{ url_for('admin.test_license_api', product_id=product.id) }}">
+            <span class="icon icon-sm" data-lucide="activity"></span> Test Project Infinity API
+          </button>
+        </div>
+        <pre class="admin-code-output" id="license-test-result"></pre>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="visibility">Visibility</label>
+        <select class="form-select" id="visibility" name="visibility">
+          <option value="public" {% if product.visibility == 'public' %}selected{% endif %}>Public</option>
+          <option value="private" {% if product.visibility == 'private' %}selected{% endif %}>Private (top of page)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="admin-form-grid">
+      <div class="form-group">
+        <label class="form-label" for="status">Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="undetected" {% if product.status == 'undetected' %}selected{% endif %}>Undetected</option>
+          <option value="online" {% if product.status == 'online' %}selected{% endif %}>Online</option>
+          <option value="offline" {% if product.status == 'offline' %}selected{% endif %}>Offline</option>
+          <option value="maintenance" {% if product.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="admin-form-grid">
+      <div class="form-group">
+        <label class="form-label" for="name">Name</label>
+        <input class="form-input" type="text" id="name" name="name" value="{{ product.name }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="slug">Slug</label>
+        <input class="form-input" type="text" id="slug" name="slug" value="{{ product.slug }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="description">Description</label>
+      <textarea class="form-input" id="description" name="description" rows="2" placeholder="Short product description shown on detail page">{{ product.description or '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="game">Game / Category</label>
+      <input class="form-input" type="text" id="game" name="game" value="{{ product.game or '' }}" placeholder="e.g. Rust — groups the product on the homepage and /games pages">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="features_text">Features <span class="form-hint">(one per line)</span></label>
+      <textarea class="form-input" id="features_text" name="features_text" rows="6" placeholder="Legit ESP suite&#10;Debug camera&#10;Player and resource overlays&#10;Distance and visibility tools">{{ product.features_text or '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="buyer_notes">Buyer Notes</label>
+      <textarea class="form-input" id="buyer_notes" name="buyer_notes" rows="4" placeholder="Windows desktop with a stable Rust install&#10;Fast onboarding with Discord walkthroughs&#10;Ticketed help for setup, HWID, and maintenance">{{ product.buyer_notes or '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <span class="form-label">Banner Image</span>
+      <div class="admin-actions">
+        <input class="admin-file" type="file" name="image_file" accept=".png,.jpg,.jpeg,.webp">
+        {% if product.image_url %}
+        <a href="{{ product.image_url }}" target="_blank" rel="noopener" class="admin-note">View current</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="image_url">Custom Image URL <span class="form-hint">(or upload above)</span></label>
+      <input class="form-input" type="text" id="image_url" name="image_url" value="{{ product.image_url or '' }}" placeholder="https://example.com/cheat-banner.png">
+    </div>
+
+    <div class="form-group">
+      <span class="form-label">Loader File <span class="form-hint">(exe/zip for buyers)</span></span>
+      <div class="admin-actions">
+        <input class="admin-file" type="file" name="loader_file" accept=".exe,.zip,.rar,.7z">
+        {% if product.loader_url %}
+        <a href="{{ product.loader_url }}" target="_blank" rel="noopener" class="admin-note">Download current</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="loader_url">Loader URL <span class="form-hint">(or upload above)</span></label>
+      <input class="form-input" type="text" id="loader_url" name="loader_url" value="{{ product.loader_url or '' }}" placeholder="/static/loaders/rust-beazt-external/loader.exe">
+      {% if not product.loader_url %}
+      <span class="form-hint form-hint--warn" role="alert"><span class="icon icon-sm" data-lucide="alert-triangle"></span> No loader attached &mdash; buyers of this product will have no loader to download. Paste a URL or upload a file.</span>
+      {% else %}
+      <span class="form-hint">This is the loader buyers receive for this product. Clearing it leaves buyers without a loader.</span>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <span class="form-label">Gallery Images</span>
+      {% if gallery_imgs %}
+      <div class="admin-gallery">
+        {% for img in gallery_imgs %}
+        <div class="admin-gallery__item">
+          <img src="{{ img }}" alt="Gallery image {{ loop.index }}">
+          <button type="submit" name="delete_gallery_image" value="{{ loop.index0 }}" class="admin-gallery__remove" aria-label="Delete gallery image {{ loop.index }}">&#x2715;</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <span class="form-hint">The gallery is empty &mdash; add an image URL or upload a file below.</span>
+      {% endif %}
+      <div class="admin-actions">
+        <input class="form-input" type="text" name="add_gallery_url" placeholder="https://example.com/image.webp">
+        <button type="submit" class="btn-xs btn-primary">Add</button>
+      </div>
+      <div class="admin-actions">
+        <input class="admin-file" type="file" name="gallery_upload" accept=".png,.jpg,.jpeg,.webp">
+        <button type="submit" class="btn-xs btn-secondary">Upload</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Product</button>
+  </form>
+  <span class="admin-note">
+    <strong>Pool Only:</strong> Keys come from bulk upload only. No external API. Use for privately hosted cheats.<br>
+    <strong>ChairFBI:</strong> Pool first, then auto-generate via ChairFBI API on purchase.
+  </span>
+</div>
+
+{% if product.visibility == 'private' %}
+<div class="cf-alert cf-alert-ok">
+  <span class="icon icon-sm" data-lucide="info"></span>
+  This is a <strong>private</strong> product. Tiers marked <strong>Recurring</strong> will auto-renew via subscription billing. Set 1 Month / 12 Months durations for monthly or yearly plans.
+</div>
+{% endif %}
+
+<h3 class="admin-subheading">Pricing Tiers</h3>
+<table class="admin-table">
+  <thead><tr><th>ID</th><th>Label</th><th>Duration</th><th>Price</th><th>Subscription</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for t in tiers %}
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.label }}</td>
+      <td>{{ t.duration_days }} days</td>
+      <td>&pound;{{ "%.2f"|format(t.price_pounds) }}</td>
+      <td>
+        <span class="badge-sm {{ 'badge-green' if t.is_subscription else 'badge-neutral' }}">
+          {{ 'Recurring' if t.is_subscription else 'One-time' }}
+        </span>
+      </td>
+      <td>
+        <div class="admin-actions">
+          <form method="POST" action="{{ url_for('admin.edit_tier', tier_id=t.id) }}" class="admin-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input class="form-input" type="text" name="label" value="{{ t.label }}" aria-label="Label" placeholder="Label">
+            <input class="form-input" type="number" name="duration_days" value="{{ t.duration_days }}" aria-label="Days" placeholder="Days">
+            <input class="form-input" type="number" name="price_pounds" value="{{ t.price_pounds }}" step="0.01" aria-label="Price" placeholder="Price">
+            <label class="admin-note"><input type="checkbox" name="is_subscription" value="1" {% if t.is_subscription %}checked{% endif %}> Sub</label>
+            <input type="hidden" name="is_subscription" value="0">
+            <button type="submit" class="btn-xs btn-success-sm">Save</button>
+          </form>
+          <form method="POST" action="{{ url_for('admin.delete_tier', tier_id=t.id) }}" data-confirm="Delete this tier?" data-confirm-title="Delete tier">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-danger">Del</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3 class="admin-subheading">Add New Tier</h3>
+<form method="POST" action="{{ url_for('admin.add_tier', product_id=product.id) }}" class="admin-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input class="form-input" type="text" name="label" placeholder="e.g. 3 Months" required aria-label="Label">
+  <input class="form-input" type="number" name="duration_days" placeholder="Days" required aria-label="Days">
+  <input class="form-input" type="number" name="price_pounds" placeholder="Price" step="0.01" required aria-label="Price">
+  <select class="form-select" name="billing_type" aria-label="Billing type">
+    <option value="one_time" selected>One-time</option>
+    <option value="subscription">Subscription</option>
+  </select>
+  <input class="form-input" type="text" name="ivno_subscription_link" placeholder="Subscription link" aria-label="Subscription link">
+  <input class="form-input" type="number" name="bundle_count" value="1" min="1" max="10" title="Keys per purchase" aria-label="Keys per purchase">
+  <button type="submit" class="btn-xs btn-primary">Add Tier</button>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var setBtn = document.getElementById("set-license-app");
+  if (setBtn) {
+    setBtn.addEventListener("click", function () {
+      var v = document.getElementById("license_app_id_val").value.trim();
+      fetch(setBtn.getAttribute("data-url"), {
+        method: "POST",
+        headers: {'Content-Type': 'application/json', 'X-CSRF-Token': '{{ csrf_token() }}'},
+        body: JSON.stringify({app_id: v})
+      }).then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+        .then(function(r) {
+          if (r.ok && r.data.ok) { location.reload(); }
+          else { window.BEAZT.toast('Error: ' + (r.data && r.data.error ? r.data.error : 'Unknown'), 'error'); }
+        })
+        .catch(function(e) { window.BEAZT.toast('Network error: ' + e.message, 'error'); });
+    });
+  }
+
+  var testBtn = document.getElementById("test-license-api");
+  if (testBtn) {
+    testBtn.addEventListener("click", function () {
+      var box = document.getElementById("license-test-result");
+      box.classList.add("is-open");
+      box.textContent = 'Testing Project Infinity API...';
+      fetch(testBtn.getAttribute("data-url"), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-Token': '{{ csrf_token() }}'}
+      }).then(function(r) { return r.json(); })
+        .then(function(d) { box.textContent = JSON.stringify(d, null, 2); })
+        .catch(function(e) { box.textContent = 'Error: ' + e.message; });
+    });
+  }
+});
+</script>
+{% endblock %}

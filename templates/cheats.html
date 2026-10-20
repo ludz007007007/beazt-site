@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}All cheats | BEAZT{% endblock %}
+{% block meta_description %}Every BEAZT product with its current detection status, last verified date and starting price. Filter by game or status, or sort by price.{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <header class="page-header">
+      <p class="section-eyebrow">Catalogue</p>
+      <h1 class="t-h1">All cheats</h1>
+      <p class="text-secondary">Every product we sell, with its current detection status and the date it was last checked. Filters apply as you change them.</p>
+    </header>
+
+    {#- data-autosubmit: script.js applies selects immediately and debounces
+        the search box (400ms), navigating with clean GET params so the URL
+        stays shareable and back/forward works. The Apply button is the
+        no-JS fallback — CSS hides it once the form wires itself up. -#}
+    <form method="get" action="{{ url_for('main.cheats') }}" class="filter-bar" role="search" aria-label="Filter the catalogue" data-autosubmit>
+      <div class="form-group filter-bar__search">
+        <label class="form-label" for="filter-q">Search</label>
+        <input class="form-input" type="search" id="filter-q" name="q" value="{{ filters.q }}" placeholder="Product or game name" maxlength="100">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filter-game">Game</label>
+        <select class="form-select" id="filter-game" name="game">
+          <option value="">All games</option>
+          {% for g in games %}
+          <option value="{{ g.slug }}"{% if filters.game == g.slug %} selected{% endif %}>{{ g.name }} ({{ g.count }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filter-status">Status</label>
+        <select class="form-select" id="filter-status" name="status">
+          <option value="">Any status</option>
+          {% for key, label in status_options %}
+          <option value="{{ key }}"{% if filters.status == key %} selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filter-sort">Sort by</label>
+        <select class="form-select" id="filter-sort" name="sort">
+          {% for key, label in sort_options %}
+          <option value="{{ key }}"{% if sort == key %} selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-bar__actions">
+        <button type="submit" class="btn btn-secondary filter-bar__apply">Apply filters</button>
+        {% if filtered %}<a href="{{ url_for('main.cheats') }}" class="btn btn-ghost">Clear</a>{% endif %}
+      </div>
+    </form>
+
+    {% set is_filtered = filters.q or filters.game or filters.status %}
+    {% set sort_label = dict(sort_options).get(sort, '') %}
+    <p class="filter-bar__count" role="status">
+      {%- if is_filtered %}Showing {{ cards|length }} of {{ total }} product{{ '' if total == 1 else 's' }}{% else %}{{ total }} product{{ '' if total == 1 else 's' }}{% endif -%}
+      {%- if sort != 'featured' %} &middot; sorted by {{ sort_label|lower }}{% endif -%}
+    </p>
+
+    {% if cards %}
+    <div class="product-grid">
+      {% for c in cards %}{% include "partials/product_card.html" %}{% endfor %}
+    </div>
+    {% elif total %}
+    {% set empty_title = "No products match these filters" %}
+    {% set empty_text = "Try a shorter search or a different status." %}
+    {% set empty_action_href = url_for('main.cheats') %}
+    {% set empty_action_label = "Clear filters" %}
+    {% set empty_action2_href = url_for('main.games_index') %}
+    {% set empty_action2_label = "Browse by game" %}
+    {% include "partials/empty_state.html" %}
+    {% else %}
+    {% set empty_title = "No products listed yet" %}
+    {% set empty_text = "We're preparing the catalogue. Check the status page for updates." %}
+    {% set empty_action_href = url_for('main.status_page') %}
+    {% set empty_action_label = "View status page" %}
+    {% include "partials/empty_state.html" %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

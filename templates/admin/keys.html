@@ -1,0 +1,71 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>All Keys</h1>
+  <p>Manage every license key in the system.</p>
+</div>
+
+{% with chips = [
+  {'label': 'All', 'href': url_for('admin.keys'), 'active': not request.args.get('filter')},
+  {'label': 'Pool', 'href': url_for('admin.keys', filter='pool'), 'active': request.args.get('filter') == 'pool'},
+  {'label': 'Active', 'href': url_for('admin.keys', filter='active'), 'active': request.args.get('filter') == 'active'},
+  {'label': 'Expired', 'href': url_for('admin.keys', filter='expired'), 'active': request.args.get('filter') == 'expired'}
+], chips_label = 'Key filter' %}
+{% include "partials/admin_filter_chips.html" %}
+{% endwith %}
+
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>ID</th><th>Key</th><th>Product</th><th>Tier</th><th>User</th>
+      <th>Status</th><th>Created</th><th>Expires</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for k in keys.items %}
+    <tr>
+      <td>{{ k.id }}</td>
+      <td><code class="admin-key-code">{{ k.key_value }}</code></td>
+      <td>{{ k.product.name if k.product else '-' }}</td>
+      <td>{{ k.tier.label if k.tier else '-' }}</td>
+      <td>{{ k.user.username if k.user else 'Pool' }}</td>
+      <td>
+        {% if not k.user_id %}
+          <span class="badge-sm badge-neutral">Pool</span>
+        {% elif k.is_active %}
+          <span class="badge-sm badge-green">Active</span>
+        {% else %}
+          <span class="badge-sm badge-red">Expired</span>
+        {% endif %}
+      </td>
+      <td>{{ k.created_at.strftime('%d %b') }}</td>
+      <td>{{ k.expires_at.strftime('%d %b %Y') if k.expires_at else '-' }}</td>
+      <td>
+        <div class="admin-actions">
+        <form method="POST" action="{{ url_for('admin.toggle_key', key_id=k.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-xs {{ 'btn-danger' if k.is_active else 'btn-success-sm' }}">
+            {{ 'Revoke' if k.is_active else 'Activate' }}
+          </button>
+        </form>
+        <form method="POST" action="{{ url_for('admin.delete_key', key_id=k.id) }}" data-confirm="Delete this key permanently?" data-confirm-title="Delete key">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-xs btn-danger">Delete</button>
+        </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if not keys.items %}
+{% with empty_icon = 'key-round', empty_title = 'No keys yet', empty_text = 'Keys appear here the moment a purchase completes or you upload pool keys.', empty_action_href = url_for('admin.products'), empty_action_label = 'Manage products' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% endif %}
+
+{% with pg = keys, pg_params = {'filter': request.args.get('filter', '')} if request.args.get('filter') else {} %}
+{% include "partials/admin_pagination.html" %}
+{% endwith %}
+{% endblock %}

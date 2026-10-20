@@ -1,0 +1,39 @@
+{#- Deterministic per-game decorative motif for the landing-page hero.
+    Variant 0-3 comes from group_games() (crc32 of the game slug), so every
+    game always gets the same geometry. Purely decorative: aria-hidden, no
+    status or product meaning, hairline strokes only (<8% visual weight). -#}
+<svg class="game-hero__motif" viewBox="0 0 480 480" fill="none" aria-hidden="true" focusable="false">
+  {%- if motif == 0 -%}
+  {#- Corner brackets + diagonal keyline -#}
+  <path d="M16 104V16h88"></path>
+  <path d="M464 376v88h-88"></path>
+  <path d="M72 408 408 72"></path>
+  <path d="M120 464 464 120"></path>
+  {%- elif motif == 1 -%}
+  {#- Off-register scan lines -#}
+  <path d="M40 72h400"></path>
+  <path d="M88 128h352"></path>
+  <path d="M52 184h340"></path>
+  <path d="M104 240h336"></path>
+  <path d="M64 296h320"></path>
+  <path d="M116 352h324"></path>
+  <path d="M76 408h300"></path>
+  {%- elif motif == 2 -%}
+  {#- Vertical keylines + anchor square -#}
+  <path d="M96 32v416"></path>
+  <path d="M192 32v416"></path>
+  <path d="M288 32v416"></path>
+  <path d="M384 32v416"></path>
+  <rect x="336" y="336" width="56" height="56"></rect>
+  <path d="M32 96h64"></path>
+  <path d="M32 384h64"></path>
+  {%- else -%}
+  {#- Concentric quarter arcs anchored at the top-right corner -#}
+  <path d="M400 0A80 80 0 0 1 480 80"></path>
+  <path d="M340 0A140 140 0 0 1 480 140"></path>
+  <path d="M280 0A200 200 0 0 1 480 200"></path>
+  <path d="M220 0A260 260 0 0 1 480 260"></path>
+  <path d="M160 0A320 320 0 0 1 480 320"></path>
+  <path d="M100 0A380 380 0 0 1 480 380"></path>
+  {%- endif -%}
+</svg>

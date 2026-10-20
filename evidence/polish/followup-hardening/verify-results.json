@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "name": "home: lucide UMD loaded",
+      "pass": true,
+      "detail": "true"
+    },
+    {
+      "name": "home: every [data-lucide] placeholder hydrated to svg",
+      "pass": true,
+      "detail": "24/24"
+    },
+    {
+      "name": "home: no .reveal element stuck invisible in viewport",
+      "pass": true,
+      "detail": "stuck=0 visible=0/16 (0 reveals = surface uses none)"
+    },
+    {
+      "name": "home: zero console errors",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "feedback: lucide UMD loaded",
+      "pass": true,
+      "detail": "true"
+    },
+    {
+      "name": "feedback: every [data-lucide] placeholder hydrated to svg",
+      "pass": true,
+      "detail": "9/9"
+    },
+    {
+      "name": "feedback: no .reveal element stuck invisible in viewport",
+      "pass": true,
+      "detail": "stuck=0 visible=3/4 (0 reveals = surface uses none)"
+    },
+    {
+      "name": "feedback: zero console errors",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "product link found on /cheats",
+      "pass": true,
+      "detail": "/product/rust-external-private"
+    },
+    {
+      "name": "product: lucide UMD loaded",
+      "pass": true,
+      "detail": "true"
+    },
+    {
+      "name": "product: every [data-lucide] placeholder hydrated to svg",
+      "pass": true,
+      "detail": "27/27"
+    },
+    {
+      "name": "product: no .reveal element stuck invisible in viewport",
+      "pass": true,
+      "detail": "stuck=0 visible=0/0 (0 reveals = surface uses none)"
+    },
+    {
+      "name": "product: zero console errors",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "live /cheat-image/rust-external-private resolves to an image",
+      "pass": true,
+      "detail": "{\"status\":200,\"contentType\":\"image/jpeg\",\"finalUrl\":\"http://127.0.0.1:5000/static/icons/rust_placeholder.jpg\"}"
+    },
+    {
+      "name": "zero unpkg/scrollreveal CDN requests",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "cheatImage": {
+    "status": 200,
+    "contentType": "image/jpeg",
+    "finalUrl": "http://127.0.0.1:5000/static/icons/rust_placeholder.jpg"
+  }
+}

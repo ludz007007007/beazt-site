@@ -1,0 +1,161 @@
+{
+  "checks": [
+    {
+      "name": "unknown URL returns HTTP 404",
+      "pass": true,
+      "detail": "404"
+    },
+    {
+      "name": "title",
+      "pass": true,
+      "detail": "Page Not Found (404) | BEAZT"
+    },
+    {
+      "name": "eyebrow Error 404",
+      "pass": true,
+      "detail": "Error 404"
+    },
+    {
+      "name": "decorative 404 code present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "h1 Page not found",
+      "pass": true,
+      "detail": "Page not found"
+    },
+    {
+      "name": "explanatory lead >= 40 chars",
+      "pass": true,
+      "detail": "146"
+    },
+    {
+      "name": ".nf-card revealed in normal-motion browser",
+      "pass": true,
+      "detail": "{\"hasVisible\":true,\"opacity\":\"1\",\"rectH\":601}"
+    },
+    {
+      "name": "primary CTA Back to home -> /",
+      "pass": true,
+      "detail": "/"
+    },
+    {
+      "name": "secondary CTA -> /cheats",
+      "pass": true,
+      "detail": "/cheats"
+    },
+    {
+      "name": "4 quick-link chips",
+      "pass": true,
+      "detail": "[{\"text\":\"FAQ\",\"href\":\"/faq\"},{\"text\":\"Loader setup\",\"href\":\"/loader\"},{\"text\":\"Reviews\",\"href\":\"/feedback\"},{\"text\":\"My keys\",\"href\":\"/my-keys\"}]"
+    },
+    {
+      "name": "chips hit real routes",
+      "pass": true,
+      "detail": "[\"/faq\",\"/loader\",\"/feedback\",\"/my-keys\"]"
+    },
+    {
+      "name": "Back to home navigates to /",
+      "pass": true,
+      "detail": "http://127.0.0.1:5000/"
+    },
+    {
+      "name": "FAQ chip navigates to /faq",
+      "pass": true,
+      "detail": "http://127.0.0.1:5000/faq"
+    },
+    {
+      "name": "mono display font on 404 code",
+      "pass": true,
+      "detail": "\"JetBrains Mono\", \"Fira Code\", monospace"
+    },
+    {
+      "name": "gradient text clip applied",
+      "pass": true,
+      "detail": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "name": "chips styled (radius + token border)",
+      "pass": true,
+      "detail": "9999px / rgba(255, 255, 255, 0.06)"
+    },
+    {
+      "name": "primary button has glow shadow",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "eyebrow accent background",
+      "pass": true,
+      "detail": "rgba(22, 139, 255, 0.12)"
+    },
+    {
+      "name": "first tab lands on skip link",
+      "pass": true,
+      "detail": "skip-link"
+    },
+    {
+      "name": "focus state styled on primary CTA",
+      "pass": true,
+      "detail": "rgba(22, 139, 255, 0.35) 0px 0px 20px 0px, rgba(0, 0, 0, 0.3) 0px 4px 12px 0px"
+    },
+    {
+      "name": "no overflow @320",
+      "pass": true,
+      "detail": "{\"sw\":320,\"cw\":320,\"bw\":320}"
+    },
+    {
+      "name": "no overflow @390",
+      "pass": true,
+      "detail": "{\"sw\":390,\"cw\":390,\"bw\":390}"
+    },
+    {
+      "name": "mobile stacked full-width CTAs",
+      "pass": true,
+      "detail": "{\"cta\":58,\"chip\":44,\"dir\":\"column\"}"
+    },
+    {
+      "name": "mobile chips >= 44px",
+      "pass": true,
+      "detail": "44"
+    },
+    {
+      "name": "no overflow @768",
+      "pass": true,
+      "detail": "{\"sw\":768,\"cw\":768,\"bw\":768}"
+    },
+    {
+      "name": "no overflow @1440",
+      "pass": true,
+      "detail": "{\"sw\":1440,\"cw\":1440,\"bw\":1440}"
+    },
+    {
+      "name": "zero console errors (excluding document 404)",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "zero failed requests (excluding document 404)",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "no unpkg/scrollreveal CDN dependency",
+      "pass": true,
+      "detail": "0 CDN hits"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+    "Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+    "Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+    "Failed to load resource: the server responded with a status of 404 (NOT FOUND)"
+  ],
+  "failedRequests": [
+    "status() {\n        return this._initializer.status;\n      } http://127.0.0.1:5000/definitely-not-a-real-page",
+    "status() {\n        return this._initializer.status;\n      } http://127.0.0.1:5000/definitely-not-a-real-page",
+    "status() {\n        return this._initializer.status;\n      } http://127.0.0.1:5000/definitely-not-a-real-page",
+    "status() {\n        return this._initializer.status;\n      } http://127.0.0.1:5000/definitely-not-a-real-page"
+  ]
+}

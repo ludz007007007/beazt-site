@@ -1,0 +1,832 @@
+{
+  "skipLink": {
+    "present": true,
+    "hiddenBeforeFocus": true,
+    "focusedOnTab": true,
+    "focusVisible": true,
+    "visibleWhenFocused": true,
+    "activates": true,
+    "mainContentId": true,
+    "afterActivate": {
+      "url": "http://127.0.0.1:5000/#main-content",
+      "hash": "#main-content",
+      "focused": "body",
+      "scrolledY": 0,
+      "mainTop": 0
+    }
+  },
+  "keyboardWalk": {
+    "cheats": {
+      "tabStops": [
+        {
+          "i": 1,
+          "focused": "a.skip-link",
+          "focusVisible": true,
+          "boxShadow": "rgb(5, 7, 11) 0px 0px 0px 3px, rgb(22, 139, 255) 0px 0px 0px 5px",
+          "text": "Skip to main content",
+          "visibleRect": {
+            "top": 15,
+            "left": 541,
+            "w": 198,
+            "h": 50
+          }
+        },
+        {
+          "i": 2,
+          "focused": "a.nav-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93895px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.8779px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 16,
+            "left": 24,
+            "w": 129,
+            "h": 40
+          }
+        },
+        {
+          "i": 3,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.92) 0px 0px 0px 1.84155px, rgba(22, 139, 255, 0.92) 0px 0px 0px 3.6831px",
+          "text": "Home",
+          "visibleRect": {
+            "top": 14,
+            "left": 540,
+            "w": 72,
+            "h": 44
+          }
+        },
+        {
+          "i": 4,
+          "focused": "a.nav-link.active",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Store",
+          "visibleRect": {
+            "top": 14,
+            "left": 616,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 5,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Proof",
+          "visibleRect": {
+            "top": 14,
+            "left": 687,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 6,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 14,
+            "left": 759,
+            "w": 59,
+            "h": 44
+          }
+        },
+        {
+          "i": 7,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Loader",
+          "visibleRect": {
+            "top": 14,
+            "left": 823,
+            "w": 79,
+            "h": 44
+          }
+        },
+        {
+          "i": 8,
+          "focused": "a.btn-discord",
+          "focusVisible": true,
+          "boxShadow": "rgba(88, 101, 242, 0.35) 0px 4px 16px 0px, rgba(88, 101, 242, 0.2) 0px 0px 0px 1px, rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset",
+          "text": "Discord",
+          "visibleRect": {
+            "top": 6,
+            "left": 905,
+            "w": 174,
+            "h": 60
+          }
+        },
+        {
+          "i": 9,
+          "focused": "a.nav-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Login",
+          "visibleRect": {
+            "top": 14,
+            "left": 1083,
+            "w": 69,
+            "h": 44
+          }
+        },
+        {
+          "i": 10,
+          "focused": "a.nav-cta",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 8, 14, 0.98) 0px 0px 0.618641px 2.9072px, rgba(22, 138, 253, 0.976) 0px 0.123728px 0.371185px 4.84534px",
+          "text": "Sign Up",
+          "visibleRect": {
+            "top": 13,
+            "left": 1156,
+            "w": 100,
+            "h": 46
+          }
+        },
+        {
+          "i": 11,
+          "focused": "a.cheat-card",
+          "focusVisible": true,
+          "boxShadow": "rgba(0, 0, 0, 0.52) 0px 16.2778px 43.9222px 0px, rgba(0, 0, 0, 0.392) 0px 8.13888px 16.2778px 0px, rgba(22, 139, 255, 0.09) 0px 0px 24.5555px 0px, rgba(5, 7, 11, 0.616) 0px 0px 0px 1.22778px, rgba(22, 139, 255, 0.616) 0px 0px 0px 2.45555px",
+          "text": "undetected\n        \n        Rust Externa",
+          "visibleRect": {
+            "top": 343,
+            "left": 24,
+            "w": 395,
+            "h": 381
+          }
+        },
+        {
+          "i": 12,
+          "focused": "a.footer-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 764,
+            "left": 24,
+            "w": 127,
+            "h": 36
+          }
+        },
+        {
+          "i": 13,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Terms of Service",
+          "visibleRect": {
+            "top": 658,
+            "left": 24,
+            "w": 389,
+            "h": 44
+          }
+        },
+        {
+          "i": 14,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Privacy Policy",
+          "visibleRect": {
+            "top": 566,
+            "left": 24,
+            "w": 389,
+            "h": 44
+          }
+        },
+        {
+          "i": 15,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 510,
+            "left": 445,
+            "w": 389,
+            "h": 44
+          }
+        }
+      ],
+      "focusRingGaps": [
+        {
+          "i": 2,
+          "focused": "a.nav-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93895px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.8779px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 16,
+            "left": 24,
+            "w": 129,
+            "h": 40
+          }
+        },
+        {
+          "i": 3,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.92) 0px 0px 0px 1.84155px, rgba(22, 139, 255, 0.92) 0px 0px 0px 3.6831px",
+          "text": "Home",
+          "visibleRect": {
+            "top": 14,
+            "left": 540,
+            "w": 72,
+            "h": 44
+          }
+        },
+        {
+          "i": 4,
+          "focused": "a.nav-link.active",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Store",
+          "visibleRect": {
+            "top": 14,
+            "left": 616,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 5,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Proof",
+          "visibleRect": {
+            "top": 14,
+            "left": 687,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 6,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 14,
+            "left": 759,
+            "w": 59,
+            "h": 44
+          }
+        },
+        {
+          "i": 7,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Loader",
+          "visibleRect": {
+            "top": 14,
+            "left": 823,
+            "w": 79,
+            "h": 44
+          }
+        },
+        {
+          "i": 8,
+          "focused": "a.btn-discord",
+          "focusVisible": true,
+          "boxShadow": "rgba(88, 101, 242, 0.35) 0px 4px 16px 0px, rgba(88, 101, 242, 0.2) 0px 0px 0px 1px, rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset",
+          "text": "Discord",
+          "visibleRect": {
+            "top": 6,
+            "left": 905,
+            "w": 174,
+            "h": 60
+          }
+        },
+        {
+          "i": 9,
+          "focused": "a.nav-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Login",
+          "visibleRect": {
+            "top": 14,
+            "left": 1083,
+            "w": 69,
+            "h": 44
+          }
+        },
+        {
+          "i": 10,
+          "focused": "a.nav-cta",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 8, 14, 0.98) 0px 0px 0.618641px 2.9072px, rgba(22, 138, 253, 0.976) 0px 0.123728px 0.371185px 4.84534px",
+          "text": "Sign Up",
+          "visibleRect": {
+            "top": 13,
+            "left": 1156,
+            "w": 100,
+            "h": 46
+          }
+        },
+        {
+          "i": 11,
+          "focused": "a.cheat-card",
+          "focusVisible": true,
+          "boxShadow": "rgba(0, 0, 0, 0.52) 0px 16.2778px 43.9222px 0px, rgba(0, 0, 0, 0.392) 0px 8.13888px 16.2778px 0px, rgba(22, 139, 255, 0.09) 0px 0px 24.5555px 0px, rgba(5, 7, 11, 0.616) 0px 0px 0px 1.22778px, rgba(22, 139, 255, 0.616) 0px 0px 0px 2.45555px",
+          "text": "undetected\n        \n        Rust Externa",
+          "visibleRect": {
+            "top": 343,
+            "left": 24,
+            "w": 395,
+            "h": 381
+          }
+        },
+        {
+          "i": 12,
+          "focused": "a.footer-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 764,
+            "left": 24,
+            "w": 127,
+            "h": 36
+          }
+        },
+        {
+          "i": 13,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Terms of Service",
+          "visibleRect": {
+            "top": 658,
+            "left": 24,
+            "w": 389,
+            "h": 44
+          }
+        },
+        {
+          "i": 14,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Privacy Policy",
+          "visibleRect": {
+            "top": 566,
+            "left": 24,
+            "w": 389,
+            "h": 44
+          }
+        },
+        {
+          "i": 15,
+          "focused": "a.footer-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 510,
+            "left": 445,
+            "w": 389,
+            "h": 44
+          }
+        }
+      ],
+      "firstFocusIsSkipLink": true,
+      "nTabStops": 15
+    },
+    "faq": {
+      "tabStops": [
+        {
+          "i": 1,
+          "focused": "a.skip-link",
+          "focusVisible": true,
+          "boxShadow": "rgb(5, 7, 11) 0px 0px 0px 3px, rgb(22, 139, 255) 0px 0px 0px 5px",
+          "text": "Skip to main content",
+          "visibleRect": {
+            "top": 12,
+            "left": 541,
+            "w": 198,
+            "h": 50
+          }
+        },
+        {
+          "i": 2,
+          "focused": "a.nav-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93895px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.8779px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 16,
+            "left": 24,
+            "w": 129,
+            "h": 40
+          }
+        },
+        {
+          "i": 3,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Home",
+          "visibleRect": {
+            "top": 14,
+            "left": 540,
+            "w": 72,
+            "h": 44
+          }
+        },
+        {
+          "i": 4,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Store",
+          "visibleRect": {
+            "top": 14,
+            "left": 616,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 5,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Proof",
+          "visibleRect": {
+            "top": 14,
+            "left": 687,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 6,
+          "focused": "a.nav-link.active",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 14,
+            "left": 759,
+            "w": 59,
+            "h": 44
+          }
+        },
+        {
+          "i": 7,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93814px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87627px",
+          "text": "Loader",
+          "visibleRect": {
+            "top": 14,
+            "left": 823,
+            "w": 79,
+            "h": 44
+          }
+        },
+        {
+          "i": 8,
+          "focused": "a.btn-discord",
+          "focusVisible": true,
+          "boxShadow": "rgba(88, 101, 242, 0.35) 0px 4px 16px 0px, rgba(88, 101, 242, 0.2) 0px 0px 0px 1px, rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset",
+          "text": "Discord",
+          "visibleRect": {
+            "top": 6,
+            "left": 905,
+            "w": 174,
+            "h": 60
+          }
+        },
+        {
+          "i": 9,
+          "focused": "a.nav-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Login",
+          "visibleRect": {
+            "top": 14,
+            "left": 1083,
+            "w": 69,
+            "h": 44
+          }
+        },
+        {
+          "i": 10,
+          "focused": "a.nav-cta",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 12, 0.996) 0px 0px 0.141337px 2.9788px, rgba(22, 139, 254, 0.996) 0px 0.0282675px 0.0848024px 4.96467px",
+          "text": "Sign Up",
+          "visibleRect": {
+            "top": 13,
+            "left": 1156,
+            "w": 100,
+            "h": 46
+          }
+        },
+        {
+          "i": 11,
+          "focused": "input#faq-search.form-input.faq-search",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.12) 0px 0px 0px 4px, rgba(22, 139, 255, 0.263) 0px 0px 31.3133px 0px, rgba(255, 255, 255, 0.05) 0px 1px 0px 0px inset",
+          "text": "Search questions (e.g. key, refund, HWID",
+          "visibleRect": {
+            "top": 233,
+            "left": 240,
+            "w": 800,
+            "h": 52
+          }
+        },
+        {
+          "i": 12,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84142px inset",
+          "text": "How does BEAZT run?",
+          "visibleRect": {
+            "top": 386,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 13,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84098px inset",
+          "text": "Which games are live?",
+          "visibleRect": {
+            "top": 464,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 14,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.8413px inset",
+          "text": "What payments work?",
+          "visibleRect": {
+            "top": 602,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 15,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84162px inset",
+          "text": "Do you refund?",
+          "visibleRect": {
+            "top": 680,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        }
+      ],
+      "focusRingGaps": [
+        {
+          "i": 2,
+          "focused": "a.nav-logo",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93895px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.8779px",
+          "text": "BEAZT",
+          "visibleRect": {
+            "top": 16,
+            "left": 24,
+            "w": 129,
+            "h": 40
+          }
+        },
+        {
+          "i": 3,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Home",
+          "visibleRect": {
+            "top": 14,
+            "left": 540,
+            "w": 72,
+            "h": 44
+          }
+        },
+        {
+          "i": 4,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Store",
+          "visibleRect": {
+            "top": 14,
+            "left": 616,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 5,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93772px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87544px",
+          "text": "Proof",
+          "visibleRect": {
+            "top": 14,
+            "left": 687,
+            "w": 68,
+            "h": 44
+          }
+        },
+        {
+          "i": 6,
+          "focused": "a.nav-link.active",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "FAQ",
+          "visibleRect": {
+            "top": 14,
+            "left": 759,
+            "w": 59,
+            "h": 44
+          }
+        },
+        {
+          "i": 7,
+          "focused": "a.nav-link.",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.93814px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87627px",
+          "text": "Loader",
+          "visibleRect": {
+            "top": 14,
+            "left": 823,
+            "w": 79,
+            "h": 44
+          }
+        },
+        {
+          "i": 8,
+          "focused": "a.btn-discord",
+          "focusVisible": true,
+          "boxShadow": "rgba(88, 101, 242, 0.35) 0px 4px 16px 0px, rgba(88, 101, 242, 0.2) 0px 0px 0px 1px, rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset",
+          "text": "Discord",
+          "visibleRect": {
+            "top": 6,
+            "left": 905,
+            "w": 174,
+            "h": 60
+          }
+        },
+        {
+          "i": 9,
+          "focused": "a.nav-link",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 11, 0.97) 0px 0px 0px 1.9373px, rgba(22, 139, 255, 0.97) 0px 0px 0px 3.87461px",
+          "text": "Login",
+          "visibleRect": {
+            "top": 14,
+            "left": 1083,
+            "w": 69,
+            "h": 44
+          }
+        },
+        {
+          "i": 10,
+          "focused": "a.nav-cta",
+          "focusVisible": true,
+          "boxShadow": "rgba(5, 7, 12, 0.996) 0px 0px 0.141337px 2.9788px, rgba(22, 139, 254, 0.996) 0px 0.0282675px 0.0848024px 4.96467px",
+          "text": "Sign Up",
+          "visibleRect": {
+            "top": 13,
+            "left": 1156,
+            "w": 100,
+            "h": 46
+          }
+        },
+        {
+          "i": 11,
+          "focused": "input#faq-search.form-input.faq-search",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.12) 0px 0px 0px 4px, rgba(22, 139, 255, 0.263) 0px 0px 31.3133px 0px, rgba(255, 255, 255, 0.05) 0px 1px 0px 0px inset",
+          "text": "Search questions (e.g. key, refund, HWID",
+          "visibleRect": {
+            "top": 233,
+            "left": 240,
+            "w": 800,
+            "h": 52
+          }
+        },
+        {
+          "i": 12,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84142px inset",
+          "text": "How does BEAZT run?",
+          "visibleRect": {
+            "top": 386,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 13,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84098px inset",
+          "text": "Which games are live?",
+          "visibleRect": {
+            "top": 464,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 14,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.8413px inset",
+          "text": "What payments work?",
+          "visibleRect": {
+            "top": 602,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        },
+        {
+          "i": 15,
+          "focused": "button.faq-question",
+          "focusVisible": true,
+          "boxShadow": "rgba(22, 139, 255, 0.92) 0px 0px 0px 1.84162px inset",
+          "text": "Do you refund?",
+          "visibleRect": {
+            "top": 680,
+            "left": 241,
+            "w": 798,
+            "h": 64
+          }
+        }
+      ],
+      "firstFocusIsSkipLink": true,
+      "nTabStops": 15
+    }
+  },
+  "faqAccordion": {
+    "buttonCount": 11,
+    "keyboardOperable": true,
+    "ariaExpandedToggled": false,
+    "panelVisibleAfter": true,
+    "beforeAfter": {
+      "before": {
+        "expanded": "false",
+        "tag": "BUTTON"
+      },
+      "after": {
+        "expanded": "false",
+        "panelVisible": true
+      }
+    }
+  },
+  "forms": {
+    "login": {
+      "status": 404,
+      "fields": [],
+      "allLabeled": true
+    },
+    "register": {
+      "status": 404,
+      "fields": [],
+      "allLabeled": true
+    }
+  },
+  "validation": {
+    "attempted": true,
+    "errorShown": null,
+    "inputAriaDescribedBy": null,
+    "errorId": null,
+    "errorRole": null,
+    "wired": null,
+    "noNavigation": null
+  },
+  "consoleErrors": [
+    "console: Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+    "console: Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+    "console: Failed to load resource: the server responded with a status of 404 (NOT FOUND)"
+  ]
+}

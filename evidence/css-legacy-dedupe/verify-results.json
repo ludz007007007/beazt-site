@@ -1,0 +1,369 @@
+{
+  "computedDiff": [
+    {
+      "page": "home",
+      "sel": ".nav-logo",
+      "idx": 0,
+      "prop": "min-height",
+      "old": "auto",
+      "new": "44px",
+      "expected": true
+    },
+    {
+      "page": "cheats",
+      "sel": ".nav-logo",
+      "idx": 0,
+      "prop": "min-height",
+      "old": "auto",
+      "new": "44px",
+      "expected": true
+    },
+    {
+      "page": "product",
+      "sel": ".nav-logo",
+      "idx": 0,
+      "prop": "min-height",
+      "old": "auto",
+      "new": "44px",
+      "expected": true
+    },
+    {
+      "page": "login",
+      "sel": ".nav-logo",
+      "idx": 0,
+      "prop": "min-height",
+      "old": "auto",
+      "new": "44px",
+      "expected": true
+    },
+    {
+      "page": "terms",
+      "sel": ".nav-logo",
+      "idx": 0,
+      "prop": "min-height",
+      "old": "auto",
+      "new": "44px",
+      "expected": true
+    }
+  ],
+  "touchTargets": [
+    {
+      "sel": ".nav-logo",
+      "w": 129.4,
+      "h": 44,
+      "ok": true
+    },
+    {
+      "sel": ".nav-logo",
+      "w": 129.4,
+      "h": 44,
+      "ok": true
+    },
+    {
+      "sel": "a.pd-back",
+      "w": 121.3,
+      "h": 44,
+      "ok": true
+    },
+    {
+      "sel": ".pd-qty-btn",
+      "w": 44,
+      "h": 44,
+      "ok": true
+    },
+    {
+      "sel": ".pd-qty-btn",
+      "w": 44,
+      "h": 44,
+      "ok": true
+    },
+    {
+      "sel": ".pd-qty-input",
+      "w": 54,
+      "h": 44,
+      "ok": true
+    }
+  ],
+  "sweep": [
+    {
+      "viewport": "320x680",
+      "page": "home",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "cheats",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "product",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "faq",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "loader",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "feedback",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "login",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "320x680",
+      "page": "terms",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 320
+    },
+    {
+      "viewport": "390x720",
+      "page": "home",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "cheats",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "product",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "faq",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "loader",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "feedback",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "login",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "390x720",
+      "page": "terms",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 390
+    },
+    {
+      "viewport": "768x900",
+      "page": "home",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "cheats",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "product",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "faq",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "loader",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "feedback",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "login",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "768x900",
+      "page": "terms",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 768
+    },
+    {
+      "viewport": "1440x900",
+      "page": "home",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "cheats",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "product",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "faq",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "loader",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "feedback",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "login",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    },
+    {
+      "viewport": "1440x900",
+      "page": "terms",
+      "consoleErrors": [],
+      "horizontalOverflow": false,
+      "scrollW": 1440
+    }
+  ],
+  "checks": [
+    {
+      "name": "hero-bg-image alt is empty",
+      "pass": true,
+      "value": ""
+    },
+    {
+      "name": "page-section has padding",
+      "pass": true,
+      "value": "40px"
+    },
+    {
+      "name": "page-header has margin",
+      "pass": true,
+      "value": "40px"
+    },
+    {
+      "name": "t-h1 renders",
+      "pass": true,
+      "value": "56px / Inter, Sora, system-ui, sans-serif"
+    },
+    {
+      "name": "pd-heading renders with display font",
+      "pass": true,
+      "value": "Inter, Sora, system-ui, sans-serif 40px"
+    },
+    {
+      "name": "tab switch via :class works (visualization)",
+      "pass": true,
+      "value": "{\"visShown\":true,\"overviewHidden\":true}"
+    },
+    {
+      "name": "tab switch via :class works (buyer)",
+      "pass": true,
+      "value": "{\"buyerShown\":true,\"visHidden\":true}"
+    },
+    {
+      "name": "qty stepper works, input >=44px tall",
+      "pass": true,
+      "value": "{\"value\":\"2\",\"h\":44}"
+    },
+    {
+      "name": "legal toc-link uses token (bg-elevated)",
+      "pass": true,
+      "value": "rgb(12, 22, 37)"
+    }
+  ],
+  "screenshots": [
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\home-320x680.png",
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\cheats-320x680.png",
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\product-320x680.png",
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\home-1440x900.png",
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\cheats-1440x900.png",
+    "E:\\github\\rust beazt\\BEAZT-WEBSITE\\evidence\\css-legacy-dedupe\\product-1440x900.png"
+  ],
+  "productPath": "/product/rust-external-private"
+}

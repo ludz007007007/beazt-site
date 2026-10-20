@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Terms of Service | BEAZT{% endblock %}
+
+{% block meta_description %}BEAZT Terms of Service — the rules that govern your use of BEAZT, including payments and refunds, license usage, service availability and liability.{% endblock %}
+{% block og_title %}BEAZT — Terms of Service{% endblock %}
+{% block og_description %}The rules that govern your use of BEAZT: payments and refunds, license usage, availability and liability.{% endblock %}
+{% block head %}
+  <meta property="og:type" content="article">
+  <link rel="canonical" href="{{ url_for('main.terms', _external=True) }}">
+{% endblock %}
+
+{% block content %}
+<section class="legal-page">
+  <div class="container">
+    <!-- Page hero -->
+    <header class="legal-hero reveal">
+      <span class="section-eyebrow">Legal</span>
+      <h1 class="legal-title">Terms of Service</h1>
+      <p class="legal-lead">The agreement between you and BEAZT. Read it before you purchase — it covers payments, license usage and what you can expect from the service.</p>
+      <p class="legal-updated"><span class="legal-updated-dot" aria-hidden="true"></span>Last updated: June 2026</p>
+    </header>
+
+    <div class="legal-layout">
+      <!-- Sticky table of contents (desktop) / chip row (mobile) -->
+      <nav class="legal-toc reveal" aria-label="On this page">
+        <span class="legal-toc-label">On this page</span>
+        <ol class="legal-toc-list">
+          <li><a class="legal-toc-link" href="#terms-acceptance"><span class="legal-toc-num" aria-hidden="true">01</span>Acceptance of Terms</a></li>
+          <li><a class="legal-toc-link" href="#terms-service"><span class="legal-toc-num" aria-hidden="true">02</span>Service Description</a></li>
+          <li><a class="legal-toc-link" href="#terms-account"><span class="legal-toc-num" aria-hidden="true">03</span>Account Responsibility</a></li>
+          <li><a class="legal-toc-link" href="#terms-payments"><span class="legal-toc-num" aria-hidden="true">04</span>Payment and Refunds</a></li>
+          <li><a class="legal-toc-link" href="#terms-license"><span class="legal-toc-num" aria-hidden="true">05</span>License Usage</a></li>
+          <li><a class="legal-toc-link" href="#terms-availability"><span class="legal-toc-num" aria-hidden="true">06</span>Service Availability</a></li>
+          <li><a class="legal-toc-link" href="#terms-liability"><span class="legal-toc-num" aria-hidden="true">07</span>Limitation of Liability</a></li>
+          <li><a class="legal-toc-link" href="#terms-thirdparty"><span class="legal-toc-num" aria-hidden="true">08</span>Third-Party Platforms</a></li>
+          <li><a class="legal-toc-link" href="#terms-changes"><span class="legal-toc-num" aria-hidden="true">09</span>Changes to Terms</a></li>
+          <li><a class="legal-toc-link" href="#terms-contact"><span class="legal-toc-num" aria-hidden="true">10</span>Contact</a></li>
+        </ol>
+      </nav>
+
+      <div class="legal-body">
+        <article class="legal-content reveal">
+          <section class="legal-section" id="terms-acceptance" aria-labelledby="terms-acceptance-title">
+            <h2 class="legal-section-title" id="terms-acceptance-title"><span class="legal-num" aria-hidden="true">01</span>Acceptance of Terms</h2>
+            <p>By using BEAZT, you agree to these Terms of Service. If you disagree, do not use the service.</p>
+          </section>
+
+          <section class="legal-section" id="terms-service" aria-labelledby="terms-service-title">
+            <h2 class="legal-section-title" id="terms-service-title"><span class="legal-num" aria-hidden="true">02</span>Service Description</h2>
+            <p>BEAZT provides external software tools that do not modify game files. You are responsible for compliance with third-party platform rules.</p>
+          </section>
+
+          <section class="legal-section" id="terms-account" aria-labelledby="terms-account-title">
+            <h2 class="legal-section-title" id="terms-account-title"><span class="legal-num" aria-hidden="true">03</span>Account Responsibility</h2>
+            <p>You are responsible for keeping your credentials secure. BEAZT is not liable for unauthorized access caused by account misuse.</p>
+          </section>
+
+          <section class="legal-section" id="terms-payments" aria-labelledby="terms-payments-title">
+            <h2 class="legal-section-title" id="terms-payments-title"><span class="legal-num" aria-hidden="true">04</span>Payment and Refunds</h2>
+            <p>Payments are processed securely via PayFast or card. Because products are digital, sales are final once a key is generated and delivered.</p>
+            <div class="legal-callout" role="note">
+              <span class="legal-callout-title">Before you buy</span>
+              <p>If anything about a product is unclear, ask the team in Discord first — DMs before purchasing are answered before and after checkout.</p>
+            </div>
+          </section>
+
+          <section class="legal-section" id="terms-license" aria-labelledby="terms-license-title">
+            <h2 class="legal-section-title" id="terms-license-title"><span class="legal-num" aria-hidden="true">05</span>License Usage</h2>
+            <p>Each key is licensed to one user. Sharing, reselling, or redistribution is prohibited and can result in immediate termination without refund.</p>
+          </section>
+
+          <section class="legal-section" id="terms-availability" aria-labelledby="terms-availability-title">
+            <h2 class="legal-section-title" id="terms-availability-title"><span class="legal-num" aria-hidden="true">06</span>Service Availability</h2>
+            <p>We target high availability but may pause service for maintenance, updates, or security. During scheduled downtime, active license time is preserved.</p>
+          </section>
+
+          <section class="legal-section" id="terms-liability" aria-labelledby="terms-liability-title">
+            <h2 class="legal-section-title" id="terms-liability-title"><span class="legal-num" aria-hidden="true">07</span>Limitation of Liability</h2>
+            <p>BEAZT is provided as-is. We do not guarantee specific outcomes, and users accept responsibility for use.</p>
+          </section>
+
+          <section class="legal-section" id="terms-thirdparty" aria-labelledby="terms-thirdparty-title">
+            <h2 class="legal-section-title" id="terms-thirdparty-title"><span class="legal-num" aria-hidden="true">08</span>Third-Party Platforms</h2>
+            <p>BEAZT is not affiliated with or endorsed by game developers or publishers. You remain responsible for third-party compliance.</p>
+          </section>
+
+          <section class="legal-section" id="terms-changes" aria-labelledby="terms-changes-title">
+            <h2 class="legal-section-title" id="terms-changes-title"><span class="legal-num" aria-hidden="true">09</span>Changes to Terms</h2>
+            <p>We reserve the right to modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms.</p>
+          </section>
+
+          <section class="legal-section" id="terms-contact" aria-labelledby="terms-contact-title">
+            <h2 class="legal-section-title" id="terms-contact-title"><span class="legal-num" aria-hidden="true">10</span>Contact</h2>
+            <p>For questions about these terms, contact us via our <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer">Discord server</a>.</p>
+          </section>
+        </article>
+
+        <!-- Related resources -->
+        <aside class="legal-related" aria-label="Related resources" aria-labelledby="terms-related-title">
+          <h2 class="legal-related-title" id="terms-related-title">Related resources</h2>
+          <div class="legal-related-grid">
+            <a class="legal-related-card" href="{{ url_for('main.privacy') }}">
+              <span class="legal-related-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              <span class="legal-related-body">
+                <span class="legal-related-name">Privacy Policy</span>
+                <span class="legal-related-desc">What data we collect and how we protect it.</span>
+              </span>
+            </a>
+            <a class="legal-related-card" href="{{ url_for('main.faq') }}">
+              <span class="legal-related-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+              <span class="legal-related-body">
+                <span class="legal-related-name">FAQ</span>
+                <span class="legal-related-desc">Refunds, keys, HWID resets and delivery times.</span>
+              </span>
+            </a>
+            <a class="legal-related-card" href="{{ url_for('main.loader') }}">
+              <span class="legal-related-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </span>
+              <span class="legal-related-body">
+                <span class="legal-related-name">Setup Guide</span>
+                <span class="legal-related-desc">Install the loader and activate your key.</span>
+              </span>
+            </a>
+            <a class="legal-related-card" href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer">
+              <span class="legal-related-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              </span>
+              <span class="legal-related-body">
+                <span class="legal-related-name">Discord Support</span>
+                <span class="legal-related-desc">Reach the support team 24/7 with questions.</span>
+              </span>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

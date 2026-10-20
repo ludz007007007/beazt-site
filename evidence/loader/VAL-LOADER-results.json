@@ -1,0 +1,118 @@
+{
+  "checks": [
+    {
+      "name": "generic 200 + title",
+      "pass": true,
+      "detail": "Loader Setup | BEAZT"
+    },
+    {
+      "name": "h1 Loader Guide",
+      "pass": true,
+      "detail": "Loader Guide"
+    },
+    {
+      "name": "prerequisites list >=5",
+      "pass": true,
+      "detail": "5"
+    },
+    {
+      "name": "numbered steps =6",
+      "pass": true,
+      "detail": "6"
+    },
+    {
+      "name": "download cards =3",
+      "pass": true,
+      "detail": "3"
+    },
+    {
+      "name": "warn block",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "info block",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "my-keys links",
+      "pass": true,
+      "detail": "9"
+    },
+    {
+      "name": "toc links",
+      "pass": true,
+      "detail": "4"
+    },
+    {
+      "name": "product guides list",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "keyboard focus lands",
+      "pass": true,
+      "detail": "A:#main-content"
+    },
+    {
+      "name": "product h1",
+      "pass": true,
+      "detail": "Rust External - BeaZt Legit Loader Guide"
+    },
+    {
+      "name": "product download card",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "product notes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "aria-current on product",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "unknown slug 404",
+      "pass": true,
+      "detail": "404"
+    },
+    {
+      "name": "no overflow @320",
+      "pass": true,
+      "detail": "{\"sw\":320,\"cw\":320,\"bw\":320}"
+    },
+    {
+      "name": "no overflow @390",
+      "pass": true,
+      "detail": "{\"sw\":390,\"cw\":390,\"bw\":390}"
+    },
+    {
+      "name": "no overflow @768",
+      "pass": true,
+      "detail": "{\"sw\":768,\"cw\":768,\"bw\":768}"
+    },
+    {
+      "name": "no overflow @1440",
+      "pass": true,
+      "detail": "{\"sw\":1440,\"cw\":1440,\"bw\":1440}"
+    },
+    {
+      "name": "zero console errors",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "clean pages console errors",
+      "pass": true,
+      "detail": "0"
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [
+    "404 http://127.0.0.1:5000/loader/does-not-exist"
+  ]
+}

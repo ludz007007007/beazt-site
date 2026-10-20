@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101318">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Admin{% endblock %} | BEAZT</title>
+  <link rel="icon" href="/static/icons/logo.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/Archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css?v=51">
+  <link rel="stylesheet" href="/static/css/admin.css?v=9">
+  <script defer src="/static/js/vendor/alpine.min.js"></script>
+  <script defer src="/static/js/vendor/lucide.min.js"></script>
+</head>
+<body class="admin">
+  <a href="#admin-main" class="skip-link">Skip to main content</a>
+  <header class="site-header site-header--admin">
+    <div class="site-header__inner">
+      <a href="{{ url_for('admin.dashboard') }}" class="brand" aria-label="BEAZT admin dashboard">
+        <img src="/static/icons/logo.svg" alt="" class="brand__logo" width="28" height="28">
+        <span class="brand__name">BEAZT</span>
+        <span class="brand__tag">Admin</span>
+      </a>
+      <nav class="site-header__actions" aria-label="Admin account">
+        <a href="{{ url_for('main.index') }}" class="site-header__link">View site</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost btn-sm">Sign out</a>
+      </nav>
+    </div>
+  </header>
+
+  {% include "partials/flash_toasts.html" %}
+  {% include "partials/confirm_dialog.html" %}
+
+  <div class="admin-layout">
+    <nav class="admin-sidebar" aria-label="Admin sections">
+      <h3>Manage</h3>
+      {%- set ep = request.endpoint or '' -%}
+      {%- set admin_nav = [
+        ('Dashboard', url_for('admin.dashboard'), 'layout-dashboard', ('admin.dashboard',)),
+        ('Products', url_for('admin.products'), 'boxes', ('admin.products', 'admin.product_tiers', 'admin.product_keys')),
+        ('Orders', url_for('admin.orders'), 'receipt', ('admin.orders', 'admin.order_detail', 'admin.fulfill_order', 'admin.assign_custom_key', 'admin.assign_pool_key', 'admin.retry_license')),
+        ('Keys', url_for('admin.keys'), 'key-round', ('admin.keys',)),
+        ('Users', url_for('admin.users'), 'users', ('admin.users', 'admin.user_detail')),
+        ('Reviews', url_for('admin.reviews'), 'star', ('admin.reviews', 'admin.moderate_review', 'admin.delete_review')),
+        ('ChairFBI', url_for('admin.chairfbi_dashboard'), 'cloud', ('admin.chairfbi_dashboard', 'admin.chairfbi_revoke', 'admin.chairfbi_hwid_reset', 'admin.chairfbi_vouche')),
+        ('Settings', url_for('admin.settings'), 'settings', ('admin.settings',)),
+      ] %}
+      {%- for label, href, icon, endpoints in admin_nav %}
+      <a href="{{ href }}" class="{{ 'active' if ep in endpoints }}"{% if ep in endpoints %} aria-current="page"{% endif %}>
+        <span class="icon icon-sm" data-lucide="{{ icon }}" aria-hidden="true"></span> {{ label }}
+      </a>
+      {%- endfor %}
+    </nav>
+    <main class="admin-main" id="admin-main" tabindex="-1">
+      {% block admin_content %}{% endblock %}
+    </main>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+  <!-- Shared behaviour (toasts, modals, form validation) — every setup
+       function no-ops when its storefront markup is absent. -->
+  <script defer src="/static/js/script.js?v=19"></script>
+</body>
+</html>

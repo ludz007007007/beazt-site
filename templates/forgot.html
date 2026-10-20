@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Reset your password | BEAZT{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+  <div class="container auth-shell__inner">
+    <div class="auth-panel">
+      {% if requested %}
+      {# Neutral confirmation — identical for registered and unregistered
+         addresses, so the page never reveals whether an account exists.
+         SMTP-unconfigured is a soft failure: this state renders regardless. #}
+      <header class="auth-panel__head">
+        <span class="section-eyebrow">Password reset</span>
+        <h1 class="t-h1">Check your inbox</h1>
+      </header>
+      <p class="auth-panel__sub">
+        If an account exists for that address, a reset link is on its way.
+        The link expires in one hour and can only be used once.
+      </p>
+      <p class="auth-panel__note">
+        Nothing arrived? Check your spam folder, or ask on Discord
+        {% if discord_public_url %}— <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer">the BEAZT server</a>{% endif %}.
+      </p>
+      {% else %}
+      <header class="auth-panel__head">
+        <span class="section-eyebrow">Password reset</span>
+        <h1 class="t-h1">Forgot your password?</h1>
+        <p class="auth-panel__sub">
+          Enter the email on your account and we'll send a link to choose a
+          new password.
+        </p>
+      </header>
+
+      <form method="POST" id="forgot-form" class="auth-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon" data-lucide="mail" aria-hidden="true"></span>
+            <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" class="form-input" aria-describedby="email-help email-error" data-error-id="email-error">
+          </div>
+          <div class="form-hint" id="email-help">The address registered to your account</div>
+          <div class="form-error" id="email-error" role="alert" hidden></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <span class="icon" data-lucide="send" aria-hidden="true"></span> Send reset link
+        </button>
+      </form>
+      {% endif %}
+
+      <div class="auth-panel__foot">
+        <p>Remembered it? <a href="{{ url_for('auth.login') }}">Back to sign in</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/auth-form.js?v=3" defer></script>
+{% endblock %}

@@ -1,0 +1,1388 @@
+/* ==========================================================================
+   Component library: shared by the storefront and the admin panel.
+   Buttons, status pills, pills/chips, badges, cards, forms, tables, tabs,
+   breadcrumbs, pagination, modals, toasts, skeletons, empty states.
+   ========================================================================== */
+
+/* ---- Buttons --------------------------------------------------------------
+   .btn + variant (.btn-primary | .btn-secondary | .btn-ghost | .btn-danger)
+   + optional size (.btn-sm | .btn-lg | .btn-xl) and .btn-block.
+   Disabled: [disabled], [aria-disabled="true"] or .is-disabled.
+   Loading: .btn-loading (or aria-busy="true") with an optional .btn-spinner. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-height);
+  padding: 0 var(--button-padding-x);
+  border: 1px solid transparent;
+  border-radius: var(--button-radius);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+.btn:hover {
+  color: var(--text-primary);
+}
+
+.btn:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.btn .icon {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
+}
+
+.btn-primary:active {
+  background: var(--accent-pressed);
+  border-color: var(--accent-pressed);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-strong);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #160607;
+}
+
+.btn-link {
+  min-height: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--link);
+}
+
+.btn-link:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-sm,
+.btn-compact {
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.btn-lg {
+  min-height: var(--control-height-lg);
+  padding: 0 var(--space-6);
+  font-size: var(--text-base);
+}
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+.btn[disabled],
+.btn.is-disabled,
+.btn[aria-disabled="true"] {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn[aria-busy="true"] {
+  position: relative;
+  pointer-events: none;
+  cursor: progress;
+}
+
+.btn-spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.btn-spinner {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Status pill ----------------------------------------------------------
+   Dot + text label, never colour alone. Taxonomy:
+   .status-pill--undetected | --updating | --detected | --down | --risky | --unknown
+   Markup: <span class="status-pill status-pill--undetected">
+             <span class="status-pill-dot" aria-hidden="true"></span>Undetected
+           </span>                                                          */
+.status-pill {
+  --pill-color: var(--status-unknown);
+  --pill-bg: var(--status-unknown-bg);
+  --pill-border: var(--status-unknown-border);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 26px;
+  padding: 0 var(--space-3);
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  border-radius: var(--radius-full);
+  color: var(--pill-color);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-pill-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--pill-color);
+}
+
+.status-pill--undetected {
+  --pill-color: var(--status-undetected);
+  --pill-bg: var(--status-undetected-bg);
+  --pill-border: var(--status-undetected-border);
+}
+
+.status-pill--updating {
+  --pill-color: var(--status-updating);
+  --pill-bg: var(--status-updating-bg);
+  --pill-border: var(--status-updating-border);
+}
+
+.status-pill--detected,
+.status-pill--down {
+  --pill-color: var(--status-detected);
+  --pill-bg: var(--status-detected-bg);
+  --pill-border: var(--status-detected-border);
+}
+
+.status-pill--risky {
+  --pill-color: var(--status-risky);
+  --pill-bg: var(--status-risky-bg);
+  --pill-border: var(--status-risky-border);
+}
+
+/* ---- Pills / chips (neutral labels and filters) -------------------------- */
+.pill,
+.chip {
+  --pill-color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 26px;
+  padding: 0 var(--space-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--pill-color);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+.pill-dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pill-success { --pill-color: var(--success); background: var(--success-bg); border-color: var(--success-border); }
+.pill-warn { --pill-color: var(--warning); background: var(--warning-bg); border-color: var(--warning-border); }
+.pill-danger { --pill-color: var(--danger); background: var(--danger-bg); border-color: var(--danger-border); }
+
+a.chip:hover,
+button.chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.chip.is-active,
+.chip[aria-pressed="true"],
+.chip[aria-current="true"] {
+  background: var(--accent-tint);
+  border-color: var(--accent-border);
+  color: var(--text-primary);
+}
+
+/* ---- Badges (counts, roles, flags) --------------------------------------- */
+/* Availability (In stock / Sold out / Private build) is a badge, never a
+   status pill: one neutral treatment for all three keys so availability
+   never masquerades as risk colour. Produced only by
+   partials/availability_badge.html.                                    */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--badge-radius);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.badge-sm {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--space-2);
+  border-radius: var(--badge-radius);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.02em;
+}
+
+.badge-primary {
+  background: var(--accent-tint);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.badge-success,
+.badge-green { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
+.badge-info,
+.badge-blue { background: var(--info-bg); border-color: var(--info-border); color: var(--info); }
+.badge-warning,
+.badge-orange { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning); }
+.badge-error,
+.badge-red { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger); }
+
+.badge-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge-availability {
+  /* Deliberately identical for every key (see badges note above); the
+     --<key> modifier exists for tests and future per-key tweaks only. */
+  color: var(--text-secondary);
+}
+
+/* ---- Cards --------------------------------------------------------------- */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-display);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---- Forms ----------------------------------------------------------------
+   The ONLY form markup in the codebase: .form-group > .form-label +
+   .form-input/.form-select + .form-hint/.form-error. Inline errors render
+   into [hidden].form-error slots (role=alert, aria-invalid,
+   aria-describedby); script.js validates on blur + submit, shows
+   role=alert messages and focuses the first error. No inline style= on
+   form controls anywhere.                                              */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.form-label .required,
+.form-label abbr {
+  color: var(--danger);
+  text-decoration: none;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--input-padding-x);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--input-radius);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.form-input::placeholder {
+  color: var(--text-faint);
+}
+
+.form-input:hover,
+.form-select:hover {
+  border-color: var(--input-border-hover);
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+/* Keyboard focus gets the same solid 2px accent ring as every other control. */
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.form-input--textarea,
+textarea.form-input {
+  min-height: 120px;
+  padding: var(--space-3) var(--input-padding-x);
+  line-height: var(--leading-normal);
+  resize: vertical;
+}
+
+.form-select {
+  appearance: none;
+  padding-right: var(--space-10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23B4BAC4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-4) center;
+}
+
+.form-input:disabled,
+.form-select:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.form-error svg {
+  flex-shrink: 0;
+}
+
+.has-error .form-input,
+.has-error .form-select,
+.form-input.is-error,
+.form-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.has-error .form-input:focus,
+.form-input.is-error:focus {
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+
+.form-input.is-success {
+  border-color: var(--success-border);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.form-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.input-wrapper,
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .form-input {
+  padding-left: var(--space-10);
+}
+
+.input-icon {
+  position: absolute;
+  left: var(--space-4);
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--text-secondary);
+}
+
+.password-wrapper .form-input {
+  padding-right: var(--space-12);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+}
+
+.password-toggle:hover {
+  color: var(--text-primary);
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-toggle .icon-eye-off,
+.password-wrapper.show-password .icon-eye {
+  display: none;
+}
+
+.password-wrapper.show-password .icon-eye-off {
+  display: block;
+}
+
+.form-checkbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-target);
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.checkbox-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.form-checkbox:hover .checkbox-custom {
+  border-color: var(--text-muted);
+}
+
+.form-checkbox input:checked + .checkbox-custom {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.form-checkbox input:checked + .checkbox-custom::after {
+  content: "";
+  width: 5px;
+  height: 10px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.form-checkbox input:focus-visible + .checkbox-custom {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.has-error .checkbox-custom {
+  border-color: var(--danger);
+}
+
+.checkbox-label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* ---- Tables -------------------------------------------------------------- */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table .num,
+.table td.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---- Tabs ---------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-6);
+  scrollbar-width: none;
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.is-active,
+.tab[aria-selected="true"] {
+  color: var(--text-primary);
+}
+
+.tab.is-active::after,
+.tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+/* Tab panel visibility is attribute-driven ONLY: inactive panels carry the
+   `hidden` attribute (enforced by base.css `[hidden]{display:none!important}`)
+   and the Alpine :hidden bindings toggle it. No display rule here — a
+   display:none default would hide the ACTIVE panel too, because nothing
+   applies the old .is-active/.active counters to panels (VAL-ST-006). */
+
+/* ---- Breadcrumbs --------------------------------------------------------- */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  list-style: none;
+}
+
+.breadcrumb a {
+  color: var(--text-muted);
+  /* VAL-RSP-004 (m5 user-testing r1): breadcrumb links are tappable on mobile
+     (product/games pages); give them the shared touch-target minimum. */
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+}
+
+.breadcrumb a:hover {
+  color: var(--text-primary);
+}
+
+.breadcrumb [aria-current] {
+  color: var(--text-secondary);
+}
+
+/* ---- Pagination ---------------------------------------------------------- */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.pagination a,
+.pagination span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.pagination a:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.pagination .current,
+.pagination [aria-current="page"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: var(--font-semibold);
+}
+
+.pagination .disabled {
+  opacity: var(--opacity-disabled);
+}
+
+/* ---- Modal ----------------------------------------------------------------
+   <div class="modal" id="…" data-modal hidden role="dialog" aria-modal="true">
+     <div class="modal-backdrop" data-modal-backdrop></div>
+     <div class="modal-panel" role="document" tabindex="-1">…</div>
+   </div>
+   Produced by partials/modal.html. Open with [data-modal-open="#id"];
+   script.js traps focus, closes on Escape / [data-modal-close] / backdrop
+   click, restores focus, and refuses backdrop-close on [data-modal-static]
+   (destructive confirms).                                            */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+/* The flex rule above out-specifies the UA's [hidden] rule, so the guard
+   is explicit. script.js toggles the hidden attribute to open/close. */
+.modal[hidden] { display: none; }
+
+/* Body scroll lock while a modal is open (class set by script.js). */
+html.has-open-modal { overflow: hidden; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-overlay);
+}
+
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - var(--space-8));
+  overflow-y: auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+}
+
+.modal-panel--sm { max-width: 360px; }
+.modal-panel--lg { max-width: 640px; }
+
+.modal-panel:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .modal-panel {
+    animation: modal-in var(--duration-normal) var(--ease-standard);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-6) 0;
+}
+
+.modal-title {
+  font-size: var(--text-xl);
+}
+
+.modal-body {
+  padding: var(--space-4) var(--space-6);
+  color: var(--text-secondary);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Toasts (flash messages) ----------------------------------------------
+   Region: aria-live=polite. Success toasts carry data-autodismiss="4200"
+   (script.js removes them); every other kind persists until the dismiss
+   control ([data-toast-dismiss], a real button) is used. JS-created toasts
+   come from window.BEAZT.toast(message, kind) with identical markup.     */
+.flash-container {
+  position: fixed;
+  top: calc(var(--header-height) + var(--space-3));
+  right: var(--space-4);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: min(380px, calc(100vw - var(--space-8)));
+}
+
+.flash-message {
+  --toast-color: var(--info);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--toast-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.flash-message__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.flash-success { --toast-color: var(--success); }
+.flash-error,
+.flash-danger { --toast-color: var(--danger); }
+.flash-warning { --toast-color: var(--warning); }
+.flash-info,
+.flash-message { --toast-color: var(--info); }
+
+/* 44px hit area: the dismiss control is a primary interactive control
+   (VAL-RSP-004 touch targets). */
+.flash-close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1) 0 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+}
+
+.flash-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.flash-close:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Dismissal fades to opacity 0 under every motion preference; the 8px slide
+   is decorative and only runs when the user allows motion (VAL-DS-004). */
+.flash-message.is-dismissing {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flash-message.is-dismissing {
+    transform: translateX(8px);
+    transition: opacity 150ms var(--ease-standard), transform 150ms var(--ease-standard);
+  }
+
+  .flash-message {
+    animation: toast-in var(--duration-normal) var(--ease-standard);
+  }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Skeletons -----------------------------------------------------------
+   Usage rule (design-direction §4): skeletons are for genuinely async
+   content only (e.g. the keys dashboard's pre-hydration state). Content the
+   server renders is never hidden behind x-cloak or skeletons — it renders
+   directly and stays readable without JavaScript.                      */
+.skeleton,
+.skeleton-text,
+.skeleton-title,
+.skeleton-avatar,
+.skeleton-input,
+.skeleton-badge {
+  display: block;
+  background: linear-gradient(90deg, var(--bg-surface) 0%, var(--bg-surface-hover) 50%, var(--bg-surface) 100%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-text { height: 12px; margin-bottom: var(--space-2); }
+.skeleton-text:last-child { width: 70%; margin-bottom: 0; }
+.skeleton-title { height: 22px; width: 60%; margin-bottom: var(--space-3); }
+.skeleton-avatar { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; }
+.skeleton-input { width: 100%; height: var(--control-height); border-radius: var(--radius-md); }
+.skeleton-badge { width: 64px; height: 20px; border-radius: var(--radius-full); }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ---- Empty states --------------------------------------------------------
+   One component: partials/empty_state.html (icon + title + one sentence +
+   one action). Never a bare "No results." — always give the reader a way
+   forward.                                                              */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-2);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+}
+
+.empty-icon svg,
+.empty-icon .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+}
+
+.empty-text {
+  max-width: 420px;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.empty-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+/* ---- Spinner -------------------------------------------------------------- */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+/* ---- Product card -----------------------------------------------------------
+   templates/partials/product_card.html is the only producer of this markup.
+   The title link's ::after covers the card, so the card has a single link. */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-5);
+}
+
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+
+.product-card:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+}
+
+.product-card:focus-within {
+  border-color: var(--accent-border);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .product-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.product-card__media {
+  aspect-ratio: 16 / 9;
+  background: var(--bg-inset);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.product-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card--soldout .product-card__media img {
+  opacity: 0.55;
+}
+
+.product-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+.product-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.product-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+}
+
+.product-card__link {
+  color: var(--text-primary);
+}
+
+.product-card__link:hover {
+  color: var(--text-primary);
+}
+
+.product-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.product-card__game {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.product-card__fresh,
+.product-card__rating {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.product-card__rating span[aria-hidden] {
+  color: var(--text-secondary);
+}
+
+.product-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.product-card__price {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.product-card__muted {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+/* ---- Game card ------------------------------------------------------------ */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+.game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+}
+
+.game-card:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+}
+
+.game-card:focus-within {
+  border-color: var(--accent-border);
+}
+
+/* Per-game typographic cover tile — mirrors the product card media rule. */
+.game-card__media {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: calc(var(--card-radius) - 4px);
+}
+
+.game-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-card__title {
+  padding-right: var(--space-8);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.01em;
+}
+
+.game-card__link,
+.game-card__link:hover {
+  color: var(--text-primary);
+}
+
+.game-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.game-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.game-card__status {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.game-card__arrow {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  color: var(--text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.game-card:hover .game-card__arrow {
+  color: var(--text-primary);
+}
+
+/* ---- Status ratio strip ----------------------------------------------------
+   templates/partials/status_ratio.html is the shared producer (game cards,
+   game landing heroes). One equal segment per product, coloured by that
+   product's real status — decorative visually, counts in the aria-label. */
+.ratio-strip {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.ratio-strip__seg {
+  flex: 1 1 0;
+  min-width: 4px;
+  border-radius: var(--radius-full);
+  background: var(--status-unknown);
+}
+
+.ratio-strip__seg--undetected { background: var(--status-undetected); }
+.ratio-strip__seg--updating { background: var(--status-updating); }
+.ratio-strip__seg--risky { background: var(--status-risky); }
+.ratio-strip__seg--detected { background: var(--status-detected); }
+.ratio-strip__seg--down { background: var(--status-unknown); }
+
+/* ---- Review card -----------------------------------------------------------
+   templates/partials/review_card.html is the shared producer (homepage,
+   /feedback); product.html renders the same class family inline until its
+   M2 rebuild. Review cards are static content: no hover language, no lift. */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-5);
+}
+
+.review-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--card-padding);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+}
+
+.review-card-stars,
+.stars {
+  color: var(--accent);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+}
+
+.review-card-title {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.review-card-body {
+  flex: 1;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.review-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.review-card-name {
+  color: var(--text-primary);
+  font-weight: var(--font-semibold);
+}
+
+.review-card-verified {
+  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
+}
+
+.review-card-verified svg,
+.review-card-verified .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.review-card-date {
+  margin-left: auto;
+  color: var(--text-muted);
+}

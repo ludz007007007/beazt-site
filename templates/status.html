@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Live Status | BEAZT{% endblock %}
+{% block meta_description %}Live product status for every BEAZT listing: undetected, updating, risky, detected or down, with the date each was last checked.{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <div class="page-header reveal">
+      <span class="section-eyebrow">Live Status</span>
+      <h1 class="t-h1">Status board</h1>
+      <p class="text-secondary">Current status for every product. Statuses are set by the operations panel and cross-checked against our provider — never derived or simulated.</p>
+    </div>
+
+    {#- Summary numbers come from the DB (route); script.js updates them in
+        place when a refresh finds new data and announces it politely. -#}
+    <div class="status-summary reveal">
+      <div class="status-summary__item" data-status-count-wrap>
+        <span class="status-summary__num tabular">{{ undetected_count }}<span class="status-summary__total">/{{ cards|length }}</span></span>
+        <span class="status-summary__label">Undetected</span>
+      </div>
+      {% if last_verified %}
+      <div class="status-summary__item" data-status-verified-wrap>
+        <span class="status-summary__num status-summary__num--date tabular"><time datetime="{{ last_verified.strftime('%Y-%m-%d') }}">{{ format_date(last_verified) }}</time></span>
+        <span class="status-summary__label">Most recent check</span>
+      </div>
+      {% endif %}
+    </div>
+    <p class="sr-only" role="status" data-status-live></p>
+
+    {% if cards %}
+    {#- ARIA table: the grid is a real 4-column board ≥900px and stacks into
+        labelled cards below it — every field stays rendered at every width,
+        nothing is ever display:none'd except the redundant per-cell labels
+        (the column headers carry them on desktop) and the header row itself
+        when stacked. data-* hooks drive the refresh sweep in script.js. -#}
+    <div class="status-board reveal" role="table" aria-label="Product status board" data-status-board>
+      <div class="status-row status-row--head" role="row">
+        <span class="status-cell status-cell--head" role="columnheader">Product</span>
+        <span class="status-cell status-cell--head" role="columnheader">Game</span>
+        <span class="status-cell status-cell--head" role="columnheader">Updated</span>
+        <span class="status-cell status-cell--head" role="columnheader">Status</span>
+      </div>
+      {% for c in cards %}
+      <div class="status-row" role="row" data-status-row="{{ c.slug }}" data-status="{{ c.status }}">
+        <span class="status-cell status-cell--product" role="cell">
+          <span class="status-field-label" aria-hidden="true">Product</span>
+          <a class="status-product-link" href="{{ url_for('main.product_detail', slug=c.slug) }}">{{ c.name }}</a>
+        </span>
+        <span class="status-cell status-cell--game" role="cell">
+          <span class="status-field-label" aria-hidden="true">Game</span>
+          <a class="status-game-link" href="{{ url_for('main.game_page', game_slug=c.game_slug) }}">{{ c.game }}</a>
+        </span>
+        <span class="status-cell status-cell--updated" role="cell" data-status-fresh>
+          <span class="status-field-label" aria-hidden="true">Updated</span>
+          {%- if c.freshness.date %}<time datetime="{{ c.freshness.date.strftime('%Y-%m-%d') }}">{{ c.freshness.text }}</time>{% else %}{{ c.freshness.text }}{% endif -%}
+        </span>
+        <span class="status-cell status-cell--status" role="cell">
+          <span class="status-field-label" aria-hidden="true">Status</span>
+          <span class="status-cell-badges" data-status-pill>
+            {% with status=c.status, label=c.status_label %}{% include "partials/status_pill.html" %}{% endwith %}
+            {% if c.availability %}{% with availability=c.availability, show_in_stock=true %}{% include "partials/availability_badge.html" %}{% endwith %}{% endif %}
+          </span>
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="reveal">
+      {% set empty_icon = 'activity' %}
+      {% set empty_title = 'No products to report on' %}
+      {% set empty_text = 'The catalogue is being restocked. Check back soon, or join the Discord for updates.' %}
+      {% include "partials/empty_state.html" %}
+    </div>
+    {% endif %}
+
+    {% if base_statuses %}
+    <section class="status-bases reveal" aria-labelledby="status-bases-title">
+      <span class="section-eyebrow">Infrastructure</span>
+      <h2 class="t-h2 status-bases__title" id="status-bases-title">Loader base status</h2>
+      <p class="status-bases__lede">Live loader-infrastructure status from our provider API, re-checked at most every 45 seconds.</p>
+      <div class="status-board status-board--bases" role="table" aria-label="Loader base status">
+        <div class="status-row status-row--head" role="row">
+          <span class="status-cell status-cell--head" role="columnheader">Base</span>
+          <span class="status-cell status-cell--head" role="columnheader">Status</span>
+        </div>
+        {% for b in base_statuses %}
+        <div class="status-row" role="row">
+          <span class="status-cell status-cell--product" role="cell">
+            <span class="status-field-label" aria-hidden="true">Base</span>
+            {{ b.name }}
+          </span>
+          <span class="status-cell status-cell--status" role="cell">
+            <span class="status-field-label" aria-hidden="true">Status</span>
+            {% include "partials/base_status_pill.html" %}
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <div class="status-note reveal">
+      <p><span class="icon icon-sm" data-lucide="timer" aria-hidden="true"></span> Maintenance windows never burn license time — your key's timer is paused while a product is down for updates.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

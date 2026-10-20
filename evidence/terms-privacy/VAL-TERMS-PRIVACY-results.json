@@ -1,0 +1,160 @@
+{
+  "pages": {
+    "terms": {
+      "url": "http://127.0.0.1:5000/terms-of-service",
+      "consoleErrors": [],
+      "dom": {
+        "httpStatus": 200,
+        "h1": "Terms of Service",
+        "h1Matches": true,
+        "sections": 10,
+        "tocLinks": 10,
+        "relatedCards": 4,
+        "canonical": "http://127.0.0.1:5000/terms-of-service",
+        "metaDescription": "BEAZT Terms of Service — the rules that govern your use of BEAZT, including payments and refunds, license usage, service availability and liability.",
+        "ogTitle": "BEAZT — Terms of Service",
+        "sectionIds": [
+          "terms-acceptance",
+          "terms-service",
+          "terms-account",
+          "terms-payments",
+          "terms-license",
+          "terms-availability",
+          "terms-liability",
+          "terms-thirdparty",
+          "terms-changes",
+          "terms-contact"
+        ],
+        "relatedHrefs": [
+          "/privacy",
+          "/faq",
+          "/loader",
+          "https://discord.gg/bU4tFA43KK"
+        ]
+      },
+      "viewports": [
+        {
+          "name": "mobile-320",
+          "width": 320,
+          "height": 720,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "mobile-390",
+          "width": 390,
+          "height": 844,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "tablet-768",
+          "width": 768,
+          "height": 1024,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "desktop-1440",
+          "width": 1440,
+          "height": 900,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        }
+      ],
+      "checks": {
+        "allAnchorsResolve": true,
+        "emptySections": [],
+        "tocAnchorHash": "#terms-payments",
+        "tocTargetVisibleAfterClick": true,
+        "relatedLinksResolve": true,
+        "footerOtherLegalLinkCount": 1,
+        "footerNavigationLandsOn": "http://127.0.0.1:5000/privacy",
+        "footerNavigationWorks": true,
+        "firstTabFocus": {
+          "tag": "A",
+          "text": "Skip to main content",
+          "label": null
+        }
+      }
+    },
+    "privacy": {
+      "url": "http://127.0.0.1:5000/privacy",
+      "consoleErrors": [],
+      "dom": {
+        "httpStatus": 200,
+        "h1": "Privacy Policy",
+        "h1Matches": true,
+        "sections": 10,
+        "tocLinks": 10,
+        "relatedCards": 4,
+        "canonical": "http://127.0.0.1:5000/privacy",
+        "metaDescription": "BEAZT Privacy Policy — what data we collect, how we use and protect it, cookie usage, retention periods and your GDPR/CCPA rights.",
+        "ogTitle": "BEAZT — Privacy Policy",
+        "sectionIds": [
+          "privacy-collection",
+          "privacy-usage",
+          "privacy-payments",
+          "privacy-security",
+          "privacy-cookies",
+          "privacy-thirdparty",
+          "privacy-retention",
+          "privacy-rights",
+          "privacy-changes",
+          "privacy-contact"
+        ],
+        "relatedHrefs": [
+          "/terms-of-service",
+          "/faq",
+          "/loader",
+          "https://discord.gg/bU4tFA43KK"
+        ]
+      },
+      "viewports": [
+        {
+          "name": "mobile-320",
+          "width": 320,
+          "height": 720,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "mobile-390",
+          "width": 390,
+          "height": 844,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "tablet-768",
+          "width": 768,
+          "height": 1024,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        },
+        {
+          "name": "desktop-1440",
+          "width": 1440,
+          "height": 900,
+          "horizontalOverflowPx": 0,
+          "textReflowOk": true
+        }
+      ],
+      "checks": {
+        "allAnchorsResolve": true,
+        "emptySections": [],
+        "tocAnchorHash": "#privacy-security",
+        "tocTargetVisibleAfterClick": true,
+        "relatedLinksResolve": true,
+        "footerOtherLegalLinkCount": 1,
+        "footerNavigationLandsOn": "http://127.0.0.1:5000/terms-of-service",
+        "footerNavigationWorks": true,
+        "firstTabFocus": {
+          "tag": "A",
+          "text": "Skip to main content",
+          "label": null
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050507">
+  <title>BEAZT — FAQ preview section (VAL-HOME-007)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/style.css?v=6">
+  <style>
+    body { background: var(--bg-base); }
+  </style>
+</head>
+<body>
+  <div class="main-content" id="main-content">
+    <!-- Section rendered exactly as templates/index.html emits it. Answers
+         mirror the FAQ page copy (faq-answer-1, -5, -4, -8); "Full answer in
+         FAQ" links deep-link into the accordion on /faq. -->
+    <section class="section section-alt" aria-labelledby="faq-preview-heading">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">Answers</span>
+          <h2 class="t-h2" id="faq-preview-heading">Before you buy</h2>
+        </div>
+        <div class="faq-list reveal" style="max-width:780px;">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-preview-1">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="help-circle"></span>How does BEAZT run?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-preview-1">
+              <div class="faq-answer-inner"><p>BEAZT runs as a read-only external stack. Launch the loader, paste your key, and start Rust — no injection or file edits.</p><p class="faq-answer-more"><a href="/faq#faq-answer-1">Full answer in FAQ <span aria-hidden="true">&rarr;</span></a></p></div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-preview-2">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="timer"></span>When do keys arrive?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-preview-2">
+              <div class="faq-answer-inner"><p>Keys hit your dashboard in under 15 seconds after payment. Track them anytime on the My Keys page.</p><p class="faq-answer-more"><a href="/faq#faq-answer-5">Full answer in FAQ <span aria-hidden="true">&rarr;</span></a></p></div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-preview-3">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="credit-card"></span>What payments work?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-preview-3">
+              <div class="faq-answer-inner"><p>Stripe handles every card — Visa, Mastercard, Amex — with full encryption. We never see or store your card data.</p><p class="faq-answer-more"><a href="/faq#faq-answer-4">Full answer in FAQ <span aria-hidden="true">&rarr;</span></a></p></div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-preview-4">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="activity"></span>What if there's downtime?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-preview-4">
+              <div class="faq-answer-inner"><p>Maintenance time never burns your license. We pause timers and post live status threads in Discord.</p><p class="faq-answer-more"><a href="/faq#faq-answer-8">Full answer in FAQ <span aria-hidden="true">&rarr;</span></a></p></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:1.6rem;" class="reveal">
+          <a href="/faq" class="btn btn-ghost">
+            <span class="icon icon-sm" data-lucide="book-open"></span>
+            See all FAQs
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="/static/js/script.js"></script>
+  <script>
+    window.addEventListener("load", function () {
+      if (window.lucide && typeof window.lucide.createIcons === "function") {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

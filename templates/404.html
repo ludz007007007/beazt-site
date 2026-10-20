@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found (404) | BEAZT{% endblock %}
+
+{% block meta_description %}The page you requested could not be found. Head back to the BEAZT homepage, browse the catalogue, or check the live status board.{% endblock %}
+{% block og_title %}Page Not Found | BEAZT{% endblock %}
+{% block og_description %}The page you requested could not be found. Head back to the BEAZT homepage or browse the catalogue.{% endblock %}
+
+{% block content %}
+{# Branded recovery page (VAL-CON-004): every exit links somewhere real —
+   catalogue, status board and home first, then the help surfaces. Page CSS
+   lives in site.css under "Page: 404" — no inline styles. #}
+<section class="nf-section">
+  <div class="container">
+    <div class="nf-card reveal">
+      <p class="section-eyebrow">
+        <span class="nf-eyebrow-dot" aria-hidden="true"></span>
+        Error 404
+      </p>
+      <div class="nf-code" aria-hidden="true">404</div>
+      <h1 class="nf-title">Page not found</h1>
+      <p class="nf-lead">
+        The page you're looking for doesn't exist, was moved, or is temporarily unavailable.
+        Your account and keys are unaffected.
+      </p>
+      <div class="nf-actions">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary btn-lg">
+          <span class="icon" data-lucide="home" aria-hidden="true"></span>
+          Back to home
+        </a>
+        <a href="{{ url_for('main.cheats') }}" class="btn btn-secondary btn-lg">
+          <span class="icon" data-lucide="shopping-cart" aria-hidden="true"></span>
+          Browse the catalogue
+        </a>
+        <a href="{{ url_for('main.status_page') }}" class="btn btn-ghost btn-lg">
+          <span class="icon" data-lucide="activity" aria-hidden="true"></span>
+          Check status
+        </a>
+      </div>
+      <div class="nf-links">
+        <span class="nf-links-label">Looking for something else?</span>
+        <nav class="nf-links-row" aria-label="Helpful links">
+          <a href="{{ url_for('main.faq') }}" class="nf-chip">
+            <span class="icon icon-sm" data-lucide="help-circle" aria-hidden="true"></span>
+            FAQ
+          </a>
+          <a href="{{ url_for('main.loader') }}" class="nf-chip">
+            <span class="icon icon-sm" data-lucide="download" aria-hidden="true"></span>
+            Loader setup
+          </a>
+          <a href="{{ url_for('main.feedback') }}" class="nf-chip">
+            <span class="icon icon-sm" data-lucide="star" aria-hidden="true"></span>
+            Reviews
+          </a>
+          <a href="{{ url_for('main.my_keys') }}" class="nf-chip">
+            <span class="icon icon-sm" data-lucide="key-round" aria-hidden="true"></span>
+            My keys
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,124 @@
+{
+  "forms": {
+    "login": {
+      "url": "http://127.0.0.1:5000/auth/login",
+      "status": 200,
+      "fields": [
+        {
+          "field": "input#username[type=text]",
+          "hasLabel": true,
+          "labelText": "Username",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "username"
+        },
+        {
+          "field": "input#password[type=password]",
+          "hasLabel": true,
+          "labelText": "Password",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "current-password"
+        },
+        {
+          "field": "input[type=checkbox]",
+          "hasLabel": true,
+          "labelText": "Remember me",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": null
+        }
+      ],
+      "allLabeled": true
+    },
+    "signup": {
+      "url": "http://127.0.0.1:5000/auth/signup",
+      "status": 200,
+      "fields": [
+        {
+          "field": "input#username[type=text]",
+          "hasLabel": true,
+          "labelText": "Username",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "username"
+        },
+        {
+          "field": "input#email[type=email]",
+          "hasLabel": true,
+          "labelText": "Email",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "email"
+        },
+        {
+          "field": "input#password[type=password]",
+          "hasLabel": true,
+          "labelText": "Password",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "new-password"
+        },
+        {
+          "field": "input#confirm_password[type=password]",
+          "hasLabel": true,
+          "labelText": "Confirm Password",
+          "ariaLabel": null,
+          "ariaLabelledBy": null,
+          "autocomplete": "new-password"
+        }
+      ],
+      "allLabeled": true
+    }
+  },
+  "validation": {
+    "url": "http://127.0.0.1:5000/auth/login",
+    "attempted": true,
+    "errorShown": true,
+    "wired": true,
+    "noNavigation": true,
+    "posted": false,
+    "urlAfter": "http://127.0.0.1:5000/auth/login",
+    "errors": [
+      {
+        "input": "",
+        "ariaDescribedBy": null,
+        "errExists": false,
+        "errHidden": null,
+        "errText": null,
+        "errRole": null,
+        "errVisible": false
+      },
+      {
+        "input": "username",
+        "ariaDescribedBy": "username-error",
+        "errId": "username-error",
+        "errExists": true,
+        "errHidden": false,
+        "errText": "Username is required",
+        "errRole": "alert",
+        "errVisible": true
+      },
+      {
+        "input": "password",
+        "ariaDescribedBy": "password-error",
+        "errId": "password-error",
+        "errExists": true,
+        "errHidden": false,
+        "errText": "Password is required",
+        "errRole": "alert",
+        "errVisible": true
+      },
+      {
+        "input": "",
+        "ariaDescribedBy": null,
+        "errExists": false,
+        "errHidden": null,
+        "errText": null,
+        "errRole": null,
+        "errVisible": false
+      }
+    ]
+  },
+  "consoleErrors": []
+}

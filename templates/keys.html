@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}My Keys | BEAZT{% endblock %}
+
+{% block content %}
+{% set kv_now = now %}
+<section class="page-section">
+  <div class="container">
+
+    <header class="page-header reveal">
+      <p class="section-eyebrow">Account</p>
+      <h1 class="t-h1">My Keys</h1>
+      <p class="text-secondary">Your licences, delivery status and order history — everything tied to this account.</p>
+    </header>
+
+    {# One Alpine scope owns the whole dashboard: `hydrated` swaps the
+       pre-hydration skeleton for the server-rendered content the moment
+       Alpine initialises (no artificial delay), and `filter` drives the
+       All / Active / Expired chips. Without JavaScript the skeleton never
+       renders (html.js gate in site.css) and the content below is the
+       first paint — the dashboard is fully readable with JS disabled. #}
+    <div class="keys-dashboard" x-data="{ hydrated: false, filter: 'all' }" x-init="hydrated = true">
+
+      {# Skeleton: visible only between script.js adding <html class="js">
+         and Alpine hydrating this section (site.css gates it on html.js).
+         aria-hidden — it is decoration, never information. #}
+      <div class="keys-skeleton" :class="hydrated ? 'is-done' : ''" aria-hidden="true">
+        <div class="card keys-skeleton__panel">
+          <div class="keys-skeleton__row">
+            <span class="skeleton skeleton-avatar"></span>
+            <div class="keys-skeleton__col">
+              <span class="skeleton skeleton-title"></span>
+              <span class="skeleton skeleton-text"></span>
+            </div>
+          </div>
+        </div>
+        {% for i in range(2) %}
+        <div class="card keys-skeleton__card">
+          <span class="skeleton skeleton-title"></span>
+          <span class="skeleton skeleton-input"></span>
+          <div class="keys-skeleton__meta">
+            <span class="skeleton skeleton-badge"></span>
+            <span class="skeleton skeleton-badge"></span>
+            <span class="skeleton skeleton-badge"></span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {# Real dashboard content: server-rendered, never x-cloaked. #}
+      <div class="keys-content" :class="hydrated ? 'is-hydrated' : ''">
+
+        <!-- Account summary -->
+        <div class="card keys-account reveal">
+          <div class="keys-account__id">
+            <span class="keys-account__avatar" aria-hidden="true">{{ current_user.username[:2]|upper }}</span>
+            <div>
+              <h2 class="keys-account__name">
+                {{ current_user.username }}
+                {% if current_user.is_admin %}<span class="badge badge-sm badge-primary">Admin</span>{% endif %}
+              </h2>
+              <p class="keys-account__email">
+                <span class="icon icon-sm" data-lucide="mail" aria-hidden="true"></span>
+                {{ current_user.email }}
+              </p>
+              <p class="keys-account__meta">Member since {{ current_user.created_at.strftime('%d %b %Y') if current_user.created_at else '—' }}</p>
+            </div>
+          </div>
+          <div class="keys-account__actions">
+            <a href="{{ url_for('main.profile') }}" class="btn btn-secondary btn-compact">
+              <span class="icon icon-sm" data-lucide="user-cog" aria-hidden="true"></span> Edit profile
+            </a>
+            <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-compact">
+              <span class="icon icon-sm" data-lucide="life-buoy" aria-hidden="true"></span> Support
+            </a>
+          </div>
+        </div>
+
+        {% if pending_orders %}
+        <!-- Pending orders explainer: payment confirmed, keys not yet allocated -->
+        <div class="card keys-pending reveal" role="status">
+          <h3 class="keys-pending__title">
+            <span class="icon" data-lucide="clock" aria-hidden="true"></span>
+            Processing orders ({{ pending_orders|length }})
+          </h3>
+          <p class="keys-pending__copy">
+            {{ delivery_promise() }}
+            Orders waiting for key allocation are listed here and update automatically.
+          </p>
+          {% for order in pending_orders %}
+          <div class="keys-pending__row" data-pending-order>
+            <span class="keys-pending__product">{{ order.tier.product.name if order.tier and order.tier.product else 'Product' }} — {{ order.tier.label if order.tier else 'Plan' }}</span>
+            <span class="keys-pending__date">{{ order.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+            <span class="pill pill-warn pill-dot">Pending</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Licences -->
+        {% if keys %}
+        <section class="keys-list" aria-labelledby="keys-list-heading">
+          <div class="keys-section-head reveal">
+            <div>
+              <p class="section-eyebrow">Licences</p>
+              <h2 class="t-h2" id="keys-list-heading">Your keys</h2>
+            </div>
+            <div class="keys-toolbar" role="group" aria-label="Filter keys by status">
+              <button type="button" class="chip" data-filter="all"
+                      :class="{ 'is-active': filter === 'all' }"
+                      :aria-pressed="filter === 'all' ? 'true' : 'false'"
+                      @click="filter = 'all'">All ({{ filter_counts.all }})</button>
+              <button type="button" class="chip" data-filter="active"
+                      :class="{ 'is-active': filter === 'active' }"
+                      :aria-pressed="filter === 'active' ? 'true' : 'false'"
+                      @click="filter = 'active'">Active ({{ filter_counts.active }})</button>
+              <button type="button" class="chip" data-filter="expired"
+                      :class="{ 'is-active': filter === 'expired' }"
+                      :aria-pressed="filter === 'expired' ? 'true' : 'false'"
+                      @click="filter = 'expired'">Expired ({{ filter_counts.expired }})</button>
+            </div>
+          </div>
+
+          <div class="keys-grid">
+            {% for key in keys %}
+            {% set state = key_states[key.id] %}
+            {% set filter_key = 'active' if state == 'active' else 'expired' %}
+            {% set kv = key.key_value %}
+            {% set masked_kv = kv[:4] ~ ('•' * (kv|length - 8)) ~ kv[-4:] if kv|length > 8 else '•' * kv|length %}
+            {% set is_new = key.assigned_at and ((kv_now - key.assigned_at).total_seconds() < 86400) %}
+            <article class="card keys-card reveal" data-key-state="{{ state }}"
+                     x-show="filter === 'all' || filter === '{{ filter_key }}'">
+              <header class="keys-card__head">
+                <div class="keys-card__id">
+                  <h3 class="keys-card__title">{{ key.product.name if key.product else 'License' }}</h3>
+                  <div class="keys-card__badges">
+                    {% if key.tier %}<span class="badge badge-sm">{{ key.tier.label }}</span>{% endif %}
+                    <span class="badge badge-sm">{{ 'Subscription' if key.is_subscription else 'One-time' }}</span>
+                    {% if is_new %}<span class="badge badge-sm badge-success badge-dot">Just delivered</span>{% endif %}
+                  </div>
+                </div>
+                {% if state == 'active' %}
+                <span class="pill pill-success pill-dot">Active</span>
+                {% elif state == 'expired' %}
+                <span class="pill pill-dot">Expired</span>
+                {% else %}
+                <span class="pill pill-danger pill-dot">Revoked</span>
+                {% endif %}
+              </header>
+
+              {% if state == 'expired' %}
+              <p class="keys-card__note">
+                This license ended on {{ key.expires_at.strftime('%d %b %Y') if key.expires_at else 'its expiry date' }}.
+                Renew on the product page to start a fresh license.
+              </p>
+              {% elif state == 'revoked' %}
+              <p class="keys-card__note keys-card__note--danger">
+                This license was revoked and will not run. If you believe this is a mistake, contact support.
+              </p>
+              {% endif %}
+
+              <div class="keys-card__key" x-data="{ revealed: false }">
+                <div class="keys-card__key-head">
+                  <span class="keys-card__key-label">License key</span>
+                  <div class="keys-card__tools">
+                    <button type="button" class="btn btn-ghost btn-compact" @click="revealed = !revealed"
+                            :aria-pressed="revealed" :aria-label="revealed ? 'Hide license key' : 'Show license key'">
+                      <span class="icon icon-sm" data-lucide="eye" aria-hidden="true"></span>
+                      <span x-text="revealed ? 'Hide' : 'Show'">Show</span>
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-compact js-copy-key" data-key="{{ kv }}"
+                            aria-label="Copy license key to clipboard">
+                      <span class="icon icon-sm" data-lucide="copy" aria-hidden="true"></span>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+                <code class="keys-card__value">
+                  <span class="keys-card__masked" :class="revealed ? 'is-hidden' : ''">{{ masked_kv }}</span>
+                  <span class="keys-card__full" :class="revealed ? '' : 'is-hidden'" x-cloak>{{ kv }}</span>
+                </code>
+              </div>
+
+              <div class="keys-card__meta">
+                <div class="keys-card__meta-item">
+                  <span class="keys-card__meta-label">Created</span>
+                  <span class="keys-card__meta-value">{{ key.created_at.strftime('%d %b %Y, %H:%M') }} UTC</span>
+                </div>
+                <div class="keys-card__meta-item">
+                  <span class="keys-card__meta-label">Expires</span>
+                  <span class="keys-card__meta-value">
+                    {% if key.expires_at %}
+                      {{ key.expires_at.strftime('%d %b %Y, %H:%M') }} UTC
+                      {% set remaining = (key.expires_at - kv_now).total_seconds() %}
+                      {% if state == 'active' and remaining > 0 %}
+                        {% set remaining_days = ((remaining / 86400) | round(0, 'floor')) | int %}
+                        {% set remaining_hours = (((remaining % 86400) / 3600) | round(0, 'floor')) | int %}
+                        {% if remaining_days >= 1 %}
+                          <span class="keys-card__remaining">{{ remaining_days }} day{{ 's' if remaining_days != 1 }} remaining</span>
+                        {% else %}
+                          <span class="keys-card__remaining keys-card__remaining--soon">Expires today</span>
+                        {% endif %}
+                      {% elif state == 'expired' %}
+                        <span class="keys-card__ended">ended</span>
+                      {% endif %}
+                    {% else %}
+                      Lifetime
+                    {% endif %}
+                  </span>
+                </div>
+                {% if key.chairfbi_key_id %}
+                <div class="keys-card__meta-item">
+                  <span class="keys-card__meta-label">License ID</span>
+                  <span class="keys-card__meta-value keys-card__meta-value--mono">{{ key.chairfbi_key_id }}</span>
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="keys-card__actions">
+                {% if state == 'active' %}
+                  {% set prod_loader = key.product.loader_url if key.product else none %}
+                  {% set global_loader = (loader_private_url if (key.product and key.product.visibility == 'private') else loader_public_url) or loader_url %}
+                  {% set loader_href = prod_loader or global_loader or url_for('main.loader') %}
+                  <a href="{{ loader_href }}" class="btn btn-primary btn-compact">
+                    <span class="icon icon-sm" data-lucide="download" aria-hidden="true"></span> Download Loader
+                  </a>
+                  <a href="{{ url_for('main.loader_product', slug=key.product.slug) if key.product else url_for('main.loader') }}" class="btn btn-secondary btn-compact">
+                    <span class="icon icon-sm" data-lucide="book-open" aria-hidden="true"></span> Setup guide
+                  </a>
+                  {% if key.product and key.product.visibility == 'private' and discord_private_url %}
+                  <a href="{{ discord_private_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-compact">
+                    <span class="icon icon-sm" data-lucide="message-circle" aria-hidden="true"></span> Private Discord
+                  </a>
+                  {% elif discord_public_url %}
+                  <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-compact">
+                    <span class="icon icon-sm" data-lucide="message-circle" aria-hidden="true"></span> Join Discord
+                  </a>
+                  {% endif %}
+                {% elif state == 'expired' %}
+                  <a href="{{ url_for('main.product_detail', slug=key.product.slug) if key.product else url_for('main.cheats') }}" class="btn btn-primary btn-compact">
+                    <span class="icon icon-sm" data-lucide="refresh-cw" aria-hidden="true"></span> Renew license
+                  </a>
+                  <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-compact">
+                    <span class="icon icon-sm" data-lucide="life-buoy" aria-hidden="true"></span> Support
+                  </a>
+                {% else %}
+                  <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-compact">
+                    <span class="icon icon-sm" data-lucide="life-buoy" aria-hidden="true"></span> Contact support
+                  </a>
+                {% endif %}
+              </div>
+
+              {% if key.product and key.product.buyer_notes %}
+              <div class="keys-card__notes">
+                <span class="keys-card__key-label">Instructions</span>
+                <p class="keys-card__notes-body">{{ key.product.buyer_notes }}</p>
+              </div>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+        {% else %}
+        <div class="reveal">
+          {% set empty_icon = 'key-round' %}
+          {% set empty_aria_label = 'No license keys yet' %}
+          {% set empty_title = 'No keys yet' %}
+          {% set empty_text %}{{ delivery_promise() }} Browse the catalogue to make your first purchase.{% endset %}
+          {% set empty_action_href = url_for('main.cheats') %}
+          {% set empty_action_label = 'Browse plans' %}
+          {% set empty_action_class = 'btn-primary btn-lg' %}
+          {% set empty_action2_href = discord_public_url %}
+          {% set empty_action2_label = 'Ask on Discord' %}
+          {% set empty_action2_class = 'btn-ghost btn-lg' %}
+          {% set empty_action2_external = true %}
+          {% include "partials/empty_state.html" %}
+        </div>
+        {% endif %}
+
+        <!-- Order history -->
+        <section class="keys-orders" aria-labelledby="keys-orders-heading">
+          <div class="keys-section-head reveal">
+            <div>
+              <p class="section-eyebrow">Orders</p>
+              <h2 class="t-h2" id="keys-orders-heading">Order history</h2>
+            </div>
+          </div>
+          {% if order_history %}
+          <div class="table-wrap reveal">
+            <table class="table keys-orders-table">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Plan</th>
+                  <th scope="col" class="num">Qty</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in order_history %}
+                <tr data-order-row>
+                  <td data-label="Date">{{ order.created_at.strftime('%d %b %Y') }}</td>
+                  <td data-label="Product">
+                    {% if order.tier and order.tier.product %}
+                    <a href="{{ url_for('main.product_detail', slug=order.tier.product.slug) }}">{{ order.tier.product.name }}</a>
+                    {% else %}—{% endif %}
+                  </td>
+                  <td data-label="Plan">{{ order.tier.label if order.tier else '—' }}</td>
+                  <td data-label="Qty" class="num">{{ order.quantity }}</td>
+                  <td data-label="Status"><span class="pill pill-success">Completed</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="keys-orders-empty reveal">No completed orders yet — browse the <a href="{{ url_for('main.cheats') }}">catalogue</a> to get started.</p>
+          {% endif %}
+        </section>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  "use strict";
+
+  function copyText(text) {
+    // Clipboard API first; legacy fallback for non-secure contexts, denied
+    // permissions, or older browsers (VAL-ACC-002).
+    function legacyCopy() {
+      return new Promise(function (resolve, reject) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          if (document.execCommand("copy")) { resolve(); } else { reject(new Error("copy failed")); }
+        } catch (err) {
+          reject(err);
+        } finally {
+          document.body.removeChild(ta);
+        }
+      });
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(legacyCopy);
+    }
+    return legacyCopy();
+  }
+
+  function notify(message, kind) {
+    if (window.BEAZT && typeof window.BEAZT.toast === "function") {
+      window.BEAZT.toast(message, kind);
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".js-copy-key") : null;
+    if (!btn) return;
+    copyText(btn.getAttribute("data-key") || "").then(function () {
+      notify("Key copied to clipboard", "success");
+    }).catch(function () {
+      notify("Copy failed — reveal the key and copy the text manually.", "error");
+    });
+  });
+})();
+</script>
+{% endblock %}

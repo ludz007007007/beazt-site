@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}BEAZT - Support FAQ{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <div class="page-header reveal">
+      <span class="section-eyebrow">Support</span>
+      <h1 class="t-h1">Quick answers</h1>
+      <p class="text-muted">Everything you need before you buy and launch.</p>
+    </div>
+
+    <!-- FAQ SEARCH: live client-side filter. The existing setupFaqAccordion
+         accordion + hash deep-link behavior is untouched; this only toggles
+         .is-hidden on items/groups (never x-show, per AGENTS.md) and keeps
+         aria-expanded in sync for hidden items. -->
+    <div class="faq-toolbar reveal" role="search">
+      <div class="input-wrapper faq-search-wrapper">
+        <span class="input-icon" aria-hidden="true"><span class="icon icon-sm" data-lucide="search"></span></span>
+        <label class="sr-only" for="faq-search">Search frequently asked questions</label>
+        <input type="search" id="faq-search" class="form-input faq-search" placeholder="Search questions (e.g. key, refund, HWID)" autocomplete="off" aria-describedby="faq-search-count">
+      </div>
+      <p class="faq-search-count text-muted" id="faq-search-count" role="status" aria-live="polite">12 answers</p>
+    </div>
+    <div class="faq-empty is-hidden" id="faq-empty" hidden>
+      {% set empty_icon = 'search-x' %}
+      {% set empty_title = 'No answers match that search' %}
+      {% set empty_text = 'Try a shorter keyword like "key", "refund", or "Discord" — or ask the team directly.' %}
+      {% set empty_action_tag = 'button' %}
+      {% set empty_action_id = 'faq-clear-search' %}
+      {% set empty_action_label = 'Clear search' %}
+      {% set empty_action_class = 'btn-ghost' %}
+      {% set empty_action2_href = discord_public_url %}
+      {% set empty_action2_label = 'Ask in Discord' %}
+      {% set empty_action2_class = 'btn-primary' %}
+      {% set empty_action2_external = true %}
+      {% include "partials/empty_state.html" %}
+    </div>
+
+    <!-- FAQ CATEGORIES: the ten faq-answer-N ids are canonical deep-link
+         targets (homepage preview + bento grid link to #faq-answer-1/-4/-5/-8
+         and setupFaqAccordion auto-opens the hash target) — never renumber
+         them. Copy is the source of truth; mirror edits into index.html. -->
+    <div class="faq-groups reveal">
+      <section class="faq-group" aria-labelledby="faq-group-before">
+        <h2 class="faq-group-title" id="faq-group-before"><span class="icon icon-sm" data-lucide="package"></span>Before you buy</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="help-circle"></span>How does BEAZT run?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-1">
+              <div class="faq-answer-inner"><p>BEAZT runs as a read-only external stack. Launch the loader, paste your key, and start your game — no injection or file edits.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="gamepad-2"></span>Which games are live?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-2">
+              <div class="faq-answer-inner">
+                {# DB-derived list (routes/main.py faq) — reflects the real
+                   catalogue, never goes stale. #}
+                {% set game_names = games|map(attribute='name')|list if games is defined and games else [] %}
+                {% if game_names %}
+                <p>Right now BEAZT covers {{ game_names|length }} game{{ '' if game_names|length == 1 else 's' }} — {{ game_names|join(', ') }}. Every product has its own <a href="{{ url_for('main.status_page') }}">live status page</a> and per-product guides in the <a href="{{ url_for('main.loader') }}">loader guide</a>. We announce new titles and betas inside Discord first.</p>
+                {% else %}
+                <p>The <a href="{{ url_for('main.cheats') }}">catalogue</a> always shows the current line-up, each product with its own live status. We announce new titles and betas inside Discord first.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-11">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="activity"></span>What do the status labels mean?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-11">
+              <div class="faq-answer-inner"><p>Every product carries one live label. <strong>Undetected</strong> — working and not flagged. <strong>Updating</strong> — temporarily offline for a patch or maintenance. <strong>Risky</strong> — use caution, recent flags reported. <strong>Detected</strong> — currently flagged, don't buy while it shows this. The <a href="{{ url_for('main.status_page') }}">status board</a> shows the same labels and when each product last changed, for every product.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-group" aria-labelledby="faq-group-buy">
+        <h2 class="faq-group-title" id="faq-group-buy"><span class="icon icon-sm" data-lucide="credit-card"></span>Buy &amp; payment</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="credit-card"></span>What payments work?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-4">
+              <div class="faq-answer-inner"><p>PayFast and card payments are fully encrypted at checkout. We never see or store your card data.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-9">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="info"></span>Do you refund?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-9">
+              <div class="faq-answer-inner"><p>Keys are digital goods, so sales are final once generated. DM the team before purchasing if you need clarity.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-group" aria-labelledby="faq-group-delivery">
+        <h2 class="faq-group-title" id="faq-group-delivery"><span class="icon icon-sm" data-lucide="zap"></span>Delivery &amp; setup</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="timer"></span>When do keys arrive?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-5">
+              <div class="faq-answer-inner"><p>{{ delivery_promise() }} Track it any time on the <a href="{{ url_for('main.my_keys') if current_user.is_authenticated else url_for('auth.login') }}">My Keys</a> page.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-12">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="monitor"></span>What do I need to run it?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-12">
+              <div class="faq-answer-inner"><p>Windows 10 or 11 (64-bit) with the latest updates, administrator access, and RivaTuner Statistics Server for the overlay. The <a href="{{ url_for('main.loader') }}">loader guide</a> lists every prerequisite with download links and the full step-by-step setup.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="download"></span>How do I install?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-3">
+              <div class="faq-answer-inner"><p>Grab the loader from your dashboard, paste the key, and press launch. Setup averages under two minutes with Discord walkthroughs.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="monitor"></span>Can I move devices?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-6">
+              <div class="faq-answer-inner"><p>Yes. Message support on Discord to reset HWID or move your license — transfers are included.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-group" aria-labelledby="faq-group-support">
+        <h2 class="faq-group-title" id="faq-group-support"><span class="icon icon-sm" data-lucide="headset"></span>Updates &amp; Discord support</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-7">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="history"></span>How fast are updates?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-7">
+              <div class="faq-answer-inner"><p>Patches drop within hours. Discord sends the alert and you pull the fresh loader from your dashboard.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-8">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="activity"></span>What if there's downtime?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-8">
+              <div class="faq-answer-inner"><p>Maintenance time never burns your license. We pause timers and post live status threads in Discord.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-10">
+              <span class="faq-question-text"><span class="icon icon-sm" data-lucide="headset"></span>How do I reach support?</span>
+              <span class="faq-question-icon icon icon-sm" data-lucide="chevron-down"></span>
+            </button>
+            <div class="faq-answer" id="faq-answer-10">
+              <div class="faq-answer-inner"><p>Hop in Discord and create a ticket. The team staffs the channel around the clock for setup, HWID, and tuning questions.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="faq-cta reveal">
+      <p class="text-muted">Still stuck? The team answers tickets around the clock.</p>
+      <a href="{{ discord_public_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+        <span class="icon icon-sm" data-lucide="message-circle"></span>
+        Ask in Discord
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var input = document.getElementById("faq-search");
+  var count = document.getElementById("faq-search-count");
+  var empty = document.getElementById("faq-empty");
+  var clearBtn = document.getElementById("faq-clear-search");
+  if (!input) { return; }
+
+  function normalize(s) {
+    return (s || "").toLowerCase();
+  }
+
+  function applyFilter() {
+    var q = normalize(input.value).trim();
+    var visible = 0;
+    document.querySelectorAll(".faq-groups .faq-item").forEach(function (item) {
+      var text = normalize(item.textContent);
+      var match = !q || text.indexOf(q) !== -1;
+      item.classList.toggle("is-hidden", !match);
+      if (!match && item.classList.contains("open")) {
+        item.classList.remove("open");
+        var btn = item.querySelector(".faq-question");
+        if (btn) { btn.setAttribute("aria-expanded", "false"); }
+      }
+      if (match) { visible += 1; }
+    });
+    document.querySelectorAll(".faq-groups .faq-group").forEach(function (group) {
+      var anyVisible = group.querySelectorAll(".faq-item:not(.is-hidden)").length > 0;
+      group.classList.toggle("is-hidden", !anyVisible);
+    });
+    var hasResults = visible > 0;
+    if (empty) {
+      empty.classList.toggle("is-hidden", hasResults);
+      if (hasResults) { empty.setAttribute("hidden", ""); }
+      else { empty.removeAttribute("hidden"); }
+    }
+    if (count) {
+      count.textContent = q
+        ? (visible + (visible === 1 ? " match" : " matches") + ' for "' + input.value.trim() + '"')
+        : (visible + " answers");
+    }
+  }
+
+  input.addEventListener("input", applyFilter);
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function () {
+      input.value = "";
+      applyFilter();
+      input.focus();
+    });
+  }
+  applyFilter();
+})();
+</script>
+{% endblock %}

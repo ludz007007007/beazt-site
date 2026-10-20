@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}BEAZT: Private game cheats with honest detection status{% endblock %}
+{% block meta_description %}Private cheats for {% if games %}{{ games|map(attribute='name')|join(', ') }}{% else %}PC games{% endif %}. Every product shows its real detection status and history, and {{ delivery_promise()|lower }}{% endblock %}
+
+{% block content %}
+{% set stats = honest_stats() %}
+{#- Site-wide from-price, derived from the same card data as the grids below. -#}
+{% set site_prices = games | map(attribute='price_min') | reject('none') | list %}
+{% set from_price = (site_prices | min) if site_prices else none %}
+
+<section class="home-hero" aria-labelledby="home-hero-title">
+  <div class="container home-hero__inner">
+    <div class="home-hero__copy">
+      {% if games %}
+      <p class="section-eyebrow">For {{ games[:4]|map(attribute='name')|join(' · ') }}</p>
+      {% endif %}
+      <h1 class="home-hero__title" id="home-hero-title">Private game cheats for players who check the risk before they buy.</h1>
+      <p class="home-hero__lede">Every product shows its current detection status and when it last changed. {{ delivery_promise() }}</p>
+      <div class="home-hero__actions">
+        <a href="{{ url_for('main.cheats') }}" class="btn btn-primary btn-lg">Browse cheats</a>
+        <a href="{{ url_for('main.status_page') }}" class="btn btn-ghost btn-lg">Check status</a>
+      </div>
+      {% if from_price is not none %}
+      <p class="home-hero__price">Plans from <strong>£{{ "%.2f"|format(from_price) }}</strong> &mdash; duration shown before you pay.</p>
+      {% endif %}
+    </div>
+
+    {% if status_counts %}
+    <aside class="home-hero__panel card" aria-labelledby="status-snapshot-title">
+      <h2 class="micro-label" id="status-snapshot-title">Status right now</h2>
+      <ul class="status-snapshot">
+        {% for key, label, count in status_counts %}
+        <li class="status-snapshot__row">
+          {% with status=key %}{% include "partials/status_pill.html" %}{% endwith %}
+          <span class="status-snapshot__count tabular">{{ count }} product{{ '' if count == 1 else 's' }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="{{ url_for('main.status_page') }}" class="btn btn-link">See every product's status</a>
+    </aside>
+    {% endif %}
+  </div>
+</section>
+
+{% if stats.orders_delivered or stats.review_count %}
+<section class="stat-strip" aria-label="Store record">
+  <ul class="container stat-strip__list">
+    {% if stats.orders_delivered %}
+    <li class="stat-strip__item" data-stat="orders_delivered"><span class="stat-strip__value tabular">{{ stats.orders_delivered }}</span><span class="stat-strip__label">order{{ '' if stats.orders_delivered == 1 else 's' }} delivered</span></li>
+    {% endif %}
+    {% if stats.review_count %}
+    <li class="stat-strip__item" data-stat="review_count"><span class="stat-strip__value tabular">{{ stats.review_count }}</span><span class="stat-strip__label">verified buyer review{{ '' if stats.review_count == 1 else 's' }}</span></li>
+    <li class="stat-strip__item" data-stat="rating_avg"><span class="stat-strip__value tabular">{{ stats.rating_avg }}</span><span class="stat-strip__label">average rating out of 5</span></li>
+    {% endif %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="section" aria-labelledby="featured-title">
+  <div class="container">
+    <div class="section-row">
+      <div>
+        <p class="section-eyebrow"><span class="section-index" aria-hidden="true">01</span>Start here</p>
+        <h2 class="t-h2" id="featured-title">Featured cheats</h2>
+        <p class="text-secondary">Sorted by current status, lowest risk first.</p>
+      </div>
+      {% if total_products %}
+      <a href="{{ url_for('main.cheats') }}" class="btn btn-secondary">See all {{ total_products }} cheats</a>
+      {% endif %}
+    </div>
+    {% if showcase %}
+    <div class="product-grid">
+      {% for c in showcase %}{% include "partials/product_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    {% set empty_title = "No products listed yet" %}
+    {% set empty_text = "We're preparing the catalogue. The status page will show each product as soon as it's on sale." %}
+    {% set empty_action_href = url_for('main.status_page') %}
+    {% set empty_action_label = "View status page" %}
+    {% include "partials/empty_state.html" %}
+    {% endif %}
+  </div>
+</section>
+
+{% if games %}
+<section class="section section-alt" aria-labelledby="games-title">
+  <div class="container">
+    <div class="section-row">
+      <div>
+        <p class="section-eyebrow"><span class="section-index" aria-hidden="true">02</span>Games</p>
+        <h2 class="t-h2" id="games-title">Browse by game</h2>
+      </div>
+      <a href="{{ url_for('main.games_index') }}" class="btn btn-ghost">All games</a>
+    </div>
+    <div class="game-grid">
+      {% for g in games %}{% include "partials/game_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section" aria-labelledby="steps-title">
+  <div class="container">
+    <p class="section-eyebrow"><span class="section-index" aria-hidden="true">03</span>Buying</p>
+    <h2 class="t-h2" id="steps-title">What happens after you pay</h2>
+    <ol class="steps reveal-stagger">
+      <li class="steps__item reveal">
+        <span class="steps__num" aria-hidden="true">1</span>
+        <h3 class="steps__title">Pay at checkout</h3>
+        <p>Prices are in GBP. The payment methods available to you are shown at checkout before you commit.</p>
+      </li>
+      <li class="steps__item reveal">
+        <span class="steps__num" aria-hidden="true">2</span>
+        <h3 class="steps__title">Your key appears in My Keys</h3>
+        <p>{{ delivery_promise() }}</p>
+      </li>
+      <li class="steps__item reveal">
+        <span class="steps__num" aria-hidden="true">3</span>
+        <h3 class="steps__title">Download the loader</h3>
+        <p>Follow the setup guide for your product, and check its status before each session.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="reviews-title">
+  <div class="container">
+    <p class="section-eyebrow"><span class="section-index" aria-hidden="true">04</span>Reviews</p>
+    <h2 class="t-h2" id="reviews-title">From verified buyers</h2>
+    <p class="text-secondary section-intro">Only buyers with a completed order can leave a review, and each one is checked before it appears.</p>
+    {% if latest_reviews %}
+    <div class="reviews-grid">
+      {% for r in latest_reviews %}{% include "partials/review_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    {% set empty_title = "No verified reviews yet" %}
+    {% set empty_text = "Reviews show up here once buyers with completed orders submit them and they pass moderation." %}
+    {% set empty_action_href = None %}
+    {% include "partials/empty_state.html" %}
+    {% endif %}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="help-title">
+  <div class="container help-strip">
+    <div>
+      <p class="section-eyebrow"><span class="section-index" aria-hidden="true">05</span>Help</p>
+      <h2 class="t-h2" id="help-title">Questions before you buy?</h2>
+      <p class="text-secondary">Read how keys, refunds and maintenance work, or see the setup steps for the loader.</p>
+    </div>
+    <div class="help-strip__actions">
+      <a href="{{ url_for('main.faq') }}" class="btn btn-secondary">Read the FAQ</a>
+      <a href="{{ url_for('main.loader') }}" class="btn btn-ghost">View the setup guide</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

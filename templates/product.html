@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}{{ product.name }} | BEAZT{% endblock %}
+{% block meta_description %}{{ ((product.description or 'Private ' ~ product.name ~ ' access with instant key delivery, live status and 24/7 support.') | replace('\n', ' ') | truncate(155)) }}{% endblock %}
+{% block og_title %}{{ product.name }} | BEAZT{% endblock %}
+{% block og_description %}{{ (product.description or 'Private access. Instant delivery. Stream-proof builds.') | replace('\n', ' ') | truncate(155) }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_url %}{{ url_for('main.product_detail', slug=product.slug, _external=True) }}{% endblock %}
+{% block canonical %}{{ url_for('main.product_detail', slug=product.slug, _external=True) }}{% endblock %}
+{% block og_image %}{{ og_image }}{% endblock %}
+{% block twitter_title %}{{ product.name }} | BEAZT{% endblock %}
+{% block twitter_description %}{{ (product.description or 'Private access. Instant delivery. Stream-proof builds.') | replace('\n', ' ') | truncate(155) }}{% endblock %}
+{% block twitter_image %}{{ og_image }}{% endblock %}
+
+{% block head %}
+{# Structured data: Product + Offers from live tiers. aggregateRating is only
+   emitted when approved reviews exist — never a fabricated score. #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org", "@type": "Product",
+  "name": {{ product.name | tojson }},
+  "description": {{ (product.description or product.name) | replace('\n', ' ') | truncate(300) | tojson }},
+  "image": {{ og_image | tojson }},
+  "brand": {"@type": "Brand", "name": "BEAZT"}, "sku": {{ product.slug | tojson }},
+  {% if review_avg %}"aggregateRating": {"@type": "AggregateRating", "ratingValue": {{ review_avg }}, "reviewCount": {{ reviews|length }}},{% endif %}
+  "offers": [{% for t in tiers %}{"@type": "Offer", "name": {{ t.label | tojson }}, "price": {{ "%.2f"|format(t.price_pounds) }},
+    "priceCurrency": "GBP", "availability": "https://schema.org/InStock"}{{ "," if not loop.last }}{% endfor %}]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+{# Checkout state (Alpine). Bindings preserved from the original template:
+   variants, selectedVariantId, isAuthenticated and the create_session
+   checkout flow (PayFast auto-form / payment_url). #}
+<script>
+  window.BEAZT_PRODUCT = {
+    variants: {{ variants | tojson }},
+    selectedVariantId: {{ selected_tier.id if selected_tier else 0 }},
+    isAuthenticated: {{ 'true' if current_user.is_authenticated else 'false' }}
+  };
+  {# Gateway availability (separate global — the BEAZT_PRODUCT wire protocol
+     stays untouched). When the card gateway is unconfigured the option is
+     disabled up front; a 503 {error, gateway_unavailable: true} response
+     from create-session flips it at runtime too. #}
+  window.BEAZT_CHECKOUT = { cardEnabled: {{ 'true' if ivno_configured else 'false' }} };
+  window.productState = function() {
+    var d = window.BEAZT_PRODUCT;
+    return {
+      selectedVariantId: d.selectedVariantId,
+      variants: d.variants,
+      activeTab: 'overview',
+      checkingOut: false,
+      checkoutError: '',
+      quantity: 1,
+      selectedGateway: 'payfast',
+      cardUnavailable: !(window.BEAZT_CHECKOUT && window.BEAZT_CHECKOUT.cardEnabled),
+      IVNO_MIN_GBP: 20,
+      get currentVariant() {
+        return this.variants.find(function(v) { return v.id === this.selectedVariantId; }.bind(this)) || this.variants[0] || null;
+      },
+      get currentPrice() { var v = this.currentVariant; return v ? v.price_pounds : 0; },
+      get cartTotal() { return this.currentPrice * this.quantity; },
+      get gatewayMin() { return this.selectedGateway === 'ivno' ? this.IVNO_MIN_GBP : 0; },
+      get meetsMinimum() { return this.cartTotal >= this.gatewayMin; },
+      get buyLabel() {
+        if (!d.isAuthenticated) return 'Sign in to Buy';
+        var v = this.currentVariant, gw = this.selectedGateway === 'payfast' ? 'PayFast' : 'Card';
+        if (!v) return 'Buy with ' + gw;
+        if (v.billing_type === 'subscription') return 'Subscribe - ' + v.label;
+        if (!this.meetsMinimum) return 'Min £' + this.gatewayMin + ' for ' + gw + ' — total £' + this.cartTotal.toFixed(2);
+        return 'Buy ' + this.quantity + ' × ' + v.label + ' — £' + this.cartTotal.toFixed(2) + ' via ' + gw;
+      },
+      get canBuy() { if (this.selectedGateway === 'ivno' && this.cardUnavailable) return false; return d.isAuthenticated && this.meetsMinimum; },
+      get isSubscription() { var v = this.currentVariant; return v ? v.billing_type === 'subscription' : false; },
+      get subscriptionLink() { var v = this.currentVariant; return v ? v.subscription_link : ''; },
+      get hasExternalSub() { return this.isSubscription && !!this.subscriptionLink; },
+      async handleCheckout() {
+        this.checkoutError = '';
+        this.checkingOut = true;
+        try {
+          var formData = new FormData();
+          formData.append('tier_id', this.selectedVariantId);
+          formData.append('quantity', this.quantity);
+          formData.append('gateway', this.selectedGateway);
+          formData.append('csrf_token', '{{ csrf_token() }}');
+          var resp = await fetch('{{ url_for('checkout.create_session') }}', { method: 'POST', body: formData });
+          var data = await resp.json();
+          if (data.payfast) {
+            // PayFast: build + auto-submit the hidden form POST.
+            var pfForm = document.createElement('form');
+            pfForm.method = 'POST'; pfForm.action = data.payment_url; pfForm.style.display = 'none';
+            for (var k in data.payfast_data) {
+              var inp = document.createElement('input');
+              inp.type = 'hidden'; inp.name = k; inp.value = data.payfast_data[k]; pfForm.appendChild(inp);
+            }
+            document.body.appendChild(pfForm); pfForm.submit();
+          } else if (data.payment_url) {
+            window.location.href = data.payment_url;
+          } else {
+            // 503 {error, gateway_unavailable: true}: the card gateway is
+            // unavailable — disable its option with an explanation and fall
+            // back to PayFast so the buyer is never stranded.
+            if (data.gateway_unavailable) {
+              this.cardUnavailable = true;
+              if (this.selectedGateway === 'ivno') { this.selectedGateway = 'payfast'; }
+            }
+            this.checkoutError = data.error || 'Payment could not be started. Please try again or contact support.';
+            if (window.BEAZT && window.BEAZT.toast) { window.BEAZT.toast(this.checkoutError, 'error'); }
+          }
+        } catch (e) {
+          this.checkoutError = 'Network error. Please check your connection and try again.';
+          if (window.BEAZT && window.BEAZT.toast) { window.BEAZT.toast(this.checkoutError, 'error'); }
+        }
+        this.checkingOut = false;
+      }
+    };
+  };
+</script>
+
+{% set eyebrow = 'Private build' if product.visibility == 'private' else (product.game or 'Catalogue') %}
+{# Availability badge key from the shared card view-model (one derivation
+   for product page, catalogue card and status board): private > sold out >
+   pool stock. Never merged into the status pill. #}
+{% set avail = card.availability or '' %}
+<div class="product-page section" x-data="productState()">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ url_for('main.cheats') }}">Cheats</a>
+      {% if product.game %}<a href="{{ url_for('main.game_page', game_slug=card.game_slug) }}">{{ product.game }}</a>{% endif %}
+      <span aria-current="page">{{ product.name }}</span>
+    </nav>
+
+    {# Title block: unified status pill + REAL last-verified date (same DB
+       derivation as the catalogue card — never render time) + platforms. #}
+    <header class="pd-header">
+      <p class="section-eyebrow">{{ eyebrow }}</p>
+      <h1 class="pd-heading">{{ product.name }}</h1>
+      <div class="pd-meta-row">
+        {% with status=card.status, label=card.status_label %}{% include "partials/status_pill.html" %}{% endwith %}
+        {% if avail %}{% with availability=avail, show_in_stock=true %}{% include "partials/availability_badge.html" %}{% endwith %}{% endif %}
+        <span class="pd-meta-item">
+          {% if card.freshness.date %}<time datetime="{{ card.freshness.date.strftime('%Y-%m-%d') }}">{{ card.freshness.text }}</time>
+          {% else %}{{ card.freshness.text }}{% endif %}
+        </span>
+        <span class="pd-meta-item"><span class="icon icon-sm" data-lucide="zap" aria-hidden="true"></span>Instant delivery</span>
+      </div>
+      <div class="pd-meta-row" aria-label="Supported platforms">
+        <span class="plat-badge"><span class="icon icon-sm" data-lucide="monitor" aria-hidden="true"></span>{{ vc_specs.os if vc_specs and vc_specs.os else 'Windows 10 / 11' }}</span>
+        <span class="plat-badge"><span class="icon icon-sm" data-lucide="cpu" aria-hidden="true"></span>64-bit</span>
+      </div>
+    </header>
+
+    <div class="pd-layout">
+      <div class="pd-gallery-col">
+
+        {# Gallery: 16:9 frame, intrinsic dims, real screenshots when present,
+           typographic cover fallback. Thumbs are real buttons (keyboard-
+           selectable); a polite live region announces the current shot. #}
+        {% if gallery_images %}
+        <div class="pd-gallery" x-data='galleryState({{ gallery_images | tojson }})'>
+          <div class="pd-gallery__frame">
+            <img class="pd-gallery__main" :src="images[active]" src="{{ gallery_images[0] }}" :alt='{{ (product.name ~ " — screenshot ") | tojson }} + (active + 1)'
+                 alt="{{ product.name }} — screenshot 1" width="960" height="540" fetchpriority="high" decoding="async">
+          </div>
+          {% if gallery_images|length > 1 %}
+          <div class="pd-gallery__thumbs" role="group" aria-label="Screenshots">
+            {% for img in gallery_images %}
+            <button type="button" class="pd-thumb" :class="{ 'is-active': active === {{ loop.index0 }} }" :aria-pressed="active === {{ loop.index0 }} ? 'true' : 'false'"
+                    @click="select({{ loop.index0 }})" aria-label="Show screenshot {{ loop.index }}">
+              <img src="{{ img }}" alt="" loading="lazy" decoding="async" width="120" height="68">
+            </button>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <p class="sr-only" role="status" x-text="announcement">Screenshot 1 of {{ gallery_images|length }}</p>
+        </div>
+        {% else %}
+        <div class="pd-gallery"><div class="pd-gallery__frame">
+          <img class="pd-gallery__main" src="{{ url_for('main.cheat_image', slug=product.slug) }}" alt="{{ product.name }} cover" width="1200" height="675" fetchpriority="high" decoding="async">
+        </div></div>
+        {% endif %}
+      </div>
+
+      {# ── Sticky purchase panel ── #}
+      <aside class="purchase-panel" aria-label="Purchase options">
+
+        <div class="purchase-header">
+          <span class="section-eyebrow">{{ eyebrow }}</span>
+          <h2 class="purchase-title">Choose your plan</h2>
+          <p class="pd-selected" aria-live="polite">
+            <strong x-text="currentVariant ? currentVariant.label : 'No plans yet'">{{ selected_tier.label if selected_tier else 'No plans yet' }}</strong>
+            <span class="pd-selected-sub" x-text="currentVariant ? (isSubscription ? 'Recurring' : 'One-time · ' + currentVariant.duration_days + (currentVariant.duration_days === 1 ? ' day' : ' days')) : ''">
+              {%- if selected_tier -%}{{ 'Recurring' if selected_tier.billing_type == 'subscription' else 'One-time · ' ~ selected_tier.duration_days ~ (' day' if selected_tier.duration_days == 1 else ' days') }}{%- endif -%}
+            </span>
+          </p>
+        </div>
+
+        {# Anonymous visitors (VAL-FUN-001/002): the panel action is a real
+           login/signup link pair carrying `next` — never a dead disabled
+           button. No <form> is rendered at all, so no doomed POST to
+           /checkout/create-session can fire from an anonymous page. The
+           authenticated branch keeps the checkout form and its wire protocol
+           byte-for-byte identical. #}
+        {% if current_user.is_authenticated %}
+        <form @submit.prevent="handleCheckout()" autocomplete="off">
+        {% else %}
+        <div class="purchase-guest">
+        {% endif %}
+
+          {# Plan ladder: every tier server-rendered with an explicit
+             "One-time · N days" / "Recurring" label, per-day cost, and a
+             best-value marker on the cheapest per-day one-time plan. #}
+          <div class="purchase-variants">
+            <span class="purchase-variants-label" id="plan-picker-label">Plan</span>
+              <div class="plan-ladder" role="radiogroup" aria-labelledby="plan-picker-label">
+                {% for r in plan_rows %}
+                <label class="plan-row{% if r.is_best %} plan-row--best{% endif %}" :class="{ 'is-selected': selectedVariantId === {{ r.tier.id }} }">
+                  <input type="radio" name="variant_picker" class="sr-only" value="{{ r.tier.id }}"
+                         x-model.number="selectedVariantId"{% if selected_tier and r.tier.id == selected_tier.id %} checked{% endif %}>
+                  <span class="plan-row__body">
+                    <span class="plan-row__label">{{ r.tier.label }}{% if r.is_best %} <span class="plan-row__flag">Best value</span>{% endif %}</span>
+                    <span class="plan-row__meta">{{ 'Recurring' if r.recurring else ('One-time · ' ~ r.tier.duration_days ~ (' day' if r.tier.duration_days == 1 else ' days') if r.tier.duration_days else 'One-time') }}</span>
+                    {% if r.per_day is not none %}<span class="plan-row__perday tabular">£{{ "%.2f"|format(r.per_day) }}/day</span>{% endif %}
+                  </span>
+                  <span class="plan-row__price tabular">&pound;{{ "%.2f"|format(r.tier.price_pounds) }}</span>
+                </label>
+                {% endfor %}
+              </div>
+            <div class="pd-empty-plans" :class="variants.length === 0 ? '' : 'is-hidden'"{% if tiers %} hidden{% endif %}>
+              {% set empty_title = "No plans on sale yet" %}
+              {% set empty_text = "This product has no licence plans at the moment. Ask in Discord for restock news." %}
+              {% set empty_icon, empty_action_href, empty_action_label, empty_action_external = "package-open", discord_public_url, "Ask in Discord", true %}
+              {% include "partials/empty_state.html" %}
+            </div>
+          </div>
+
+          {# Quantity: keys per order — each key is a separate licence.
+             :hidden binding (tab-panel pattern) — :class toggling can never
+             remove the static no-JS `hidden` attribute (base.css wins). #}
+          <div class="pd-quantity" :class="currentVariant && !isSubscription ? '' : 'is-hidden'"
+               :hidden="!(currentVariant && !isSubscription)"
+               {% if not selected_tier or selected_tier.billing_type == 'subscription' %}hidden{% endif %}>
+            <div class="pd-qty-head">
+              <span class="purchase-variants-label">Quantity</span>
+              <span class="pd-qty-hint">Keys per order — each key is a separate licence.</span>
+            </div>
+            <div class="pd-qty-controls">
+              <button type="button" class="pd-qty-btn" @click="if (quantity > 1) quantity--" aria-label="Decrease quantity">&minus;</button>
+              <input type="number" class="pd-qty-input" x-model.number="quantity" min="1" max="10" aria-label="Quantity" aria-describedby="qty-total">
+              <button type="button" class="pd-qty-btn" @click="if (quantity < 10) quantity++" aria-label="Increase quantity">+</button>
+            </div>
+            <p class="pd-qty-total" id="qty-total">
+              <span x-text="quantity">1</span> &times; &pound;<span x-text="currentPrice.toFixed(2)">{{ "%.2f"|format(selected_tier.price_pounds) if selected_tier else '0.00' }}</span>
+              = <strong x-text="'£' + cartTotal.toFixed(2)">£{{ "%.2f"|format(selected_tier.price_pounds) if selected_tier else '0.00' }}</strong>
+              <span class="pd-qty-min" :class="!meetsMinimum ? '' : 'is-hidden'" x-cloak>+&pound;<span x-text="(IVNO_MIN_GBP - cartTotal).toFixed(2)"></span> more for card payment</span>
+            </p>
+          </div>
+
+          {# Payment method: minimums surfaced up front, unconfigured card
+             gateway disabled with an explanation (never a dead end). #}
+          <div :class="!hasExternalSub ? '' : 'is-hidden'" :hidden="hasExternalSub"
+               {% if selected_tier and selected_tier.billing_type == 'subscription' and selected_tier.ivno_subscription_link %}hidden{% endif %}>
+            <span class="purchase-variants-label">Payment method</span>
+            <div class="pd-gateways" role="radiogroup" aria-label="Payment method">
+              <label class="pd-gateway" :class="{ selected: selectedGateway === 'payfast' }">
+                <input type="radio" name="gateway" value="payfast" x-model="selectedGateway" aria-label="Pay with PayFast">
+                <span class="pd-gateway-card"><span class="pd-radio" aria-hidden="true"></span>
+                  <span class="pd-gateway-body"><span class="pd-gateway-top">
+                    <span class="pd-gateway-name">PayFast</span>
+                    <span class="pd-gateway-tag pd-gateway-tag--ok">No minimum</span>
+                  </span><span class="pd-gateway-sub">EFT &middot; cards &middot; instant EFT</span></span></span>
+              </label>
+              <label class="pd-gateway" :class="{ selected: selectedGateway === 'ivno', 'is-disabled': cardUnavailable }">
+                <input type="radio" name="gateway" value="ivno" x-model="selectedGateway" aria-label="Pay with card" :disabled="cardUnavailable">
+                <span class="pd-gateway-card"><span class="pd-radio" aria-hidden="true"></span>
+                  <span class="pd-gateway-body"><span class="pd-gateway-top">
+                    <span class="pd-gateway-name">Card</span>
+                    <span class="pd-gateway-tag" :class="cardUnavailable ? 'pd-gateway-tag--err' : 'pd-gateway-tag--warn'" x-text="cardUnavailable ? 'Unavailable' : 'Min \u00A320'">Min &pound;20</span>
+                  </span><span class="pd-gateway-sub" x-text="cardUnavailable ? 'Card payments temporarily off' : 'Visa \u00B7 Mastercard \u00B7 secure'">Visa &middot; Mastercard &middot; secure</span></span></span>
+              </label>
+            </div>
+            <p class="pd-gateway-note" :class="cardUnavailable ? '' : 'is-hidden'" x-cloak role="status">
+              <span class="icon icon-sm" data-lucide="credit-card" aria-hidden="true"></span>
+              <span>Card payments are temporarily unavailable — use PayFast above, or
+                <a href="{{ discord_public_url }}" target="_blank" rel="noopener">contact support</a> and we&rsquo;ll help you pay by card.</span>
+            </p>
+
+            {% if current_user.is_authenticated %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="!canBuy || checkingOut">
+              <span :class="!checkingOut ? '' : 'is-hidden'">
+                <span class="icon icon-sm" data-lucide="lock" aria-hidden="true"></span>
+                <span x-text="buyLabel">Buy Now</span>
+              </span>
+              <span :class="checkingOut ? '' : 'is-hidden'" x-cloak><span class="btn-spinner" aria-hidden="true"></span>Processing&hellip;</span>
+            </button>
+            {% endif %}
+          </div>
+
+          {# Guest actions live OUTSIDE the payment-method block: they are the
+             primary path for every anonymous visitor, including products
+             whose selected tier is an external subscription (which hides the
+             gateway section entirely). #}
+          {% if not current_user.is_authenticated %}
+          <div class="pd-guest-actions">
+            <a class="btn btn-primary btn-block btn-lg" href="{{ url_for('auth.login', next='/product/' ~ product.slug) }}"><span class="icon icon-sm" data-lucide="log-in" aria-hidden="true"></span>Sign in to buy</a>
+            <a class="btn btn-secondary btn-block" href="{{ url_for('auth.signup', next='/product/' ~ product.slug) }}">Create account</a>
+            <p class="pd-guest-note">You&rsquo;ll come straight back to this page after signing in.</p>
+          </div>
+          {% endif %}
+
+          {# External subscription checkout (authenticated buyers only:
+               anonymous visitors take the sign-in path above instead of an
+               external payment page that bypasses account creation) #}
+          {% if current_user.is_authenticated %}
+          <a :class="hasExternalSub ? '' : 'is-hidden'" x-cloak :href="subscriptionLink" target="_blank" rel="noopener"
+             class="btn btn-primary btn-block btn-lg pd-subscribe">
+            <span class="icon" data-lucide="credit-card" aria-hidden="true"></span>
+            <span x-text="buyLabel">Subscribe</span>
+          </a>
+          <p class="pd-error" :class="checkoutError ? '' : 'is-hidden'" x-text="checkoutError" x-cloak role="alert" aria-live="assertive"></p>
+          {% endif %}
+
+          <p class="pd-secure-line"><span class="icon icon-sm" data-lucide="shield-check" aria-hidden="true"></span>Encrypted checkout. {{ delivery_promise() }}</p>
+
+        {% if current_user.is_authenticated %}
+        </form>
+        {% else %}
+        </div><!-- /.purchase-guest -->
+        {% endif %}
+
+        <div class="purchase-trust">
+          <div class="purchase-trust-item"><span class="icon icon-sm" data-lucide="lock" aria-hidden="true"></span>Secure checkout</div>
+          <div class="purchase-trust-item"><span class="icon icon-sm" data-lucide="zap" aria-hidden="true"></span>Instant delivery</div>
+          <div class="purchase-trust-item"><span class="icon icon-sm" data-lucide="shield-check" aria-hidden="true"></span>Protected purchase</div>
+        </div>
+      </aside>
+
+      <div class="pd-body">
+        {# Tabs: ARIA pattern (roving tabindex, Arrow/Home/End move focus and
+           select; panels announced via aria-labelledby). JS only switches
+           panels; the Overview panel renders server-side. #}
+        <div x-data="tabsState(['overview', 'features', 'buyer'])">
+          <div class="tabs" role="tablist" aria-label="Product information">
+            <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" tabindex="0" :aria-selected="activeTab === 'overview' ? 'true' : 'false'"
+                    :tabindex="activeTab === 'overview' ? 0 : -1" :class="{ 'is-active': activeTab === 'overview' }" @click="select('overview')" @keydown="onTablistKeydown($event)">Overview</button>
+            <button class="tab" role="tab" id="tab-features" aria-controls="panel-features" aria-selected="false" tabindex="-1" :aria-selected="activeTab === 'features' ? 'true' : 'false'"
+                    :tabindex="activeTab === 'features' ? 0 : -1" :class="{ 'is-active': activeTab === 'features' }" @click="select('features')" @keydown="onTablistKeydown($event)">Features</button>
+            <button class="tab" role="tab" id="tab-buyer" aria-controls="panel-buyer" aria-selected="false" tabindex="-1" :aria-selected="activeTab === 'buyer' ? 'true' : 'false'"
+                    :tabindex="activeTab === 'buyer' ? 0 : -1" :class="{ 'is-active': activeTab === 'buyer' }" @click="select('buyer')" @keydown="onTablistKeydown($event)">Buyer info</button>
+          </div>
+
+          <div class="tab-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0" :hidden="activeTab !== 'overview'">
+            {% if product.description %}<div class="card"><p>{{ product.description }}</p></div>{% endif %}
+            <div class="pd-benefits">
+              <div class="pd-benefit card"><span class="icon" data-lucide="zap" aria-hidden="true"></span><strong>Instant delivery</strong><span>{{ delivery_promise() }}</span></div>
+              <div class="pd-benefit card"><span class="icon" data-lucide="refresh-cw" aria-hidden="true"></span><strong>Build updates</strong><span>Updates ship while your licence is active — check the status page any time.</span></div>
+              <div class="pd-benefit card"><span class="icon" data-lucide="headphones" aria-hidden="true"></span><strong>Support included</strong><span><a href="{{ discord_public_url }}" target="_blank" rel="noopener">Discord</a> support for setup and questions.</span></div>
+            </div>
+            <div class="card">
+              <h3>{{ product.name }} features</h3>
+              {% if product_features and product_features['items'] %}
+              <ul class="pd-feature-list">
+                {% for item in product_features['items'] %}<li><span class="icon icon-sm" data-lucide="check" aria-hidden="true"></span>{{ item }}</li>{% endfor %}
+              </ul>
+              {% else %}
+              <p class="text-muted">Feature list coming soon — join the <a href="{{ discord_public_url }}" target="_blank" rel="noopener">Discord</a> for details.</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="tab-panel" id="panel-features" role="tabpanel" aria-labelledby="tab-features" tabindex="0" hidden :hidden="activeTab !== 'features'">
+            {% if vc_features %}
+            <div class="card">
+              <h3>Capabilities</h3>
+              <ul class="pd-feature-list">
+                {% for cap in vc_features %}<li><span class="icon icon-sm" data-lucide="check" aria-hidden="true"></span>{{ vc_cap_names.get(cap, cap|replace('_', ' ')|title) }}</li>{% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% if vc_system_features %}
+            <div class="card">
+              <h3>System architecture</h3>
+              <div class="pd-arch-grid">
+                {% for feat in vc_system_features %}
+                <div class="pd-arch-card">
+                  <span class="icon" data-lucide="{{ 'cpu' if 'Engine' in feat.title else 'monitor' if 'Stream' in feat.title else 'gauge' if 'FPS' in feat.title else 'shield' }}" aria-hidden="true"></span>
+                  <strong>{{ feat.title }}</strong><p>{{ feat.description }}</p>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="tab-panel" id="panel-buyer" role="tabpanel" aria-labelledby="tab-buyer" tabindex="0" hidden :hidden="activeTab !== 'buyer'">
+            <div class="card">
+              <h3>Setup</h3>
+              {% if product.buyer_notes %}
+              <ul class="pd-feature-list">
+                {% for line in product.buyer_notes.splitlines() %}{% if line.strip() %}<li><span class="icon icon-sm" data-lucide="chevron-right" aria-hidden="true"></span>{{ line.strip() }}</li>{% endif %}{% endfor %}
+              </ul>
+              {% else %}
+              <p>See the <a href="{{ url_for('main.loader') }}">Loader Guide</a> for setup steps, or ask in the
+                <a href="{{ discord_public_url }}" target="_blank" rel="noopener">Discord</a> for a walkthrough.</p>
+              {% endif %}
+              {% if vc_specs %}
+              <h3>Requirements</h3>
+              <dl class="pd-reqs">
+                <div><dt>Anti-cheat</dt><dd>{{ vc_specs.ac }}</dd></div>
+                <div><dt>Operating system</dt><dd>{{ vc_specs.os }}</dd></div>
+                <div><dt>Processor</dt><dd>{{ vc_specs.cpu }}</dd></div>
+              </dl>
+              {% endif %}
+            </div>
+            <div class="card">
+              <h3>Good to know</h3>
+              <p>Keys are digital goods — sales are final once generated. See <a href="{{ url_for('main.faq') }}#faq-answer-9">FAQ: Do you refund?</a></p>
+              <p>No product guarantees zero enforcement risk. Use responsibly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Verified reviews (DB-backed, moderated) ── #}
+    <section class="pd-reviews" id="reviews" aria-labelledby="pd-reviews-heading">
+      <div class="pd-reviews-header">
+        <h2 id="pd-reviews-heading">Verified reviews</h2>
+        {% if review_avg %}
+        <p class="pd-reviews-summary"><span class="stars" aria-hidden="true">{{ '★' * (review_avg|round|int) }}{{ '☆' * (5 - (review_avg|round|int)) }}</span>{{ review_avg }} / 5 &middot; {{ reviews|length }} verified review{{ '' if reviews|length == 1 else 's' }}</p>
+        {% else %}<p class="text-muted">No verified reviews yet. Only buyers with a completed order or active key can review.</p>{% endif %}
+      </div>
+      {% if reviews %}
+      <div class="reviews-grid">{% for r in reviews %}{% include "partials/review_card.html" %}{% endfor %}</div>
+      {% endif %}
+      {% if can_review %}
+      <div class="review-form-card card">
+        <h3>Write a review</h3>
+        <form method="POST" action="{{ url_for('main.submit_review', slug=product.slug) }}" class="review-form" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="form-group">
+            <label for="review-rating" class="form-label">Rating</label>
+            <select name="rating" id="review-rating" class="form-select" required aria-describedby="review-rating-error">
+              <option value="5">5 — Excellent</option>
+              <option value="4">4 — Good</option>
+              <option value="3">3 — Average</option>
+              <option value="2">2 — Poor</option>
+              <option value="1">1 — Bad</option>
+            </select>
+            <div class="form-error" id="review-rating-error" role="alert" hidden></div>
+          </div>
+          <div class="form-group">
+            <label for="review-title" class="form-label">Title <span class="text-muted">(optional)</span></label>
+            <input type="text" name="title" id="review-title" class="form-input" maxlength="128" placeholder="Sum it up in a few words" aria-describedby="review-title-error">
+            <div class="form-error" id="review-title-error" role="alert" hidden></div>
+          </div>
+          <div class="form-group">
+            <label for="review-body" class="form-label">Your review</label>
+            <textarea name="body" id="review-body" class="form-input" rows="4" required minlength="10" placeholder="What worked, what didn't, how was setup?" aria-describedby="review-body-error"></textarea>
+            <div class="form-error" id="review-body-error" role="alert" hidden></div>
+          </div>
+          <button type="submit" class="btn btn-primary"><span class="icon icon-sm" data-lucide="send" aria-hidden="true"></span> Submit review</button>
+          <p class="form-hint">Reviews are moderated and appear once approved.</p>
+        </form>
+      </div>
+      {% endif %}    </section>
+
+    {% if related_cards %}
+    <section class="pd-related" aria-labelledby="pd-related-heading">
+      <h2 id="pd-related-heading">More in {{ product.game }}</h2>
+      <div class="product-grid">{% for c in related_cards %}{% include "partials/product_card.html" %}{% endfor %}</div>
+    </section>
+    {% endif %}
+  </div>
+
+  {# Mobile sticky bottom purchase bar — same states as the desktop panel. #}
+  <div class="mobile-buy-bar">
+    <div class="mobile-buy-bar__price">
+      <small x-text="currentVariant ? currentVariant.label : 'From'">From</small>
+      <strong class="tabular">&pound;<span x-text="currentPrice.toFixed(2)">{{ "%.2f"|format(selected_tier.price_pounds) if selected_tier else '0.00' }}</span></strong>
+    </div>
+    {% if current_user.is_authenticated %}
+    <button type="button" class="btn btn-primary btn-lg" @click="$el.closest('.product-page').querySelector('form')?.requestSubmit()">
+      <span class="icon icon-sm" data-lucide="shopping-cart" aria-hidden="true"></span>
+      <span x-text="buyLabel">Buy Now</span>
+    </button>
+    {% else %}
+    {# Anonymous (VAL-FUN-002): a real link, not a button wired to a doomed
+       checkout POST. Mirrors the desktop panel's sign-in action. #}
+    <a class="btn btn-primary btn-lg" href="{{ url_for('auth.login', next='/product/' ~ product.slug) }}">
+      <span class="icon icon-sm" data-lucide="log-in" aria-hidden="true"></span>
+      Sign in to buy
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

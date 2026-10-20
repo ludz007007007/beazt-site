@@ -1,0 +1,38 @@
+{#- The one product card. Expects `c` from utils/catalogue.py build_cards().
+    The title link is the card's only link; its ::after stretches over the
+    whole card so every pixel is clickable without duplicate links. -#}
+<article class="product-card{% if c.is_private %} product-card--private{% endif %}{% if c.out_of_stock %} product-card--soldout{% endif %}">
+  <div class="product-card__media">
+    {# Intrinsic 1200x675 matches the generated cover; lazy + async because
+       cards sit below the fold. data-fallback is wired by script.js (error
+       events don't bubble, so the listener captures) — no inline on*=. #}
+    <img src="{{ c.product.image_url or url_for('main.cheat_image', slug=c.slug) }}" alt="" loading="lazy" decoding="async" width="1200" height="675" data-fallback="{{ url_for('main.cheat_image', slug=c.slug) }}">
+  </div>
+  <div class="product-card__body">
+    <div class="product-card__tags">
+      {% with status=c.status, label=c.status_label %}{% include "partials/status_pill.html" %}{% endwith %}
+      {% if c.is_private %}{% with availability='private' %}{% include "partials/availability_badge.html" %}{% endwith %}{% endif %}
+      {% if c.out_of_stock %}{% with availability='sold_out' %}{% include "partials/availability_badge.html" %}{% endwith %}{% endif %}
+    </div>
+    <h3 class="product-card__title"><a class="product-card__link" href="{{ url_for('main.product_detail', slug=c.slug) }}">{{ c.name }}</a></h3>
+    <p class="product-card__game">{{ c.game }}</p>
+    <p class="product-card__fresh">
+      {%- if c.freshness.date -%}
+      <time datetime="{{ c.freshness.date.strftime('%Y-%m-%d') }}">{{ c.freshness.text }}</time>
+      {%- else -%}
+      {{ c.freshness.text }}
+      {%- endif -%}
+    </p>
+    {% if c.review_count %}
+    <p class="product-card__rating"><span aria-hidden="true">&#9733;</span> {{ c.review_avg }}<span class="sr-only"> out of 5</span> <span class="product-card__muted">from {{ c.review_count }} verified review{{ '' if c.review_count == 1 else 's' }}</span></p>
+    {% endif %}
+    <div class="product-card__footer">
+      {% if c.price_pounds is not none %}
+      <span class="product-card__price">From £{{ "%.2f"|format(c.price_pounds) }}</span>
+      {% if c.tier_count > 1 %}<span class="product-card__muted">{{ c.tier_count }} plans</span>{% endif %}
+      {% else %}
+      <span class="product-card__muted">No plans on sale yet</span>
+      {% endif %}
+    </div>
+  </div>
+</article>

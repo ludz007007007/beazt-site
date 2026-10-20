@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Products</h1>
+  <p>Manage products and their pricing tiers.</p>
+</div>
+
+<div class="admin-card">
+  <h2 class="admin-card-title">New Product</h2>
+  <form method="POST" action="{{ url_for('admin.create_product') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="admin-form-grid admin-form-grid--end">
+      <div class="form-group">
+        <label class="form-label" for="new-product-name">Name</label>
+        <input class="form-input" type="text" id="new-product-name" name="name" placeholder="e.g. Rust External" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-slug">Slug <span class="form-hint">(auto if empty)</span></label>
+        <input class="form-input" type="text" id="new-product-slug" name="slug" placeholder="rust-external">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-source">Key Source</label>
+        <select class="form-select" id="new-product-source" name="key_source">
+          <option value="chairfbi">ChairFBI API</option>
+          <option value="license">Project Infinity (API)</option>
+          <option value="pool">Pool Only</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-visibility">Visibility</label>
+        <select class="form-select" id="new-product-visibility" name="visibility">
+          <option value="public">Public</option>
+          <option value="private">Private (top of page)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-game">Game / Category <span class="form-hint">(groups on homepage)</span></label>
+        <input class="form-input" type="text" id="new-product-game" name="game" placeholder="e.g. Rust">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-cf-id">ChairFBI Cheat ID</label>
+        <input class="form-input" type="text" id="new-product-cf-id" name="chairfbi_cheat_id" placeholder="e.g. rust-external">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-product-app-id">License App ID</label>
+        <input class="form-input" type="text" id="new-product-app-id" name="license_api_app_id" placeholder="App ID from license dashboard">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create Product</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="admin-toolbar">
+  <a href="{{ url_for('admin.export_products') }}" class="btn-xs btn-success-sm">Export JSON</a>
+  <form method="POST" action="{{ url_for('admin.import_products') }}" enctype="multipart/form-data" class="admin-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input class="admin-file" type="file" name="products_file" accept=".json">
+    <button type="submit" class="btn-xs btn-secondary">Import JSON</button>
+  </form>
+  <button type="submit" form="bulk-form" name="action_delete_selected" value="1"
+          data-confirm="Delete the selected product(s) and their keys?" data-confirm-title="Delete selected products"
+          data-require-checked="input[name=product_ids]"
+          class="btn-xs btn-danger">Delete Selected</button>
+  <button type="submit" form="bulk-form" name="action_delete_all" value="1"
+          data-confirm="Delete ALL products? Every product, tier and key association will be removed." data-confirm-title="Delete all products"
+          data-check-all="product_ids"
+          class="btn-xs btn-danger">Delete All</button>
+</div>
+
+<form method="POST" action="{{ url_for('admin.bulk_delete_products') }}" id="bulk-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<table class="admin-table">
+  <thead><tr><th class="admin-col-check"><input type="checkbox" data-select-all="form" aria-label="Select all products"></th><th>ID</th><th>Name</th><th>Slug</th><th>Private</th><th>Source</th><th>Visibility</th><th>CF Cheat ID</th><th>Tiers</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for p in products %}
+    <tr>
+      <td><input type="checkbox" name="product_ids" value="{{ p.id }}" data-bulk-item aria-label="Select {{ p.name }}"></td>
+      <td>{{ p.id }}</td>
+      <td>{{ p.name }}</td>
+      <td><code>{{ p.slug }}</code></td>
+      <td>{{ 'Yes' if p.is_private else 'No' }}</td>
+      <td><span class="badge-sm {{ 'badge-green' if p.key_source == 'chairfbi' else 'badge-blue' }}">{{ 'Infinity' if p.license_api_app_id else p.key_source }}</span></td>
+      <td><span class="badge-sm {{ 'badge-green' if p.visibility == 'private' else 'badge-blue' }}">{{ p.visibility }}</span></td>
+      <td><code>{{ p.chairfbi_cheat_id or '-' }}</code></td>
+      <td>{{ p.tiers.count() }}</td>
+      <td>
+        <div class="admin-actions">
+          <a href="{{ url_for('admin.product_tiers', product_id=p.id) }}" class="btn-xs">Tiers</a>
+          <a href="{{ url_for('admin.product_keys', product_id=p.id) }}" class="btn-xs">Keys</a>
+          <button type="submit" form="delete-product-{{ p.id }}" class="btn-xs btn-danger">Del</button>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</form>
+
+{# Per-row delete forms live outside the bulk form: a form nested inside
+   another form is silently dropped by browsers, which would have the row
+   button submit the bulk form instead. Buttons above reference them via
+   their form="delete-product-<id>" attribute. #}
+<div class="admin-hidden-forms">
+  {% for p in products %}
+  <form method="POST" id="delete-product-{{ p.id }}" action="{{ url_for('admin.delete_product', product_id=p.id) }}"
+        data-confirm="Delete {{ p.name }} and all associated keys and orders?" data-confirm-title="Delete product">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  </form>
+  {% endfor %}
+</div>
+{% endblock %}

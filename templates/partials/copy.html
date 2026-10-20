@@ -1,0 +1,8 @@
+{# ── Canonical sitewide copy (single source of truth) ─────────────────────
+   Delivery promise is quoted verbatim from the design-direction copy canon
+   (§7). Every surface that references delivery timing imports this macro —
+   never paraphrase it and never state a different time window (retired
+   wording is test-enforced in tests/test_content_pages.py).
+   Usage: {% from "partials/copy.html" import delivery_promise %}
+#}
+{% macro delivery_promise() %}Your key appears in your account the moment payment is confirmed — usually within seconds.{% endmacro %}

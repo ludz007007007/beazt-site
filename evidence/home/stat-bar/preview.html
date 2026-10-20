@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05070B">
+  <title>BEAZT — Stat bar + hero stats preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../static/css/style.css?v=6">
+  <style>
+    body { background: var(--bg-base); }
+  </style>
+</head>
+<body>
+  <div class="main-content" id="main-content">
+    <!-- Sections rendered exactly as templates/index.html emits them for an
+         anonymous visitor with the current (order-less) database. Stat values
+         are STATIC marketing claims marked in the template comments. -->
+    <section class="hero-main" style="min-height:auto;">
+      <div class="hero-grid-pattern" aria-hidden="true"></div>
+      <div class="container hero-main-inner">
+        <span class="hero-pill">
+          <span class="hero-pill-dot"></span>
+          Systems Online &middot; Instant Delivery
+        </span>
+        <h1 class="hero-brand">BEAZT</h1>
+        <p class="hero-line">Private access. Live delivery. Stream-proof legit stack.</p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-val" data-count="2400" data-suffix="+">2,400+</span>
+            <span class="hero-stat-label">Orders Fulfilled</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-val" data-count="99.9" data-suffix="%">99.9%</span>
+            <span class="hero-stat-label">Service Uptime</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-val" data-count="15" data-suffix="s">&lt;15s</span>
+            <span class="hero-stat-label">Key Delivery</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-val" data-count="24" data-suffix="/7">24/7</span>
+            <span class="hero-stat-label">Operator Desk</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stat-bar" aria-label="Key store metrics">
+      <div class="container stat-bar-inner">
+        <div class="stat-bar-item">
+          <span class="stat-bar-num" data-count="2400" data-suffix="+">2,400+</span>
+          <span class="stat-bar-label">Fulfilled Orders</span>
+        </div>
+        <div class="stat-bar-item">
+          <span class="stat-bar-num" data-count="4.9">4.9</span>
+          <span class="stat-bar-label">Avg Buyer Rating</span>
+        </div>
+        <div class="stat-bar-item">
+          <span class="stat-bar-num" data-count="2" data-suffix="m">&lt;2m</span>
+          <span class="stat-bar-label">Avg Setup Time</span>
+        </div>
+        <div class="stat-bar-item">
+          <span class="stat-bar-num" data-count="100" data-suffix="%">100%</span>
+          <span class="stat-bar-label">Stream-Proof</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

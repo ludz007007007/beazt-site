@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Orders</h1>
+  <p>Every checkout across both gateways.</p>
+</div>
+
+{% with chips = [
+  {'label': 'All', 'href': url_for('admin.orders'), 'active': not status_filter},
+  {'label': 'Completed', 'href': url_for('admin.orders', status='completed'), 'active': status_filter == 'completed'},
+  {'label': 'Pending', 'href': url_for('admin.orders', status='pending'), 'active': status_filter == 'pending'},
+  {'label': 'Awaiting Keys', 'href': url_for('admin.orders', status='awaiting_keys'), 'active': status_filter == 'awaiting_keys'}
+], chips_label = 'Order status' %}
+{% include "partials/admin_filter_chips.html" %}
+{% endwith %}
+
+{% if status_filter == 'awaiting_keys' and orders.items %}
+<div class="cf-alert cf-alert-warn">
+  <span class="icon icon-sm" data-lucide="inbox"></span>
+  These orders are waiting for pool keys. Upload keys to the product's Key Pool page.
+  {% for p in pool_products %}
+    {% set count = pool_empty.get(p.id, 0) %}
+    <a href="{{ url_for('admin.product_keys', product_id=p.id) }}">{{ p.name }} ({{ count }} in pool)</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<table class="admin-table">
+  <thead>
+    <tr><th>ID</th><th>User</th><th>Product</th><th>Tier</th><th>Price</th><th>Status</th><th>Date</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for o in orders.items %}
+    <tr>
+      <td><a href="{{ url_for('admin.order_detail', order_id=o.id) }}">#{{ o.id }}</a></td>
+      <td>{{ o.user.username if o.user else '-' }}</td>
+      <td>{{ o.tier.product.name if o.tier and o.tier.product else '-' }}</td>
+      <td>{{ o.tier.label if o.tier else '-' }}</td>
+      <td>&pound;{{ "%.2f"|format(o.tier.price_pounds) if o.tier else '-' }}</td>
+      <td>
+        <span class="badge-sm {{ 'badge-green' if o.status == 'completed' else ('badge-blue' if o.status == 'pending' else ('badge-orange' if o.status == 'awaiting_keys' else '')) }}">
+          {{ o.status.replace('_', ' ') }}
+        </span>
+      </td>
+      <td>{{ o.created_at.strftime('%d %b %Y %H:%M') }}</td>
+      <td>
+        <div class="admin-actions">
+        {% if o.status == 'awaiting_keys' %}
+        <form method="POST" action="{{ url_for('admin.fulfill_order', order_id=o.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-xs btn-primary">Fulfill</button>
+        </form>
+        {% endif %}
+        <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="btn-xs">View</a>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if not orders.items %}
+{% if status_filter %}
+{% with empty_icon = 'receipt', empty_title = 'No orders with this status', empty_text = 'Completed checkouts from both gateways appear here.', empty_action_href = url_for('admin.orders'), empty_action_label = 'Clear filters' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% else %}
+{% with empty_icon = 'receipt', empty_title = 'No orders yet', empty_text = 'Completed checkouts from both gateways appear here.' %}
+{% include "partials/empty_state.html" %}
+{% endwith %}
+{% endif %}
+{% endif %}
+
+{% with pg = orders, pg_params = {'status': status_filter} if status_filter else {} %}
+{% include "partials/admin_pagination.html" %}
+{% endwith %}
+{% endblock %}

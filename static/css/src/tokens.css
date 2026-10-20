@@ -1,0 +1,241 @@
+/* ==========================================================================
+   BEAZT design tokens — SIGNAL v2
+   Three layers: primitives (raw values) -> semantic (what a value means)
+   -> component (sizing/shape shared by the component library).
+   Pages and components should only reference semantic or component tokens.
+
+   Contrast law (pytest-enforced, tests/test_design_system.py): every token
+   used for meaningful text reaches >= 4.5:1 on every surface it is paired
+   with. --text-faint is decorative only (dividers, disabled hints) and never
+   carries information.
+   ========================================================================== */
+
+:root {
+  /* ---- Primitives: graphite neutrals (no blue cast) ---------------------- */
+  --graphite-950: #0B0D10;
+  --graphite-900: #101318;
+  --graphite-850: #161A20;
+  --graphite-800: #1C2128;
+  --graphite-750: #232931;
+  --graphite-700: #2A313A;
+
+  /* ---- Primitives: warm bone text ramp ----------------------------------- */
+  --bone-50: #F2F0EA;
+  --bone-300: #B4BAC4;
+  --bone-500: #8E96A3;
+  --bone-600: #5C6470;
+  --grey-400: #98A0AC;
+
+  /* ---- Primitives: signal amber (brand accent) --------------------------- */
+  --amber-400: #F2B558;
+  --amber-500: #E8A33D;
+  --amber-600: #CE8B2D;
+  --amber-ink: #171310;
+
+  /* ---- Primitives: status family ----------------------------------------- */
+  --emerald-400: #46D08C;
+  --blue-400: #5FA8E8;
+  --red-400: #F0575F;
+  --orange-400: #F59A4A;
+
+  /* ---- Semantic: surfaces ------------------------------------------------- */
+  --bg-void: var(--graphite-950);
+  --bg-base: var(--graphite-900);
+  --bg-elevated: var(--graphite-850);
+  --bg-surface: var(--graphite-800);
+  --bg-surface-hover: var(--graphite-750);
+  --bg-inset: var(--graphite-950);
+  --bg-overlay: rgba(11, 13, 16, 0.78);
+
+  /* ---- Semantic: text ----------------------------------------------------- */
+  --text-primary: var(--bone-50);
+  --text-secondary: var(--bone-300);
+  --text-muted: var(--bone-500);
+  --text-faint: var(--bone-600);
+
+  /* ---- Semantic: hairline borders ---------------------------------------- */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-default: rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.17);
+
+  /* ---- Semantic: accent. Reserved for primary CTAs, links, active nav and
+     price highlights. Never used for glows or decorative washes. ---------- */
+  --accent: var(--amber-500);
+  --accent-hover: var(--amber-400);
+  --accent-pressed: var(--amber-600);
+  --on-accent: var(--amber-ink);
+  --accent-tint: rgba(232, 163, 61, 0.12);
+  --accent-border: rgba(232, 163, 61, 0.40);
+  --link: var(--amber-500);
+  --link-hover: var(--amber-400);
+
+  /* ---- Semantic: status. Always paired with a dot + text label. ---------- */
+  --status-undetected: var(--emerald-400);
+  --status-undetected-bg: rgba(70, 208, 140, 0.10);
+  --status-undetected-border: rgba(70, 208, 140, 0.28);
+  --status-updating: var(--blue-400);
+  --status-updating-bg: rgba(95, 168, 232, 0.10);
+  --status-updating-border: rgba(95, 168, 232, 0.28);
+  --status-detected: var(--red-400);
+  --status-detected-bg: rgba(240, 87, 95, 0.10);
+  --status-detected-border: rgba(240, 87, 95, 0.28);
+  --status-risky: var(--orange-400);
+  --status-risky-bg: rgba(245, 154, 74, 0.10);
+  --status-risky-border: rgba(245, 154, 74, 0.28);
+  --status-unknown: var(--grey-400);
+  --status-unknown-bg: rgba(152, 160, 172, 0.10);
+  --status-unknown-border: rgba(152, 160, 172, 0.28);
+
+  /* Feedback aliases (forms, toasts, badges) */
+  --success: var(--status-undetected);
+  --success-bg: var(--status-undetected-bg);
+  --success-border: var(--status-undetected-border);
+  --info: var(--status-updating);
+  --info-bg: var(--status-updating-bg);
+  --info-border: var(--status-updating-border);
+  --danger: var(--status-detected);
+  --danger-bg: var(--status-detected-bg);
+  --danger-border: var(--status-detected-border);
+  --warning: var(--status-risky);
+  --warning-bg: var(--status-risky-bg);
+  --warning-border: var(--status-risky-border);
+
+  /* ---- Focus ring: 2px accent ring offset from the element --------------- */
+  --focus-ring-color: var(--accent);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring: 0 0 0 var(--focus-ring-offset) var(--bg-base), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring-color);
+
+  /* ---- Typography ---------------------------------------------------------
+     Display face is the self-hosted Archivo variable (wght 100-900,
+     wdth 62-125, SIL OFL). Display roles set the width axis via
+     font-stretch: headings/hero use --font-stretch-display, eyebrows and
+     micro-labels use the wider --font-stretch-eyebrow.
+
+     Numeric convention: wherever numbers stack or compare (prices, keys,
+     timestamps, table numerics) text uses the mono stack, which carries
+     font-variant-numeric: tabular-nums by default (base.css); the .tabular
+     utility applies it to any other context.
+     ------------------------------------------------------------------------ */
+  --font-display: "Archivo", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --font-stretch-display: 115%;
+  --font-stretch-eyebrow: 120%;
+  --font-weight-display: 640;
+
+  --text-xs: 0.75rem;     /* 12 */
+  --text-sm: 0.875rem;    /* 14 */
+  --text-base: 1rem;      /* 16 */
+  --text-lg: 1.125rem;    /* 18 */
+  --text-xl: 1.25rem;     /* 20 */
+  --text-2xl: 1.5rem;     /* 24 */
+  --text-3xl: 1.875rem;   /* 30 */
+  --text-4xl: 2.25rem;    /* 36 */
+  --text-5xl: 3rem;       /* 48 */
+  --text-display: clamp(2.5rem, 1.5rem + 4vw, 3.75rem);
+
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  --tracking-display: -0.01em;
+  --tracking-caps: 0.08em;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* ---- Spacing (4px grid) ------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ---- Shape -------------------------------------------------------------- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* Neutral elevation only; no coloured glows. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.40), 0 4px 8px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 18px 40px rgba(0, 0, 0, 0.45), 0 6px 12px rgba(0, 0, 0, 0.30);
+  --shadow-2xl: 0 28px 64px rgba(0, 0, 0, 0.55), 0 10px 20px rgba(0, 0, 0, 0.35);
+
+  /* ---- Motion ------------------------------------------------------------- */
+  --duration-fast: 150ms;    /* hover */
+  --duration-normal: 250ms;  /* state change */
+  --duration-slow: 400ms;    /* reveals (max) */
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --ease-smooth: var(--ease-standard);
+  --ease-out: var(--ease-standard);
+  --reveal-distance: 12px;
+
+  /* ---- Layering ----------------------------------------------------------- */
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-sticky: 100;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+
+  /* ---- Layout ------------------------------------------------------------- */
+  --container-max: 1200px;
+  --container-sm: 880px;
+  --container-lg: 1360px;
+  --container-padding: var(--space-6);
+  --header-height: 64px;
+
+  /* ---- Component tokens --------------------------------------------------- */
+  --control-height: 44px;
+  --control-height-sm: 36px;
+  --control-height-lg: 52px;
+  --tap-target: 44px;
+
+  --button-radius: var(--radius-md);
+  --button-font-size: var(--text-sm);
+  --button-font-weight: var(--font-semibold);
+  --button-padding-x: var(--space-5);
+
+  --input-bg: var(--bg-inset);
+  --input-border: var(--border-default);
+  --input-border-hover: var(--border-strong);
+  --input-radius: var(--radius-md);
+  --input-padding-x: var(--space-4);
+
+  --card-bg: var(--bg-elevated);
+  --card-border: var(--border-subtle);
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-6);
+  --card-padding-sm: var(--space-4);
+
+  --badge-radius: var(--radius-full);
+  --opacity-disabled: 0.5;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --container-padding: var(--space-4);
+  }
+}

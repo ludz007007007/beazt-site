@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% from "partials/copy.html" import delivery_promise %}
+{% block title %}BEAZT - Verified Reviews{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <header class="page-header reveal">
+      <p class="section-eyebrow">Proof</p>
+      <h1 class="t-h1">Verified buyer feedback</h1>
+      <p class="text-secondary">Reviews on this page come only from accounts with a completed order, and each one passes moderation before it appears.</p>
+    </header>
+
+    {# HOW TRUST IS EARNED — verification mechanics, not testimonials. Each
+       card states a checkable fact about the review pipeline
+       (routes/main.py _user_can_review / submit_review moderation) or the
+       canonical delivery promise. NO-FABRICATED-REVIEWS: no invented quotes,
+       counts, or ratings live in this markup — the summary below is computed
+       from the reviews table by the feedback() route. #}
+    <div class="proof-grid reveal">
+      <article class="proof-card">
+        <span class="proof-card__icon" aria-hidden="true"><span class="icon" data-lucide="badge-check"></span></span>
+        <h3>Completed order required</h3>
+        <p>Only an account with a completed order or an assigned key for a product can review it.</p>
+      </article>
+      <article class="proof-card">
+        <span class="proof-card__icon" aria-hidden="true"><span class="icon" data-lucide="scan-search"></span></span>
+        <h3>Moderated before publishing</h3>
+        <p>Every review is checked before it appears. Pending and rejected reviews never render.</p>
+      </article>
+      <article class="proof-card">
+        <span class="proof-card__icon" aria-hidden="true"><span class="icon" data-lucide="history"></span></span>
+        <h3>Real dates, newest first</h3>
+        <p>Reviews carry their submission date and are listed newest first — nothing is reordered or boosted.</p>
+      </article>
+      <article class="proof-card">
+        <span class="proof-card__icon" aria-hidden="true"><span class="icon" data-lucide="receipt-text"></span></span>
+        <h3>Delivery, on record</h3>
+        <p>{{ delivery_promise() }}</p>
+      </article>
+    </div>
+
+    <section class="feedback-reviews" aria-labelledby="feedback-reviews-heading">
+      <div class="feedback-reviews-head reveal">
+        <h2 class="t-h2" id="feedback-reviews-heading">Verified reviews</h2>
+        {% if rating_avg %}
+        {# Summary computed by the feedback() route from approved reviews only. #}
+        <p class="rating-summary">
+          <span class="stars" role="img" aria-label="Rated {{ rating_avg }} out of 5"><span aria-hidden="true">{{ '★' * (rating_avg|round|int) }}{{ '☆' * (5 - (rating_avg|round|int)) }}</span></span>
+          <span class="rating-summary__text"><strong class="rating-summary__avg">{{ rating_avg }}</strong> / 5 &middot; {{ reviews|length }} verified review{{ '' if reviews|length == 1 else 's' }}</span>
+        </p>
+        {% endif %}
+      </div>
+      {% if reviews %}
+      <div class="reviews-grid">
+        {% for r in reviews %}{% include "partials/review_card.html" %}{% endfor %}
+      </div>
+      {% else %}
+      <div class="reveal">
+        {% set empty_icon = 'message-square-quote' %}
+        {% set empty_aria_label = 'No verified reviews yet' %}
+        {% set empty_title = 'No verified reviews yet' %}
+        {% set empty_text = 'Reviews appear here once verified purchases are submitted and pass moderation. In the meantime, ask current buyers about their experience in Discord.' %}
+        {% set empty_action_href = discord_public_url %}
+        {% set empty_action_label = 'Ask buyers in Discord' %}
+        {% set empty_action_class = 'btn-primary' %}
+        {% set empty_action_external = true %}
+        {% set empty_action2_href = url_for('main.cheats') %}
+        {% set empty_action2_label = 'Browse products' %}
+        {% set empty_action2_class = 'btn-ghost' %}
+        {% include "partials/empty_state.html" %}
+      </div>
+      {% endif %}
+      <p class="feedback-footnote reveal">Reviews describe real buyer experience and do not guarantee outcomes. Read the <a href="{{ url_for('main.faq') }}">FAQ</a> and <a href="{{ url_for('main.terms') }}">terms</a> before purchasing.</p>
+    </section>
+  </div>
+</section>
+{% endblock %}

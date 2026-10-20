@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ game.name }} cheats | BEAZT{% endblock %}
+{% block meta_description %}{{ game.count }} BEAZT product{{ '' if game.count == 1 else 's' }} for {{ game.name }}, each with current detection status, last verified date and starting price.{% endblock %}
+{% block og_image %}{{ url_for('main.game_image', game_slug=game.slug, _external=True) }}{% endblock %}
+{% block twitter_image %}{{ url_for('main.game_image', game_slug=game.slug, _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ url_for('main.index') }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{ url_for('main.games_index') }}">Games</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ game.name }}</span>
+    </nav>
+
+    {#- Per-game art treatment: graphite band, wordmark set in Archivo
+        expanded caps, left-edge status segments + ratio strip (one real
+        segment per product), deterministic motif (crc32 of the slug). -#}
+    <header class="game-hero game-hero--m{{ game.motif }}" aria-labelledby="game-hero-title">
+      <div class="game-hero__edge" aria-hidden="true">
+        {%- for status, _label in game.segments -%}
+        <span class="game-hero__edge-seg game-hero__edge-seg--{{ status }}"></span>
+        {%- endfor -%}
+      </div>
+      {% with motif = game.motif %}{% include "partials/game_motif.html" %}{% endwith %}
+      <div class="game-hero__body">
+        <p class="section-eyebrow">Game &middot; {{ game.count }} product{{ '' if game.count == 1 else 's' }}</p>
+        <h1 class="game-hero__title" id="game-hero-title">{{ game.name }}</h1>
+        {% with g = game %}{% include "partials/status_ratio.html" %}{% endwith %}
+        <p class="game-hero__lede">{{ game.undetected }} of {{ game.count }} {{ 'product is' if game.count == 1 else 'products are' }} undetected right now{% if game.price_min is not none %} &mdash; plans from <span class="game-hero__price">£{{ "%.2f"|format(game.price_min) }}</span>{% endif %}{% if game.tier_count %}, across {{ game.tier_count }} plan{{ '' if game.tier_count == 1 else 's' }}{% endif %}.</p>
+        <div class="game-hero__actions">
+          <a href="#game-products" class="btn btn-primary">Browse {{ game.name }} cheats</a>
+          <a href="{{ url_for('main.cheats', game=game.slug) }}" class="btn btn-ghost">Filter in the catalogue</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="game-products" id="game-products" aria-labelledby="game-products-title">
+      <div class="section-row">
+        <h2 class="t-h2" id="game-products-title">Products for {{ game.name }}</h2>
+        <p class="filter-bar__count" role="status">{{ cards|length }} product{{ '' if cards|length == 1 else 's' }}</p>
+      </div>
+      <div class="product-grid">
+        {% for c in cards %}{% include "partials/product_card.html" %}{% endfor %}
+      </div>
+    </section>
+
+    <div class="page-footer-actions">
+      <a href="{{ url_for('main.games_index') }}" class="btn btn-ghost">All games</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

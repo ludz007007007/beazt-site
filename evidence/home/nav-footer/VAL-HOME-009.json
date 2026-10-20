@@ -1,0 +1,242 @@
+{
+  "assertion": "VAL-HOME-009 + footer expectedBehavior (page-navigation-and-footer)",
+  "passed": 47,
+  "total": 47,
+  "results": [
+    {
+      "name": "header transparent at top",
+      "ok": true,
+      "detail": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "name": "header border transparent at top",
+      "ok": true,
+      "detail": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "name": "header starts at top of page (no layout-space canvas)",
+      "ok": true,
+      "detail": "top=0"
+    },
+    {
+      "name": "header is sticky (top=0 after scroll)",
+      "ok": true,
+      "detail": "top=0"
+    },
+    {
+      "name": "scrolled class applied after scroll",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "scrolled header uses dark translucent bg",
+      "ok": true,
+      "detail": "rgba(5, 7, 11, 0.85)"
+    },
+    {
+      "name": "scrolled header has backdrop blur",
+      "ok": true,
+      "detail": "blur(24px) saturate(1.8)/undefined"
+    },
+    {
+      "name": "hairline bottom border is blue accent",
+      "ok": true,
+      "detail": "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(22, 139, 255, 0.15) 15%, rgba(22, 139, 25"
+    },
+    {
+      "name": "online indicator visible in navbar",
+      "ok": true,
+      "detail": "\"systems online\" visible=true"
+    },
+    {
+      "name": "desktop nav link Home -> /",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "desktop nav link Store -> /cheats",
+      "ok": true,
+      "detail": "/cheats"
+    },
+    {
+      "name": "desktop nav link Proof -> /feedback",
+      "ok": true,
+      "detail": "/feedback"
+    },
+    {
+      "name": "desktop nav link FAQ -> /faq",
+      "ok": true,
+      "detail": "/faq"
+    },
+    {
+      "name": "desktop nav link Loader -> /loader",
+      "ok": true,
+      "detail": "/loader"
+    },
+    {
+      "name": "desktop nav link Login -> /auth/login",
+      "ok": true,
+      "detail": "/auth/login"
+    },
+    {
+      "name": "desktop Discord link correct + new tab",
+      "ok": true,
+      "detail": "https://discord.gg/bU4tFA43KK"
+    },
+    {
+      "name": "primary CTA is Sign Up -> /auth/signup",
+      "ok": true,
+      "detail": "SIGN UP -> /auth/signup"
+    },
+    {
+      "name": "active endpoint highlighted",
+      "ok": true,
+      "detail": "Home"
+    },
+    {
+      "name": "skip link is first tab stop",
+      "ok": true,
+      "detail": "skip-link"
+    },
+    {
+      "name": "footer tagline is Premium Gaming Enhancement",
+      "ok": true,
+      "detail": "Premium Gaming Enhancement"
+    },
+    {
+      "name": "footer shows BEAZT logo",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "footer has Legal/Support/Community groups",
+      "ok": true,
+      "detail": "[\"legal\",\"support\",\"community\"]"
+    },
+    {
+      "name": "footer link Terms of Service -> /terms",
+      "ok": true,
+      "detail": "/terms"
+    },
+    {
+      "name": "footer link Privacy Policy -> /privacy",
+      "ok": true,
+      "detail": "/privacy"
+    },
+    {
+      "name": "footer link FAQ -> /faq",
+      "ok": true,
+      "detail": "/faq"
+    },
+    {
+      "name": "footer link Reviews -> /feedback",
+      "ok": true,
+      "detail": "/feedback"
+    },
+    {
+      "name": "footer link Setup Guide -> /loader",
+      "ok": true,
+      "detail": "/loader"
+    },
+    {
+      "name": "footer Discord link correct + new tab",
+      "ok": true,
+      "detail": "https://discord.gg/bU4tFA43KK"
+    },
+    {
+      "name": "footer has subtle blue glow",
+      "ok": true,
+      "detail": "radial-gradient(50% 100% at 50% 0%, rgba(22, 139, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%)"
+    },
+    {
+      "name": "footer top border shine is blue",
+      "ok": true,
+      "detail": "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(22, 139, 255, 0.15) 15%, rgba(22, 139, 25"
+    },
+    {
+      "name": "no console errors (desktop)",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "desktop nav links hidden on mobile",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hamburger visible and 44px touch target",
+      "ok": true,
+      "detail": "{\"w\":44,\"h\":44}"
+    },
+    {
+      "name": "online indicator compact (dot) on mobile",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "footer tagline visible on mobile",
+      "ok": true,
+      "detail": "block"
+    },
+    {
+      "name": "mobile menu opens",
+      "ok": true,
+      "detail": "menu=1 overlay=1"
+    },
+    {
+      "name": "burger aria-expanded=true when open",
+      "ok": true,
+      "detail": "true"
+    },
+    {
+      "name": "body scroll locked while menu open",
+      "ok": true,
+      "detail": "hidden"
+    },
+    {
+      "name": "menu items have staggered animation delays",
+      "ok": true,
+      "detail": "[0,0.04,0.08,0.12,0.16]"
+    },
+    {
+      "name": "menu items settle visible",
+      "ok": true,
+      "detail": "{\"opacity\":\"1\",\"transform\":\"matrix(1, 0, 0, 1, 0, 0)\"}"
+    },
+    {
+      "name": "overlay click closes menu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Escape key closes menu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile menu has all sections (Home/Store/Proof/FAQ/Loader/Login/Sign Up)",
+      "ok": true,
+      "detail": "[\"/\",\"/cheats\",\"/feedback\",\"/faq\",\"/loader\",\"/auth/login\",\"/auth/signup\"]"
+    },
+    {
+      "name": "menu closes on link click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no horizontal scroll at 320px",
+      "ok": true,
+      "detail": "scrollWidth=320"
+    },
+    {
+      "name": "no horizontal scroll at 390px",
+      "ok": true,
+      "detail": "scrollWidth=390"
+    },
+    {
+      "name": "no console errors (mobile)",
+      "ok": true,
+      "detail": "[]"
+    }
+  ]
+}

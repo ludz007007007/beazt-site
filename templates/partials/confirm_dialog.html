@@ -1,0 +1,25 @@
+{#- Shared destructive-action confirm dialog. Included once (admin/base.html);
+    script.js's setupConfirmDialogs() fills the title and message from the
+    triggering form's data-confirm / data-confirm-title attributes and opens
+    it through the shared modal system. data-modal-static means the backdrop
+    click does NOT close it (destructive confirms, design-direction.md §4);
+    Escape, the close button and Cancel still do. The Confirm button carries
+    id="confirm-dialog-accept" — the JS hook that resumes the blocked submit. -#}
+<div class="modal" id="confirm-dialog" data-modal data-modal-static hidden role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-message">
+  <div class="modal-backdrop" data-modal-backdrop></div>
+  <div class="modal-panel modal-panel--sm" role="document" tabindex="-1">
+    <div class="modal-header">
+      <h2 class="modal-title" id="confirm-dialog-title">Please confirm</h2>
+      <button type="button" class="modal-close" data-modal-close aria-label="Close dialog">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-dialog__message" id="confirm-dialog-message"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirm-dialog-accept">Confirm</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,178 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>ChairFBI Integration</h1>
+  <p>Monitor balance, cheat statuses, and manage ChairFBI keys.</p>
+</div>
+
+{% if is_vercel and not kv_configured %}
+<div class="cf-alert cf-alert-error">
+  <span class="icon icon-sm" data-lucide="database"></span>
+  <strong>Persistence not configured.</strong> Products will disappear on refresh.
+  <a href="https://vercel.com/dashboard/stores/kv" target="_blank" rel="noopener">Create a Vercel KV database</a>, link it to this project, and redeploy.
+</div>
+{% endif %}
+
+{% if chairfbi_error %}
+<div class="cf-alert cf-alert-error">
+  <span class="icon icon-sm" data-lucide="triangle-alert"></span>
+  {{ chairfbi_error }}
+</div>
+{% else %}
+
+<div class="admin-grid-4 admin-grid-4--wide admin-stat-grid">
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">
+      {% if balance is not none %}
+        &euro;{{ balance }}
+      {% else %}
+        --
+      {% endif %}
+    </span>
+    <span class="admin-stat-label">Current Balance</span>
+    {% if balance_raw is defined and balance_raw is not none %}
+    <span class="admin-stat-sub" title="Exact value returned by the ChairFBI /api/store endpoint">API raw: {{ balance_raw }}</span>
+    {% endif %}
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ cheats|length }}</span>
+    <span class="admin-stat-label">Available Cheats</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ local_cf_keys|length }}</span>
+    <span class="admin-stat-label">Local CF Keys</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ recent_cf_keys|length }}</span>
+    <span class="admin-stat-label">Recent CF Keys (API)</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value admin-stat-value--sm">{{ vc_synced_count }} / {{ products|length }}</span>
+    <span class="admin-stat-label">VC Enriched</span>
+    {% if vc_rating %}
+    <span class="admin-stat-sub">Trustpilot: {{ vc_rating.value }}/5 ({{ vc_rating.count }} reviews)</span>
+    {% endif %}
+    {% if vc_last_sync %}
+    <span class="admin-stat-sub">Last: {{ vc_last_sync.strftime('%d %b %H:%M') }} UTC</span>
+    {% endif %}
+  </div>
+</div>
+
+{% if balance is not none and balance_raw is defined and balance_raw is not none and (balance|float != balance_raw|float) %}
+<div class="cf-alert cf-alert-warn">
+  <span class="icon icon-sm" data-lucide="alert-triangle"></span>
+  Displayed balance (&euro;{{ balance }}) differs in formatting from the raw API value ({{ balance_raw }}). Parsing may need attention.
+</div>
+{% endif %}
+{% if balance is not none and balance|float < 20 %}
+<div class="cf-alert cf-alert-warn">
+  <span class="icon icon-sm" data-lucide="alert-triangle"></span>
+  Balance is low (&euro;{{ balance }}). Top up via ChairFBI panel to keep key creation working.
+</div>
+{% endif %}
+{% if balance_error %}
+<div class="cf-alert cf-alert-error">
+  <span class="icon icon-sm" data-lucide="triangle-alert"></span>
+  Could not fetch balance: {{ balance_error }}
+</div>
+{% endif %}
+
+{% if cheats %}
+<div class="admin-card">
+  <div class="admin-toolbar">
+    <h2 class="admin-card-title">ChairFBI Cheat Status</h2>
+    <form method="POST" action="{{ url_for('admin.chairfbi_sync_venomcheats') }}" data-confirm="Sync all products with VenomCheats data? This will update features, images, and descriptions for matched products." data-confirm-title="Sync VC data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn-xs btn-primary">Sync VC Data</button>
+    </form>
+    <form method="POST" action="{{ url_for('admin.chairfbi_import_all') }}" class="admin-inline-form" data-confirm="Import all ChairFBI cheats as BEAZT products? Existing products will be skipped." data-confirm-title="Import all cheats">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="admin-note"><input type="checkbox" name="online_only" value="1" checked> Online only</label>
+      <button type="submit" class="btn-xs btn-primary">Import All as Products</button>
+    </form>
+  </div>
+  <table class="admin-table">
+    <thead><tr><th>Cheat</th><th>Status</th><th>Local Product Match</th><th></th></tr></thead>
+    <tbody>
+      {% for c in cheats %}
+      <tr>
+        <td><strong>{{ c.name if c.name else c.id }}</strong></td>
+        <td>
+          <span class="badge-sm {{ 'badge-green' if c.active else 'badge-red' }}">
+            {{ 'Online' if c.active else 'Offline' }}
+          </span>
+        </td>
+        <td>
+          {% set matched = namespace(found=None) %}
+          {% for p in products %}
+            {% if p.chairfbi_cheat_id and (p.chairfbi_cheat_id == c.id|string or p.chairfbi_cheat_id == c.name) %}
+              {% set matched.found = p %}
+            {% endif %}
+          {% endfor %}
+          {% if matched.found %}
+            <a href="{{ url_for('admin.product_tiers', product_id=matched.found.id) }}">{{ matched.found.name }}</a>
+          {% else %}
+            <span class="admin-note">Not linked</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if not matched.found %}
+          <form method="POST" action="{{ url_for('admin.chairfbi_import_one') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="cheat_id" value="{{ c.id }}">
+            <input type="hidden" name="cheat_name" value="{{ c.name if c.name else c.id }}">
+            <button type="submit" class="btn-xs btn-primary">Add</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if local_cf_keys %}
+<div class="admin-card">
+  <h2 class="admin-card-title">Local Keys with ChairFBI Link</h2>
+  <table class="admin-table">
+    <thead><tr><th>Key ID</th><th>CF Key ID</th><th>User</th><th>Product</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for k in local_cf_keys %}
+      <tr>
+        <td>{{ k.id }}</td>
+        <td><code>{{ k.chairfbi_key_id[:16] if k.chairfbi_key_id else '-' }}...</code></td>
+        <td>{{ k.user.username if k.user else '-' }}</td>
+        <td>{{ k.product.name if k.product else '-' }}</td>
+        <td><span class="badge-sm {{ 'badge-green' if k.is_active else 'badge-red' }}">{{ 'Active' if k.is_active else 'Revoked' }}</span></td>
+        <td>
+          <div class="admin-actions">
+          <form method="POST" action="{{ url_for('admin.chairfbi_hwid_reset', key_id=k.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-warn">HWID</button>
+          </form>
+          <form method="POST" action="{{ url_for('admin.chairfbi_vouche', key_id=k.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-success-sm">+6h</button>
+          </form>
+          {% if k.is_active %}
+          <form method="POST" action="{{ url_for('admin.chairfbi_delete', key_id=k.id) }}" data-confirm="Delete this UNUSED ChairFBI key? Balance is refunded. Started keys cannot be deleted directly." data-confirm-title="Delete ChairFBI key">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-danger">Delete</button>
+          </form>
+          <form method="POST" action="{{ url_for('admin.chairfbi_revoke', key_id=k.id) }}" data-confirm="Revoke this ChairFBI key?" data-confirm-title="Revoke key">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-xs btn-danger">Revoke CF</button>
+          </form>
+          {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

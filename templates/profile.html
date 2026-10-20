@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Profile | BEAZT{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <div class="page-header profile-narrow reveal">
+      <span class="section-eyebrow">Account</span>
+      <h1 class="t-h1">Profile</h1>
+      <p>Update the email on your account or change your password. Your keys and orders stay untouched.</p>
+    </div>
+
+    {# VAL-ACC-005: shared form system, inline field errors. Server-side
+       validation failures re-render this template with field_errors keyed
+       by field name; each slot below is a data-error-slot so script.js
+       client validation reuses the same element (aria-describedby stays
+       valid when the message is replaced client-side). #}
+    {% set email_error = field_errors.get("email") %}
+    {% set current_password_error = field_errors.get("current_password") %}
+    {% set new_password_error = field_errors.get("new_password") %}
+    {% set confirm_password_error = field_errors.get("confirm_password") %}
+    <div class="profile-narrow">
+      <form method="POST" class="card profile-form reveal" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <h2 class="profile-section-title">Account details</h2>
+
+        <div class="form-group">
+          <span class="form-label" id="profile-username-label">Username</span>
+          <div class="profile-static-value" aria-describedby="profile-username-help">{{ current_user.username }}</div>
+          <div class="form-hint" id="profile-username-help">Your username is fixed — it identifies your keys and orders.</div>
+        </div>
+
+        <div class="form-group{% if email_error %} has-error{% endif %}">
+          <label for="profile-email" class="form-label">Email</label>
+          <input type="email" id="profile-email" name="email" class="form-input{% if email_error %} is-error{% endif %}" value="{{ form_email or current_user.email }}" required autocomplete="email" placeholder="you@example.com" aria-describedby="profile-email-help profile-email-error" data-error-id="profile-email-error"{% if email_error %} aria-invalid="true"{% endif %}>
+          <div class="form-hint" id="profile-email-help">Used for order emails and password resets.</div>
+          <div class="form-error" id="profile-email-error" role="alert" data-error-slot{% if not email_error %} hidden{% endif %}>{% if email_error %}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>{{ email_error }}</span>{% endif %}</div>
+        </div>
+
+        <h2 class="profile-section-title">Change password</h2>
+
+        <div class="form-group{% if current_password_error %} has-error{% endif %}">
+          <label for="profile-current-password" class="form-label">Current password</label>
+          <div class="password-wrapper" x-data="{ showPassword: false }" :class="{ 'show-password': showPassword }">
+            <input :type="showPassword ? 'text' : 'password'" id="profile-current-password" name="current_password" class="form-input{% if current_password_error %} is-error{% endif %}" autocomplete="current-password" placeholder="Enter current password" aria-describedby="profile-current-password-help profile-current-password-error" data-error-id="profile-current-password-error"{% if current_password_error %} aria-invalid="true"{% endif %}>
+            <button type="button" class="password-toggle" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Hide password' : 'Show password'" :aria-pressed="showPassword">
+              <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          <div class="form-hint" id="profile-current-password-help">Required to confirm any change to this account.</div>
+          <div class="form-error" id="profile-current-password-error" role="alert" data-error-slot{% if not current_password_error %} hidden{% endif %}>{% if current_password_error %}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>{{ current_password_error }}</span>{% endif %}</div>
+        </div>
+
+        <div class="form-group{% if new_password_error %} has-error{% endif %}">
+          <label for="profile-new-password" class="form-label">New password</label>
+          <div class="password-wrapper" x-data="{ showNew: false }" :class="{ 'show-password': showNew }">
+            <input :type="showNew ? 'text' : 'password'" id="profile-new-password" name="new_password" class="form-input{% if new_password_error %} is-error{% endif %}" autocomplete="new-password" placeholder="New password" minlength="8" aria-describedby="profile-new-password-help profile-new-password-error" data-error-id="profile-new-password-error"{% if new_password_error %} aria-invalid="true"{% endif %}>
+            <button type="button" class="password-toggle" @click="showNew = !showNew" :aria-label="showNew ? 'Hide password' : 'Show password'" :aria-pressed="showNew">
+              <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          <div class="form-hint" id="profile-new-password-help">Minimum 8 characters — same rule as signup.</div>
+          <div class="form-error" id="profile-new-password-error" role="alert" data-error-slot{% if not new_password_error %} hidden{% endif %}>{% if new_password_error %}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>{{ new_password_error }}</span>{% endif %}</div>
+        </div>
+
+        <div class="form-group{% if confirm_password_error %} has-error{% endif %}">
+          <label for="profile-confirm-password" class="form-label">Confirm new password</label>
+          <div class="password-wrapper" x-data="{ showConfirm: false }" :class="{ 'show-password': showConfirm }">
+            <input :type="showConfirm ? 'text' : 'password'" id="profile-confirm-password" name="confirm_password" class="form-input{% if confirm_password_error %} is-error{% endif %}" autocomplete="new-password" placeholder="Re-enter new password" aria-describedby="profile-confirm-password-help profile-confirm-password-error" data-error-id="profile-confirm-password-error"{% if confirm_password_error %} aria-invalid="true"{% endif %}>
+            <button type="button" class="password-toggle" @click="showConfirm = !showConfirm" :aria-label="showConfirm ? 'Hide password' : 'Show password'" :aria-pressed="showConfirm">
+              <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          <div class="form-hint" id="profile-confirm-password-help">Must match your new password.</div>
+          <div class="form-error" id="profile-confirm-password-error" role="alert" data-error-slot{% if not confirm_password_error %} hidden{% endif %}>{% if confirm_password_error %}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>{{ confirm_password_error }}</span>{% endif %}</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <span class="icon" data-lucide="save" aria-hidden="true"></span> Save changes
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

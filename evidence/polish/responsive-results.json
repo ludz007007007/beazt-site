@@ -1,0 +1,298 @@
+{
+  "pages": [
+    {
+      "id": "home",
+      "path": "/",
+      "viewports": {
+        "320": {
+          "scrollWidth": 320,
+          "bodyScrollWidth": 320,
+          "innerWidth": 320,
+          "horizontalOverflow": false
+        },
+        "390": {
+          "scrollWidth": 390,
+          "bodyScrollWidth": 390,
+          "innerWidth": 390,
+          "horizontalOverflow": false
+        },
+        "768": {
+          "scrollWidth": 768,
+          "bodyScrollWidth": 768,
+          "innerWidth": 768,
+          "horizontalOverflow": false
+        },
+        "1440": {
+          "scrollWidth": 1440,
+          "bodyScrollWidth": 1440,
+          "innerWidth": 1440,
+          "horizontalOverflow": false
+        },
+        "1920": {
+          "scrollWidth": 1920,
+          "bodyScrollWidth": 1920,
+          "innerWidth": 1920,
+          "horizontalOverflow": false
+        }
+      },
+      "touchTargets320": {
+        "small": [
+          {
+            "tag": "a",
+            "cls": "nav-logo",
+            "text": "BEAZT",
+            "w": 129.4,
+            "h": 40
+          }
+        ],
+        "count": 1
+      },
+      "hamburger": {
+        "present": true,
+        "visible": true,
+        "ariaExpandedBefore": "false",
+        "opened": true,
+        "ariaExpandedAfter": "true",
+        "overlayVisible": true,
+        "linkNavigated": "http://127.0.0.1:5000/",
+        "closedAfterNav": true
+      },
+      "sticky": null,
+      "screenshots": [
+        "home-320x680.png",
+        "home-1440x900.png",
+        "home-320-hamburger-open.png"
+      ]
+    },
+    {
+      "id": "cheats",
+      "path": "/cheats",
+      "viewports": {
+        "320": {
+          "scrollWidth": 320,
+          "bodyScrollWidth": 320,
+          "innerWidth": 320,
+          "horizontalOverflow": false
+        },
+        "390": {
+          "scrollWidth": 390,
+          "bodyScrollWidth": 390,
+          "innerWidth": 390,
+          "horizontalOverflow": false
+        },
+        "768": {
+          "scrollWidth": 768,
+          "bodyScrollWidth": 768,
+          "innerWidth": 768,
+          "horizontalOverflow": false
+        },
+        "1440": {
+          "scrollWidth": 1440,
+          "bodyScrollWidth": 1440,
+          "innerWidth": 1440,
+          "horizontalOverflow": false
+        },
+        "1920": {
+          "scrollWidth": 1920,
+          "bodyScrollWidth": 1920,
+          "innerWidth": 1920,
+          "horizontalOverflow": false
+        }
+      },
+      "touchTargets320": {
+        "small": [
+          {
+            "tag": "a",
+            "cls": "nav-logo",
+            "text": "BEAZT",
+            "w": 129.4,
+            "h": 40
+          }
+        ],
+        "count": 1
+      },
+      "hamburger": {
+        "present": true,
+        "visible": true,
+        "ariaExpandedBefore": "false",
+        "opened": true,
+        "ariaExpandedAfter": "true",
+        "overlayVisible": true,
+        "linkNavigated": "http://127.0.0.1:5000/",
+        "closedAfterNav": true
+      },
+      "sticky": null,
+      "screenshots": [
+        "cheats-320x680.png",
+        "cheats-1440x900.png",
+        "cheats-320-hamburger-open.png"
+      ]
+    },
+    {
+      "id": "product",
+      "path": "/product/rust-external-private",
+      "viewports": {
+        "320": {
+          "scrollWidth": 320,
+          "bodyScrollWidth": 320,
+          "innerWidth": 320,
+          "horizontalOverflow": false
+        },
+        "390": {
+          "scrollWidth": 390,
+          "bodyScrollWidth": 390,
+          "innerWidth": 390,
+          "horizontalOverflow": false
+        },
+        "768": {
+          "scrollWidth": 768,
+          "bodyScrollWidth": 768,
+          "innerWidth": 768,
+          "horizontalOverflow": false
+        },
+        "1440": {
+          "scrollWidth": 1440,
+          "bodyScrollWidth": 1440,
+          "innerWidth": 1440,
+          "horizontalOverflow": false
+        },
+        "1920": {
+          "scrollWidth": 1920,
+          "bodyScrollWidth": 1920,
+          "innerWidth": 1920,
+          "horizontalOverflow": false
+        }
+      },
+      "touchTargets320": {
+        "small": [
+          {
+            "tag": "a",
+            "cls": "nav-logo",
+            "text": "BEAZT",
+            "w": 129.4,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "cls": "pd-back",
+            "text": "Back to Store",
+            "w": 105.3,
+            "h": 20.8
+          }
+        ],
+        "count": 2
+      },
+      "hamburger": {
+        "present": true,
+        "visible": true,
+        "ariaExpandedBefore": "false",
+        "opened": true,
+        "ariaExpandedAfter": "true",
+        "overlayVisible": true,
+        "linkNavigated": "http://127.0.0.1:5000/",
+        "closedAfterNav": true
+      },
+      "sticky": {
+        "desktop": {
+          "present": true,
+          "visible": true,
+          "afterScroll": {
+            "inViewport": false,
+            "position": "sticky",
+            "top": "96px"
+          }
+        },
+        "mobile": {
+          "display": "flex",
+          "position": "fixed",
+          "visible": true,
+          "pinnedBottom": true,
+          "rect": {
+            "top": 595,
+            "bottom": 680,
+            "h": 85
+          }
+        }
+      },
+      "screenshots": [
+        "product-320x680.png",
+        "product-1440x900.png",
+        "product-320-hamburger-open.png",
+        "product-1440-purchase-panel-scrolled.png",
+        "product-320-mobile-buy-bar.png"
+      ]
+    },
+    {
+      "id": "faq",
+      "path": "/faq",
+      "viewports": {
+        "320": {
+          "scrollWidth": 320,
+          "bodyScrollWidth": 320,
+          "innerWidth": 320,
+          "horizontalOverflow": false
+        },
+        "390": {
+          "scrollWidth": 390,
+          "bodyScrollWidth": 390,
+          "innerWidth": 390,
+          "horizontalOverflow": false
+        },
+        "768": {
+          "scrollWidth": 768,
+          "bodyScrollWidth": 768,
+          "innerWidth": 768,
+          "horizontalOverflow": false
+        },
+        "1440": {
+          "scrollWidth": 1440,
+          "bodyScrollWidth": 1440,
+          "innerWidth": 1440,
+          "horizontalOverflow": false
+        },
+        "1920": {
+          "scrollWidth": 1920,
+          "bodyScrollWidth": 1920,
+          "innerWidth": 1920,
+          "horizontalOverflow": false
+        }
+      },
+      "touchTargets320": {
+        "small": [
+          {
+            "tag": "a",
+            "cls": "nav-logo",
+            "text": "BEAZT",
+            "w": 129.4,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "cls": "faq-question",
+            "text": "Do you refund?",
+            "w": 286,
+            "h": 34.8
+          }
+        ],
+        "count": 2
+      },
+      "hamburger": {
+        "present": true,
+        "visible": true,
+        "ariaExpandedBefore": "false",
+        "opened": true,
+        "ariaExpandedAfter": "true",
+        "overlayVisible": true,
+        "linkNavigated": "http://127.0.0.1:5000/",
+        "closedAfterNav": true
+      },
+      "sticky": null,
+      "screenshots": [
+        "faq-320x680.png",
+        "faq-1440x900.png",
+        "faq-320-hamburger-open.png"
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,63 @@
+{
+  "featureId": "store-product-cards",
+  "milestone": "store",
+  "testedAt": "2026-09-16T00:00:00Z",
+  "method": "Local headless Playwright (node, repo node_modules playwright 1.63.0) against render-cheats.js mock server (127.0.0.1:5878) which renders the real templates/cheats.html + templates/base.html with representative mock data via a Jinja-subset evaluator. Flask cannot run on this machine (WindowsApps python stub EACCES, no Flask toolchain) — this is the AGENTS.md/user-testing.md approved fallback, same as the homepage milestone. Mock data mirrors the cheats() route contract including the new price-ascending tier order and cheat_statuses None (unknown) values.",
+  "assertions": {
+    "VAL-STORE-001": {
+      "assertion": "Store displays all products correctly (images, names, status badges, pricing; cards link to product detail)",
+      "results": [
+        {"check": "4 product cards render (2 private + 2 resold)", "observed": "4 a.cheat-card elements; multi-root Alpine x-if bug fixed per 4ca28c1 pattern (loops render directly)", "status": "pass"},
+        {"check": "card names match data", "observed": "BEAZT Private — Rust | BEAZT ESP Lite | Rust External — Resold | Fortnite External — Unknown Feed", "status": "pass"},
+        {"check": "all card images load with alt text", "observed": "img.complete && naturalWidth>0 && alt '<name> artwork' for all 4", "status": "pass"},
+        {"check": "all cards link to /product/<slug>", "observed": "hrefs /product/beazt-private-rust, /product/beazt-esp-lite, /product/rust-external-resold, /product/fortnite-external (matches real routes/main.py /product/<slug> route)", "status": "pass"},
+        {"check": "Updated timestamps", "observed": "3 cards show 'Updated Mon DD, YYYY' (Sep 01 2026 / Aug 20 2026 / Aug 30 2026); no-timestamp product omits the line", "status": "pass"}
+      ]
+    },
+    "VAL-STORE-002": {
+      "assertion": "Private products section shows BeaZt Private branding",
+      "results": [
+        {"check": "every private card has BeaZt Private badge", "observed": "2/2 cheat-card--private cards contain .cheat-source-badge--private with text 'BeaZt Private'", "status": "pass"},
+        {"check": "private section heading", "observed": "'Private Software' section header with BeaZt eyebrow renders above private grid", "status": "pass"}
+      ]
+    },
+    "VAL-STORE-003": {
+      "assertion": "Product cards show accurate status derived from database",
+      "results": [
+        {"check": "status badges match backend cheat_statuses dict", "observed": "status-online (dict value), status-online (dict override of product.status), status-maintenance (admin status preserved), status-undetected (dict None -> fallback)", "status": "pass"},
+        {"check": "badges have role=img + aria-label + sr-only text", "observed": "aria-label 'Status: <status>' and .sr-only span on every badge", "status": "pass"},
+        {"check": "unknown ChairFBI state documented", "observed": "_get_chairfbi_cheat_status returns None (no token / API failure) -> card renders 'undetected' badge, same fallback as homepage store-preview", "status": "pass"}
+      ]
+    },
+    "VAL-STORE-004": {
+      "assertion": "Product cards show pricing from pricing_tiers table; multiple tiers show 'From £X.XX' with duration format",
+      "results": [
+        {"check": "From price = CHEAPEST tier", "observed": "routes/main.py now orders product_tiers by price_pence ASC; card renders 'From £24.99 / 1d' for tiers 24.99/49.99/399.99 and 'From £9.00 / 1d' for 9.00/25.00 (cheapest first, duration attached)", "status": "pass"},
+        {"check": "full tier list on card (up to 3)", "observed": "'£49.99 / 30d' and '£399.99 / 365d ↻' (recurring arrow) listed after the From line", "status": "pass"},
+        {"check": "no-tier product fallback", "observed": "'No pricing yet' rendered for product with zero pricing_tiers rows", "status": "pass"},
+        {"check": "hover lift with blue glow", "observed": "hover computed transform translateY(-6px) (matrix(1,0,0,1,0,-6)); box-shadow glow incl. accent rgba(22,139,255,0.35)", "status": "pass"}
+      ]
+    }
+  },
+  "responsiveAndA11y": [
+    {"check": "no horizontal scrolling at 768/390/320px", "observed": "scrollWidth - clientWidth = 0 at all three widths", "status": "pass"},
+    {"check": "single-column card grid at <=768px", "observed": "gridTemplateColumns resolves to 1 track at 768/390/320", "status": "pass"},
+    {"check": "keyboard focus reaches store cards", "observed": "Tab cycles through skip-link/nav to first a.cheat-card; all cards have aria-label 'View <name> details'", "status": "pass"},
+    {"check": "zero HTTP 4xx/5xx, zero console/page errors, zero failed requests", "observed": "clean on both catalog and /empty renders (favicon served by mock)", "status": "pass"},
+    {"check": "empty state", "observed": "/empty render (both product lists empty) shows .empty-state with 'No products available' copy", "status": "pass"}
+  ],
+  "dataFixes": [
+    "static/icons/rust_placeholder.jpg (seeded default product image_url) did not exist on disk — added as a copy of static/images/rust.jpg so the live seeded row resolves; template keeps onerror fallback to /cheat-image/<slug>",
+    "models.py seed_products now seeds the pool-key product with visibility='private' (aligns with app.py's one-time migration 'UPDATE products SET visibility=private WHERE key_source=pool') so fresh databases exercise the Private Software branch; live instance/ DB untouched (off-limits per AGENTS.md) and still has 0 private rows until an admin marks one",
+    "routes/main.py cheats() product_tiers now ordered by price_pence ASC so the card's 'From £X' reflects the cheapest tier regardless of tier insertion order"
+  ],
+  "evidence": {
+    "desktop": "evidence/store/desktop-store.png",
+    "mobile": "evidence/store/mobile-store.png",
+    "empty": "evidence/store/empty-store.png"
+  },
+  "limitations": [
+    "Flask live-server run not possible (no working Python toolchain in worker env); validation used the real templates with mock data through the approved render fallback",
+    "Live DB has 0 visibility=private rows (instance/ off-limits); the private-card rendering is validated with mock data, and fresh seeds will produce one private product"
+  ]
+}

@@ -1,0 +1,76 @@
+﻿{
+  "brandLogo": {
+    "height": "32px",
+    "width": "32px"
+  },
+  "footerCol": null,
+  "footerLink": {
+    "color": "rgb(242, 240, 234)",
+    "font-size": "14px"
+  },
+  "headerShell": {
+    "background-color": "rgba(15, 17, 21, 0.92)",
+    "border-bottom-color": "rgba(255, 255, 255, 0.07)",
+    "min-height": "0px",
+    "position": "sticky"
+  },
+  "mainPad": {
+    "padding-top": "0px"
+  },
+  "navLink": {
+    "background-color": "rgba(0, 0, 0, 0)",
+    "border-radius": "8px",
+    "border-top-color": "rgb(180, 186, 196)",
+    "box-shadow": "none",
+    "color": "rgb(180, 186, 196)",
+    "font-family": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "font-size": "14px",
+    "font-weight": "500",
+    "letter-spacing": "normal",
+    "min-height": "44px",
+    "padding-top": "0px"
+  },
+  "signIn": {
+    "background-color": "rgba(0, 0, 0, 0)",
+    "border-radius": "8px",
+    "border-top-color": "rgba(255, 255, 255, 0.11)",
+    "box-shadow": "none",
+    "color": "rgb(180, 186, 196)",
+    "font-family": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "font-size": "12px",
+    "font-weight": "600",
+    "letter-spacing": "normal",
+    "min-height": "44px",
+    "padding-top": "0px"
+  },
+  "skipLink": {
+    "background-color": "rgb(232, 163, 61)",
+    "border-radius": "8px",
+    "border-top-color": "rgb(23, 19, 16)",
+    "box-shadow": "none",
+    "color": "rgb(23, 19, 16)",
+    "font-family": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "font-size": "16px",
+    "font-weight": "600",
+    "letter-spacing": "normal",
+    "min-height": "0px",
+    "padding-top": "12px"
+  },
+  "tokens": {
+    "--accent": "#E8A33D",
+    "--bg-base": "",
+    "--bg-elevated": "",
+    "--border-subtle": "",
+    "--control-height": "",
+    "--duration-fast": "",
+    "--ease-standard": "",
+    "--header-height": "",
+    "--radius-lg": "",
+    "--radius-md": "",
+    "--space-4": "",
+    "--space-6": "",
+    "--text-muted": "",
+    "--text-primary": "",
+    "--text-secondary": ""
+  }
+}

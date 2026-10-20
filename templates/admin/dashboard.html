@@ -1,0 +1,126 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Dashboard</h1>
+  <p>Overview of your BEAZT operation.</p>
+</div>
+
+<div class="admin-grid-4 admin-grid-4--wide admin-stat-grid">
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ total_users }}</span>
+    <span class="admin-stat-label">Total Users</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ total_keys }}</span>
+    <span class="admin-stat-label">Total Keys</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ active_keys }}</span>
+    <span class="admin-stat-label">Active Keys</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">&pound;{{ "%.2f"|format(revenue_pounds) }}</span>
+    <span class="admin-stat-label">Total Revenue</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ completed_orders }}/{{ total_orders }}</span>
+    <span class="admin-stat-label">Completed Orders</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value{{ ' is-warning' if awaiting_keys > 0 }}">{{ awaiting_keys }}</span>
+    <span class="admin-stat-label">Awaiting Keys</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">{{ total_products }}</span>
+    <span class="admin-stat-label">Products</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-value">
+      {% if cf_balance is not none %}
+        &euro;{{ cf_balance }}
+      {% else %}
+        --
+      {% endif %}
+    </span>
+    <span class="admin-stat-label">ChairFBI Balance</span>
+    {% if cf_balance_raw is defined and cf_balance_raw is not none %}
+    <span class="admin-stat-sub" title="Exact value returned by the ChairFBI /api/store endpoint">API raw: {{ cf_balance_raw }}</span>
+    {% endif %}
+  </div>
+</div>
+
+{% if cf_balance is not none and cf_balance|float < 20 %}
+<div class="cf-alert cf-alert-warn">
+  <span class="icon icon-sm" data-lucide="alert-triangle"></span>
+  ChairFBI balance is low (&euro;{{ cf_balance }}). Top up soon to avoid checkout disruptions.
+</div>
+{% endif %}
+{% if cf_balance_error %}
+<div class="cf-alert cf-alert-error">
+  <span class="icon icon-sm" data-lucide="triangle-alert"></span>
+  Could not fetch ChairFBI balance: {{ cf_balance_error }}
+</div>
+{% endif %}
+
+{% if awaiting_keys > 0 %}
+<div class="cf-alert cf-alert-warn">
+  <span class="icon icon-sm" data-lucide="inbox"></span>
+  <strong>{{ awaiting_keys }} order(s) awaiting keys.</strong> These weren't auto-fulfilled &mdash; either the License API failed or the key pool is empty. <a href="{{ url_for('admin.orders', status='awaiting_keys') }}">View orders</a> to assign keys manually.
+</div>
+{% endif %}
+
+{% if license_token_is_default and products_using_license_api > 0 %}
+<div class="cf-alert cf-alert-error">
+  <span class="icon icon-sm" data-lucide="key-round"></span>
+  <strong>License API token not configured.</strong>
+  {{ products_using_license_api }} product(s) rely on the Project Infinity API for key generation, but the token is still the default/placeholder. Purchases will be stuck in "awaiting keys" until you set a valid token in
+  <a href="{{ url_for('admin.settings') }}#license-api">Settings &rarr; License API</a>.
+  Current API URL: <code>{{ license_api_url }}</code> &mdash; run "Test Project Infinity API" on a product to verify.
+</div>
+{% endif %}
+
+<div class="admin-columns">
+  <div>
+    <h3 class="admin-subheading">Recent Users</h3>
+    {% if recent_users %}
+    <table class="admin-table">
+      <thead><tr><th>User</th><th>Email</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for u in recent_users %}
+        <tr>
+          <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}">{{ u.username }}</a></td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    {% with empty_icon = 'users', empty_title = 'No users yet', empty_text = 'Accounts appear here as customers sign up.' %}
+    {% include "partials/empty_state.html" %}
+    {% endwith %}
+    {% endif %}
+  </div>
+  <div>
+    <h3 class="admin-subheading">Recent Keys</h3>
+    {% if recent_keys %}
+    <table class="admin-table">
+      <thead><tr><th>Key</th><th>Status</th><th>Expires</th></tr></thead>
+      <tbody>
+        {% for k in recent_keys %}
+        <tr>
+          <td><code class="admin-key-code">{{ k.key_value[:20] }}...</code></td>
+          <td><span class="badge-sm {{ 'badge-green' if k.is_active else 'badge-blue' }}">{{ 'Active' if k.is_active else ('Pool' if not k.user_id else 'Expired') }}</span></td>
+          <td>{{ k.expires_at.strftime('%d %b %Y') if k.expires_at else '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    {% with empty_icon = 'key-round', empty_title = 'No keys yet', empty_text = 'Keys appear here the moment a purchase completes or you upload pool keys.' %}
+    {% include "partials/empty_state.html" %}
+    {% endwith %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

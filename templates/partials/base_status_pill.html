@@ -1,0 +1,12 @@
+{#- Loader-base infrastructure pill. Deliberately NOT the cheat-risk
+    taxonomy (a loader base is not a product) but the same shared dot+label
+    pill family, so infrastructure reads on the same component system:
+    success = operational, warning = degraded, danger = offline.
+    Expects `b` = {name, enabled, status} from _fetch_chairfbi_bases(). -#}
+{%- if b.enabled and b.status -%}
+<span class="pill pill-dot pill-success">Operational</span>
+{%- elif b.enabled -%}
+<span class="pill pill-dot pill-warn">Degraded</span>
+{%- else -%}
+<span class="pill pill-dot pill-danger">Offline</span>
+{%- endif -%}

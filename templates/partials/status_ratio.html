@@ -1,0 +1,10 @@
+{#- Per-game status ratio: one equal segment per product, coloured by that
+    product's REAL status (DB/ChairFBI resolved — same taxonomy as the pill).
+    Expects `g` from utils/catalogue.py group_games() (segments +
+    status_summary + count). Purely decorative visually; the aria-label
+    carries the counts for assistive tech. -#}
+<div class="ratio-strip" role="img" aria-label="Status of {{ g.count }} product{{ '' if g.count == 1 else 's' }}: {{ g.status_summary }}">
+  {%- for status, _label in g.segments -%}
+  <span class="ratio-strip__seg ratio-strip__seg--{{ status }}"></span>
+  {%- endfor -%}
+</div>

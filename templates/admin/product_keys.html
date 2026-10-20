@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<div class="page-header-admin">
+  <h1>Key Pool: {{ product.name }}</h1>
+  <p>Pre-load license keys. When a sale completes, keys are assigned from the pool automatically.</p>
+</div>
+
+<div class="admin-card">
+  <h2 class="admin-card-title">Pool Summary</h2>
+  <div class="admin-grid-4">
+    {% for tier in tiers %}
+      {% set stats = pool_stats.get(tier.id, {}) %}
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">{{ tier.label }}</span>
+        <span class="admin-stat-value">{{ stats.available or 0 }}</span>
+        <span class="admin-stat-sub">available / {{ stats.total or 0 }} total</span>
+        <span class="admin-stat-sub">{{ stats.assigned or 0 }} assigned</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="admin-card">
+  <h2 class="admin-card-title">Import Keys</h2>
+  <form method="POST" action="{{ url_for('admin.product_keys', product_id=product.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="add">
+    <div class="admin-form-grid admin-form-grid--end">
+      <div class="form-group">
+        <label class="form-label" for="tier_select">Assign to Tier</label>
+        <select class="form-select admin-select" id="tier_select" name="tier_id">
+          <option value="">-- No tier (generic pool) --</option>
+          {% for tier in tiers %}
+            <option value="{{ tier.id }}" {% if selected_tier_id == tier.id %}selected{% endif %}>{{ tier.label }} ({{ tier.duration_days }} day)</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Add Keys</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="keys_text">Paste keys (one per line)</label>
+      <textarea class="form-input" id="keys_text" name="keys_text" rows="10" placeholder="1808d361-2579-44aa-9dd0-43e7c9340a1f&#10;4384510a-c751-4abf-ab83-783840ff7f4d&#10;..."></textarea>
+      <span class="form-hint">Pool keys are only handed out when a matching order completes.</span>
+    </div>
+  </form>
+</div>
+
+<div class="admin-card">
+  <div class="admin-toolbar">
+    <h2 class="admin-card-title">Pool Keys</h2>
+    {% with chips = [{'label': 'All', 'href': url_for('admin.product_keys', product_id=product.id), 'active': not selected_tier_id}] %}
+    {% for tier in tiers %}
+    {% set _ = chips.append({'label': tier.label, 'href': url_for('admin.product_keys', product_id=product.id, tier_id=tier.id), 'active': selected_tier_id == tier.id}) %}
+    {% endfor %}
+    {% include "partials/admin_filter_chips.html" %}
+    {% endwith %}
+  </div>
+
+  {% if pool_keys %}
+    <form method="POST" action="{{ url_for('admin.product_keys', product_id=product.id, tier_id=selected_tier_id or '') }}"
+          data-confirm="Delete the selected unassigned pool key(s)?" data-confirm-title="Delete pool keys"
+          data-require-checked="input[name=key_ids]">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="delete_pool">
+      <div class="admin-scroll">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th class="admin-col-check"><input type="checkbox" id="select_all_pool" data-select-all="form" aria-label="Select all pool keys"></th>
+              <th>Key</th>
+              <th>Tier</th>
+              <th>Added</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for k in pool_keys %}
+            <tr>
+              <td><input type="checkbox" name="key_ids" value="{{ k.id }}" class="pool-key-cb" data-bulk-item aria-label="Select key {{ k.key_value[:12] }}"></td>
+              <td><code class="admin-key-code">{{ k.key_value }}</code></td>
+              <td>{{ k.tier.label if k.tier else '-' }}</td>
+              <td>{{ k.created_at.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-danger">Delete Selected</button>
+    </form>
+  {% else %}
+    {% with empty_icon = 'package', empty_title = 'No pool keys' ~ (' for this tier' if selected_tier_id else ''), empty_text = 'Paste keys above to pre-load the inventory.' %}
+    {% include "partials/empty_state.html" %}
+    {% endwith %}
+  {% endif %}
+</div>
+{% endblock %}

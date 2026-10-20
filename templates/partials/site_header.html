@@ -1,0 +1,67 @@
+{#- Site header: brand, primary nav, account actions, mobile panel.
+    Burger/overlay/panel class names are driven by static/js/script.js. -#}
+{%- set ep = request.endpoint or '' -%}
+{%- set nav_items = [
+  ('Cheats', url_for('main.cheats'), ep in ('main.cheats', 'main.product_detail', 'main.plan_detail')),
+  ('Games', url_for('main.games_index'), ep in ('main.games_index', 'main.game_page')),
+  ('Status', url_for('main.status_page'), ep == 'main.status_page'),
+  ('FAQ', url_for('main.faq'), ep == 'main.faq'),
+  ('Setup', url_for('main.loader'), ep in ('main.loader', 'main.loader_product')),
+] -%}
+<header class="site-header navbar">
+  <div class="container site-header__inner">
+    <a href="/" class="brand" aria-label="BEAZT home">
+      <img src="/static/icons/logo.svg" alt="" class="brand__logo" width="32" height="32">
+      <span class="brand__name">BEAZT</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      {%- for label, href, active in nav_items %}
+      <a href="{{ href }}" class="site-nav__link"{% if active %} aria-current="page"{% endif %}>{{ label }}</a>
+      {%- endfor %}
+    </nav>
+
+    <div class="site-header__actions">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.my_keys') }}" class="site-header__link"{% if ep == 'main.my_keys' %} aria-current="page"{% endif %}>My Keys</a>
+        <a href="{{ url_for('main.profile') }}" class="site-header__link"{% if ep == 'main.profile' %} aria-current="page"{% endif %}>Account</a>
+        {% if current_user.is_admin %}
+          <a href="{{ url_for('admin.dashboard') }}" class="site-header__link">Admin</a>
+        {% endif %}
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost btn-sm">Sign out</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-ghost btn-sm">Sign in</a>
+      {% endif %}
+    </div>
+
+    <button type="button" class="nav-burger" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line>
+      </svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu-overlay" aria-hidden="true"></div>
+  <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">
+    {%- for label, href, active in nav_items %}
+    <a href="{{ href }}" class="mobile-menu__link"{% if active %} aria-current="page"{% endif %}>{{ label }}</a>
+    {%- endfor %}
+    <div class="mobile-menu__divider" role="presentation"></div>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('main.my_keys') }}" class="mobile-menu__link"{% if ep == 'main.my_keys' %} aria-current="page"{% endif %}>My Keys</a>
+      <a href="{{ url_for('main.profile') }}" class="mobile-menu__link"{% if ep == 'main.profile' %} aria-current="page"{% endif %}>Account</a>
+      {% if current_user.is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}" class="mobile-menu__link">Admin</a>
+      {% endif %}
+      <a href="{{ url_for('auth.logout') }}" class="mobile-menu__link">Sign out</a>
+    {% else %}
+      <div class="mobile-menu__actions">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Sign in</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-ghost">Create account</a>
+      </div>
+    {% endif %}
+  </nav>
+</header>
