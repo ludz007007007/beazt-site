@@ -178,7 +178,7 @@
         </div>
         {% else %}
         <div class="pd-gallery"><div class="pd-gallery__frame">
-          <img class="pd-gallery__main" src="{{ url_for('main.cheat_image', slug=product.slug) }}" alt="{{ product.name }} cover" width="1200" height="675" fetchpriority="high" decoding="async">
+          <img class="pd-gallery__main" src="{{ url_for('main.cheat_image', slug=product.slug) }}?rev={{ product.updated_at.strftime('%Y%m%d%H%M%S') if product.updated_at else product.id }}" alt="{{ product.name }} cover" width="1200" height="675" fetchpriority="high" decoding="async">
         </div></div>
         {% endif %}
       </div>

@@ -105,6 +105,8 @@ def main():
         full.description = FULL_DESCRIPTION
         full.game = full.game or "Rust"
         full.video_url = full.video_url or "https://www.youtube.com/watch?v=2SlYtGIZni8"
+        from datetime import datetime as _dt
+        full.updated_at = _dt.utcnow()  # busts the cover-image cache (?rev=)
         print("Updated:", full.name)
 
         # -- Legit build: create if missing ----------------------------------

@@ -6,7 +6,7 @@
     {# Intrinsic 1200x675 matches the generated cover; lazy + async because
        cards sit below the fold. data-fallback is wired by script.js (error
        events don't bubble, so the listener captures) — no inline on*=. #}
-    <img src="{{ c.product.image_url or url_for('main.cheat_image', slug=c.slug) }}" alt="" loading="lazy" decoding="async" width="1200" height="675" data-fallback="{{ url_for('main.cheat_image', slug=c.slug) }}">
+    <img src="{{ c.product.image_url or (url_for('main.cheat_image', slug=c.slug) ~ '?rev=' ~ (c.updated_at.strftime('%Y%m%d%H%M%S') if c.updated_at else c.product.id)) }}" alt="" loading="lazy" decoding="async" width="1200" height="675" data-fallback="{{ url_for('main.cheat_image', slug=c.slug) }}">
   </div>
   <div class="product-card__body">
     <div class="product-card__tags">
