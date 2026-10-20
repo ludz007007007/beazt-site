@@ -70,6 +70,31 @@ def csrf_protect():
         return jsonify({"error": "CSRF token missing or invalid"}), 400
     return None
 
+
+# --- Runtime error logging (server diagnosis) ------------------------------
+# Passenger hides tracebacks behind a generic 500 page. Log unhandled
+# exceptions to passenger_errors.log in the app dir so we can read the real
+# error from cPanel File Manager.
+import traceback as _traceback
+from datetime import datetime as _datetime
+
+_ERROR_LOG = os.path.join(_basedir, "passenger_errors.log")
+
+
+@app.errorhandler(Exception)
+def _log_unhandled_exception(exc):
+    try:
+        with open(_ERROR_LOG, "a") as _f:
+            _f.write("\n===== %s (request) =====\n" % _datetime.utcnow().isoformat())
+            _f.write("Path: %s %s\n" % (request.method, request.path))
+            _f.write(_traceback.format_exc())
+            _f.write("\n")
+    except Exception:
+        pass
+    # Re-raise so Flask still returns its normal error response.
+    raise
+
+
 # ---------------------------------------------------------------------------
 
 
