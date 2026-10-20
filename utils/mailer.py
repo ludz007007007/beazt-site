@@ -115,6 +115,18 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
             discord_block_html = f"""
               <a href="{discord_url}" style="display:inline-block;background:#182344;color:#eaf0ff;text-decoration:none;padding:11px 20px;border-radius:8px;font-weight:600;font-size:14px;margin-top:14px;margin-left:8px;border:1px solid #1f2a4a;">Join Discord</a>"""
 
+        # Precompute the buyer-notes block outside the f-string: Python 3.10
+        # forbids backslashes (e.g. '\n') inside f-string expression parts.
+        buyer_notes_html = ""
+        if buyer_notes:
+            buyer_notes_html = (
+                '<div style="margin-top:22px;padding:14px 16px;background:#121a33;'
+                'border:1px solid #1f2a4a;border-radius:10px;color:#94a3b8;'
+                'font-size:13px;line-height:1.6;">'
+                + buyer_notes.replace("\n", "<br>")
+                + "</div>"
+            )
+
         html = f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0b1020;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#eaf0ff;">
@@ -137,7 +149,7 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
 
     <a href="{my_keys_url}" style="display:inline-block;color:#06b6d4;text-decoration:none;font-size:14px;margin-top:18px;">View on My Keys &rarr;</a>
 
-    {('<div style="margin-top:22px;padding:14px 16px;background:#121a33;border:1px solid #1f2a4a;border-radius:10px;color:#94a3b8;font-size:13px;line-height:1.6;">' + buyer_notes.replace('\n', '<br>') + '</div>') if buyer_notes else ''}
+    {buyer_notes_html}
 
     <p style="color:#475569;font-size:12px;line-height:1.6;margin-top:26px;border-top:1px solid #1f2a4a;padding-top:16px;">
       Before running: install <a href="https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/" style="color:#06b6d4;">RivaTuner Statistics Server</a> and temporarily disable antivirus real-time protection. If you didn't make this purchase, please ignore this email.
