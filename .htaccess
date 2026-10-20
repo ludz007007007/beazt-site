@@ -4,3 +4,8 @@
   PassengerStartupFile passenger_wsgi.py
   PassengerFriendlyErrorPages On
 </IfModule>
+
+# Deny access to sensitive/config files
+<FilesMatch "(^\.htaccess$|^\.env$|php\.ini$|\.git|composer\.(json|lock)|package(-lock)?\.json$)">
+  Require all denied
+</FilesMatch>
