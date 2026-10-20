@@ -80,7 +80,7 @@
       <td>{{ p.id }}</td>
       <td>{{ p.name }}</td>
       <td><code>{{ p.slug }}</code></td>
-      <td>{{ 'Yes' if p.is_private else 'No' }}</td>
+      <td>{{ 'Yes' if p.visibility == 'private' else 'No' }}</td>
       <td><span class="badge-sm {{ 'badge-green' if p.key_source == 'chairfbi' else 'badge-blue' }}">{{ 'Infinity' if p.license_api_app_id else p.key_source }}</span></td>
       <td><span class="badge-sm {{ 'badge-green' if p.visibility == 'private' else 'badge-blue' }}">{{ p.visibility }}</span></td>
       <td><code>{{ p.chairfbi_cheat_id or '-' }}</code></td>
