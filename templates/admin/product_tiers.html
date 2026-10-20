@@ -55,6 +55,13 @@
           <option value="private" {% if product.visibility == 'private' %}selected{% endif %}>Private (top of page)</option>
         </select>
       </div>
+      <div class="form-group">
+        <label class="form-label" for="is_featured">Featured</label>
+        <select class="form-select" id="is_featured" name="is_featured">
+          <option value="0" {% if not product.is_featured %}selected{% endif %}>Not featured</option>
+          <option value="1" {% if product.is_featured %}selected{% endif %}>Featured (top of homepage)</option>
+        </select>
+      </div>
     </div>
 
     <div class="admin-form-grid">

@@ -77,12 +77,17 @@ def csrf_protect():
 # error from cPanel File Manager.
 import traceback as _traceback
 from datetime import datetime as _datetime
+from werkzeug.exceptions import HTTPException as _HTTPException
 
 _ERROR_LOG = os.path.join(_basedir, "passenger_errors.log")
 
 
 @app.errorhandler(Exception)
 def _log_unhandled_exception(exc):
+    # HTTP errors (403/404/...) are normal responses, not crashes — hand
+    # them straight back so Flask renders them as usual.
+    if isinstance(exc, _HTTPException):
+        return exc
     try:
         with open(_ERROR_LOG, "a") as _f:
             _f.write("\n===== %s (request) =====\n" % _datetime.utcnow().isoformat())
@@ -366,6 +371,13 @@ with app.app_context():
         _cols = [r[1] for r in _cursor.fetchall()]
         if "video_url" not in _cols:
             _cursor.execute("ALTER TABLE products ADD COLUMN video_url VARCHAR(256)")
+            _conn.commit()
+
+        # Ensure products table has is_featured (homepage showcase pin)
+        _cursor.execute("PRAGMA table_info(products)")
+        _cols = [r[1] for r in _cursor.fetchall()]
+        if "is_featured" not in _cols:
+            _cursor.execute("ALTER TABLE products ADD COLUMN is_featured BOOLEAN DEFAULT 0")
             _conn.commit()
 
         # Ensure pricing_tiers table has is_subscription

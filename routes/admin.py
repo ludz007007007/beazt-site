@@ -672,6 +672,8 @@ def product_tiers(product_id):
             product.buyer_notes = request.form.get("buyer_notes", "").strip() or None
         if "game" in request.form:
             product.game = request.form.get("game", "").strip() or None
+        # Featured pin: a select box, so it is always present in the form.
+        product.is_featured = request.form.get("is_featured") == "1"
 
         image_file = request.files.get("image_file")
         if image_file and image_file.filename:

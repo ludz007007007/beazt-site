@@ -80,6 +80,9 @@ class Product(db.Model):
     # Showcase video (YouTube watch URL); rendered as an embedded player on
     # the product page when set.
     video_url = db.Column(db.String(256), nullable=True)
+    # Admin-controlled pin: featured products sort to the top of the homepage
+    # showcase and the catalogue. Not set by any automatic rule.
+    is_featured = db.Column(db.Boolean, default=False, index=True)
     # Game/category this product belongs to (e.g. "Rust"). Free-text set by the
     # admin; storefront groups products and builds /games/<slug> pages from it.
     game = db.Column(db.String(64), nullable=True, index=True)

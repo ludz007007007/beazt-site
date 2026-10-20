@@ -203,6 +203,7 @@ def build_cards(products, resolve_status=None):
             "game": p.display_game,
             "game_slug": p.game_slug or "other",
             "is_private": p.visibility == "private",
+            "featured": bool(getattr(p, "is_featured", False)),
             "status": status,
             "status_label": STATUS_LABELS[status],
             "availability": availability,
@@ -230,9 +231,13 @@ def sort_cards(cards, sort):
     elif sort == "name":
         cards.sort(key=lambda c: c["name"].lower())
     else:
-        # Stable on the incoming newest-first order: private builds, then the
-        # safest statuses, so buyable products lead.
-        cards.sort(key=lambda c: (not c["is_private"], STATUS_ORDER.index(c["status"])))
+        # Admin-pinned featured products lead, then private builds, then the
+        # safest statuses. Stable on the incoming newest-first order.
+        cards.sort(key=lambda c: (
+            not c["featured"],
+            not c["is_private"],
+            STATUS_ORDER.index(c["status"]),
+        ))
     return sort
 
 
