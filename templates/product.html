@@ -132,8 +132,7 @@
       <span aria-current="page">{{ product.name }}</span>
     </nav>
 
-    {# Title block: unified status pill + REAL last-verified date (same DB
-       derivation as the catalogue card — never render time) + platforms. #}
+    {# Title block: status pill + REAL last-verified date + platforms. #}
     <header class="pd-header">
       <p class="section-eyebrow">{{ eyebrow }}</p>
       <h1 class="pd-heading">{{ product.name }}</h1>
@@ -154,10 +153,11 @@
 
     <div class="pd-layout">
       <div class="pd-gallery-col">
-
-        {# Gallery: 16:9 frame, intrinsic dims, real screenshots when present,
-           typographic cover fallback. Thumbs are real buttons (keyboard-
-           selectable); a polite live region announces the current shot. #}
+        {# Video showcase: embedded YouTube player when video_url is set #}
+        {% if product.youtube_embed_url %}
+        <div class="pd-video"><iframe class="pd-video__frame" src="{{ product.youtube_embed_url }}" title="{{ product.name }} — video showcase" loading="lazy" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        {% endif %}
+        {# Gallery: 16:9 frame, real screenshots, typographic cover fallback. #}
         {% if gallery_images %}
         <div class="pd-gallery" x-data='galleryState({{ gallery_images | tojson }})'>
           <div class="pd-gallery__frame">

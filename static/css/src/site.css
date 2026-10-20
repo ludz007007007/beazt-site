@@ -1070,6 +1070,19 @@
 .pd-body { grid-area: body; min-width: 0; }
 .pd-layout .purchase-panel { grid-area: panel; }
 
+.pd-video {
+  margin-bottom: 12px;
+}
+
+.pd-video__frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+}
+
 .pd-gallery__frame {
   position: relative;
   aspect-ratio: 16 / 9;

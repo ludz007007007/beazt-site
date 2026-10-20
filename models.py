@@ -77,11 +77,30 @@ class Product(db.Model):
     # version; storefront freshness labels read this, never the render time.
     last_verified_at = db.Column(db.DateTime, nullable=True)
     loader_url = db.Column(db.String(256), nullable=True)
+    # Showcase video (YouTube watch URL); rendered as an embedded player on
+    # the product page when set.
+    video_url = db.Column(db.String(256), nullable=True)
     # Game/category this product belongs to (e.g. "Rust"). Free-text set by the
     # admin; storefront groups products and builds /games/<slug> pages from it.
     game = db.Column(db.String(64), nullable=True, index=True)
 
     tiers = db.relationship("PricingTier", backref="product", lazy="dynamic")
+
+    @property
+    def youtube_embed_url(self):
+        """Embed-ready URL for video_url, or None if unset/not a YouTube link.
+
+        Accepts the usual watch/shorts/youtu.be forms; anything else returns
+        None so the template simply skips the showcase block.
+        """
+        import re as _re
+        if not self.video_url:
+            return None
+        m = _re.search(
+            r"(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([\w-]{6,})",
+            self.video_url,
+        )
+        return "https://www.youtube-nocookie.com/embed/" + m.group(1) if m else None
 
     @property
     def game_slug(self):

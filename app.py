@@ -361,6 +361,13 @@ with app.app_context():
             _cursor.execute("ALTER TABLE products ADD COLUMN loader_url VARCHAR(256)")
             _conn.commit()
 
+        # Ensure products table has video_url (showcase video on product page)
+        _cursor.execute("PRAGMA table_info(products)")
+        _cols = [r[1] for r in _cursor.fetchall()]
+        if "video_url" not in _cols:
+            _cursor.execute("ALTER TABLE products ADD COLUMN video_url VARCHAR(256)")
+            _conn.commit()
+
         # Ensure pricing_tiers table has is_subscription
         _cursor.execute("PRAGMA table_info(pricing_tiers)")
         _cols = [r[1] for r in _cursor.fetchall()]
