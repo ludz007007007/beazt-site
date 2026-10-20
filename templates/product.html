@@ -358,19 +358,17 @@
               <div class="pd-benefit card"><span class="icon" data-lucide="refresh-cw" aria-hidden="true"></span><strong>Build updates</strong><span>Updates ship while your licence is active — check the status page any time.</span></div>
               <div class="pd-benefit card"><span class="icon" data-lucide="headphones" aria-hidden="true"></span><strong>Support included</strong><span><a href="{{ discord_public_url }}" target="_blank" rel="noopener">Discord</a> support for setup and questions.</span></div>
             </div>
-            <div class="card">
-              <h3>{{ product.name }} features</h3>
-              {% if product_features and product_features['items'] %}
-              <ul class="pd-feature-list">
-                {% for item in product_features['items'] %}<li><span class="icon icon-sm" data-lucide="check" aria-hidden="true"></span>{{ item }}</li>{% endfor %}
-              </ul>
-              {% else %}
-              <p class="text-muted">Feature list coming soon — join the <a href="{{ discord_public_url }}" target="_blank" rel="noopener">Discord</a> for details.</p>
-              {% endif %}
-            </div>
           </div>
 
           <div class="tab-panel" id="panel-features" role="tabpanel" aria-labelledby="tab-features" tabindex="0" hidden :hidden="activeTab !== 'features'">
+            {% if product_features and product_features['items'] %}
+            <div class="card">
+              <h3>{{ product_features['label'] }} features</h3>
+              <ul class="pd-feature-list">
+                {% for item in product_features['items'] %}<li><span class="icon icon-sm" data-lucide="check" aria-hidden="true"></span>{{ item }}</li>{% endfor %}
+              </ul>
+            </div>
+            {% endif %}
             {% if vc_features %}
             <div class="card">
               <h3>Capabilities</h3>
