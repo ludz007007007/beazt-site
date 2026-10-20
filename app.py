@@ -165,22 +165,33 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
-try:
-    from routes.main import main_bp
-except Exception:
-    main_bp = None
-try:
-    from routes.auth import auth_bp
-except Exception:
-    auth_bp = None
-try:
-    from routes.checkout import checkout_bp
-except Exception:
-    checkout_bp = None
-try:
-    from routes.admin import admin_bp
-except Exception:
-    admin_bp = None
+def _import_blueprint(module_name, attr):
+    """Import a blueprint, logging any failure to passenger_errors.log.
+
+    Silently swallowing import errors (the old `try/except: bp = None` pattern)
+    hid the real cause and made every url_for('auth.login') crash. Log instead.
+    """
+    try:
+        mod = __import__(module_name, fromlist=[attr])
+        return getattr(mod, attr)
+    except Exception as exc:
+        try:
+            with open(_ERROR_LOG, "a") as _f:
+                _f.write(
+                    "\n===== %s (import %s) =====\n"
+                    % (_datetime.utcnow().isoformat(), module_name)
+                )
+                _f.write(_traceback.format_exc())
+                _f.write("\n")
+        except Exception:
+            pass
+        return None
+
+
+main_bp = _import_blueprint("routes.main", "main_bp")
+auth_bp = _import_blueprint("routes.auth", "auth_bp")
+checkout_bp = _import_blueprint("routes.checkout", "checkout_bp")
+admin_bp = _import_blueprint("routes.admin", "admin_bp")
 
 if main_bp:
     app.register_blueprint(main_bp)
