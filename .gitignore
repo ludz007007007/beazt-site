@@ -10,3 +10,4 @@ venv/
 # see AGENTS.md Security Conventions).
 cookies*.txt
 *.cookies
+passenger_errors.log
