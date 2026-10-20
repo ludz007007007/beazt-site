@@ -332,9 +332,15 @@ def index():
     cards = _all_cards()
     catalogue.sort_cards(cards, "featured")
     total = len(cards)
-    # The homepage previews the catalogue; /cheats is the full, filterable
-    # list. Always show fewer cards than exist so the two never duplicate.
-    showcase = cards[: min(3, max(total - 1, 1))] if total else []
+    # Showcase is admin-curated: ONLY products explicitly marked Featured
+    # appear here. Newest products no longer leak into the top slots; when
+    # nothing is featured at all we still preview the catalogue so the
+    # homepage never renders an empty shelf.
+    featured_cards = [c for c in cards if c["featured"]]
+    if featured_cards:
+        showcase = featured_cards[:3]
+    else:
+        showcase = cards[: min(3, max(total - 1, 1))] if total else []
     games = catalogue.group_games(cards)
     status_counts = [
         (key, catalogue.STATUS_LABELS[key], n)
