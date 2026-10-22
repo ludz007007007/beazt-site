@@ -13,7 +13,7 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <h3 class="admin-card-title">Product Settings</h3>
 
-    {% if not product.license_api_app_id and pool_count == 0 and product.key_source != 'chairfbi' %}
+    {% if not product.license_api_app_id and pool_count == 0 and product.key_source not in ('chairfbi', 'nfahub') %}
     <div class="cf-alert cf-alert-warn">
       <span class="icon icon-sm" data-lucide="alert-triangle"></span>
       <strong>Auto-fulfillment won't work for this product.</strong>
@@ -28,6 +28,7 @@
         <select class="form-select" id="key_source" name="key_source">
           <option value="chairfbi" {% if product.key_source == 'chairfbi' and not product.license_api_app_id %}selected{% endif %}>ChairFBI API</option>
           <option value="license" {% if product.license_api_app_id %}selected{% endif %}>Project Infinity (API)</option>
+          <option value="nfahub" {% if product.key_source == 'nfahub' %}selected{% endif %}>NFAHub (accounts)</option>
           <option value="pool" {% if product.key_source == 'pool' %}selected{% endif %}>Pool Only (upload)</option>
         </select>
       </div>
@@ -72,6 +73,7 @@
           <option value="online" {% if product.status == 'online' %}selected{% endif %}>Online</option>
           <option value="offline" {% if product.status == 'offline' %}selected{% endif %}>Offline</option>
           <option value="maintenance" {% if product.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+          <option value="account" {% if product.status == 'account' %}selected{% endif %}>Account</option>
         </select>
       </div>
     </div>
@@ -200,6 +202,7 @@
             <input class="form-input" type="number" name="price_pounds" value="{{ t.price_pounds }}" step="0.01" aria-label="Price" placeholder="Price">
             <label class="admin-note"><input type="checkbox" name="is_subscription" value="1" {% if t.is_subscription %}checked{% endif %}> Sub</label>
             <input type="hidden" name="is_subscription" value="0">
+            <input class="form-input" type="text" name="nfahub_variant_id" value="{{ t.nfahub_variant_id or '' }}" aria-label="NFAHub variant ID" placeholder="NFAHub variant">
             <button type="submit" class="btn-xs btn-success-sm">Save</button>
           </form>
           <form method="POST" action="{{ url_for('admin.delete_tier', tier_id=t.id) }}" data-confirm="Delete this tier?" data-confirm-title="Delete tier">
@@ -225,6 +228,7 @@
   </select>
   <input class="form-input" type="text" name="ivno_subscription_link" placeholder="Subscription link" aria-label="Subscription link">
   <input class="form-input" type="number" name="bundle_count" value="1" min="1" max="10" title="Keys per purchase" aria-label="Keys per purchase">
+  <input class="form-input" type="text" name="nfahub_variant_id" placeholder="NFAHub variant ID" aria-label="NFAHub variant ID">
   <button type="submit" class="btn-xs btn-primary">Add Tier</button>
 </form>
 

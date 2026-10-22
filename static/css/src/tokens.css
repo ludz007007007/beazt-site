@@ -82,6 +82,11 @@
   --status-risky: var(--orange-400);
   --status-risky-bg: rgba(245, 154, 74, 0.10);
   --status-risky-border: rgba(245, 154, 74, 0.28);
+  /* NFA/account products: neutral violet, no risk signal */
+  --purple-400: #A78BFA;
+  --status-account: var(--purple-400);
+  --status-account-bg: rgba(167, 139, 250, 0.10);
+  --status-account-border: rgba(167, 139, 250, 0.28);
   --status-unknown: var(--grey-400);
   --status-unknown-bg: rgba(152, 160, 172, 0.10);
   --status-unknown-border: rgba(152, 160, 172, 0.28);

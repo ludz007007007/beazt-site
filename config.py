@@ -99,6 +99,10 @@ class Config:
     IVNO_API_KEY = os.getenv("IVNO_API_KEY", "")
     IVNO_API_SECRET = os.getenv("IVNO_API_SECRET", "")
     IVNO_WEBHOOK_SECRET = os.getenv("IVNO_WEBHOOK_SECRET", "")
+    # NFAHub reseller API (account storefront fulfillment). Optional: empty
+    # key disables the integration exactly like the other paid suppliers.
+    NFAHUB_API_KEY = os.getenv("NFAHUB_API_KEY", "")
+    NFAHUB_API_BASE = os.getenv("NFAHUB_API_BASE", "https://nfahub.cc/api/reseller/v2")
     LOADER_PUBLIC_URL = os.getenv("LOADER_PUBLIC_URL", "")
     LOADER_PRIVATE_URL = os.getenv("LOADER_PRIVATE_URL", "")
     IMGBB_API_KEY = os.getenv("IMGBB_API_KEY", "")
@@ -201,6 +205,29 @@ def get_discord_config():
     return {
         "public_url": _lookup("discord_public_url", Config.DISCORD_PUBLIC_URL),
         "private_url": _lookup("discord_private_url", Config.DISCORD_PRIVATE_URL),
+    }
+
+def get_nfahub_config():
+    """NFAHub reseller API credentials (utils/nfahub.py).
+
+    Mirrors the other integration helpers: Settings take precedence over the
+    Config env-var defaults, so the key / base URL can be updated from the
+    admin Settings page without a redeploy.
+    """
+    from models import Setting
+
+    def _lookup(key, default):
+        try:
+            val = Setting.get(key)
+            if val:
+                return val
+        except Exception:
+            pass
+        return default
+
+    return {
+        "api_key": _lookup("nfahub_api_key", Config.NFAHUB_API_KEY),
+        "api_base": _lookup("nfahub_api_base", Config.NFAHUB_API_BASE),
     }
 
 def get_license_api_config():

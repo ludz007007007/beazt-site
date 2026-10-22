@@ -394,6 +394,13 @@ with app.app_context():
             _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN sellix_product_id VARCHAR(64)")
             _conn.commit()
 
+        # Ensure pricing_tiers table has nfahub_variant_id
+        _cursor.execute("PRAGMA table_info(pricing_tiers)")
+        _cols = [r[1] for r in _cursor.fetchall()]
+        if "nfahub_variant_id" not in _cols:
+            _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN nfahub_variant_id VARCHAR(64)")
+            _conn.commit()
+
         # Ensure orders table has stripe_subscription_id
         _cursor.execute("PRAGMA table_info(orders)")
         _cols = [r[1] for r in _cursor.fetchall()]
@@ -406,6 +413,13 @@ with app.app_context():
         _cols = [r[1] for r in _cursor.fetchall()]
         if "is_subscription" not in _cols:
             _cursor.execute("ALTER TABLE keys ADD COLUMN is_subscription BOOLEAN DEFAULT 0")
+            _conn.commit()
+
+        # Ensure keys table has nfahub_order_id
+        _cursor.execute("PRAGMA table_info(keys)")
+        _cols = [r[1] for r in _cursor.fetchall()]
+        if "nfahub_order_id" not in _cols:
+            _cursor.execute("ALTER TABLE keys ADD COLUMN nfahub_order_id VARCHAR(64)")
             _conn.commit()
 
         # Ensure keys table has tier_id, assigned_at
@@ -452,6 +466,7 @@ with app.app_context():
             ("ivno_subscription_link", "VARCHAR(512)"),
             ("billing_type", "VARCHAR(16) DEFAULT 'one_time'"),
             ("is_subscription", "BOOLEAN DEFAULT 0"),
+            ("nfahub_variant_id", "VARCHAR(64)"),
         ]:
             try:
                 mc.execute("ALTER TABLE pricing_tiers ADD COLUMN {} {}".format(col, ddl))
@@ -461,6 +476,7 @@ with app.app_context():
             ("is_subscription", "BOOLEAN DEFAULT 0"),
             ("tier_id", "INTEGER REFERENCES pricing_tiers(id)"),
             ("assigned_at", "DATETIME"),
+            ("nfahub_order_id", "VARCHAR(64)"),
         ]:
             try:
                 mc.execute("ALTER TABLE keys ADD COLUMN {} {}".format(col, ddl))

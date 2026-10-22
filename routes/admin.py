@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort, current_app, Response
 from flask_login import login_required, current_user, login_user, logout_user
 from models import db, User, Product, PricingTier, Order, Key, Setting, Review, StatusEvent
-from config import Config, get_chairfbi_config, get_loader_config, get_discord_config, get_ivno_config, get_license_api_config, get_mailer_config
+from config import Config, get_chairfbi_config, get_loader_config, get_discord_config, get_ivno_config, get_nfahub_config, get_license_api_config, get_mailer_config
 
 admin_bp = Blueprint("admin", __name__)
 logger = logging.getLogger(__name__)
@@ -21,6 +21,7 @@ _ADMIN_STATUS_LABELS = {
     "online": "Online",
     "offline": "Offline",
     "maintenance": "Maintenance",
+    "account": "Account",
 }
 
 
@@ -448,8 +449,8 @@ def create_product():
     if Product.query.filter_by(slug=slug).first():
         flash(f"Slug '{slug}' already exists. Choose a different name.", "error")
         return redirect(url_for("admin.products"))
-    if key_source not in ("pool", "chairfbi", "license"):
-        flash("Key source must be pool, chairfbi, or license.", "error")
+    if key_source not in ("pool", "chairfbi", "license", "nfahub"):
+        flash("Key source must be pool, chairfbi, license, or nfahub.", "error")
         return redirect(url_for("admin.products"))
     if key_source in ("pool", "license"):
         chairfbi_cheat_id = None
@@ -464,7 +465,7 @@ def create_product():
         description=description or None,
         image_url=image_url or None,
         is_private=(visibility_val == "private"),
-        key_source="chairfbi" if key_source in ("chairfbi", "license") else "pool",
+        key_source=key_source if key_source in ("chairfbi", "license", "nfahub") else "pool",
         chairfbi_cheat_id=chairfbi_cheat_id or None,
         license_api_app_id=license_api_app_id,
         visibility=visibility_val,
@@ -631,7 +632,7 @@ def product_tiers(product_id):
         license_app = request.form.get("license_api_app_id", "").strip()
         if license_app:
             key_source_val = "license"
-        if key_source_val in ("pool", "chairfbi", "license"):
+        if key_source_val in ("pool", "chairfbi", "license", "nfahub"):
             product.key_source = "chairfbi" if key_source_val == "license" else key_source_val
             if key_source_val == "pool":
                 product.chairfbi_cheat_id = None
@@ -650,7 +651,7 @@ def product_tiers(product_id):
             product.visibility = visibility_val
         status_val = request.form.get("status", "").strip()
         previous_status = product.status
-        if status_val in ("undetected", "online", "offline", "maintenance"):
+        if status_val in ("undetected", "online", "offline", "maintenance", "account"):
             product.status = status_val
         if "name" in request.form:
             new_name = request.form.get("name", "").strip()
@@ -847,6 +848,7 @@ def add_tier(product_id):
         is_subscription=(billing_type_val == "subscription"),
         ivno_subscription_link=request.form.get("ivno_subscription_link", "").strip() or None,
         bundle_count=request.form.get("bundle_count", 1, type=int),
+        nfahub_variant_id=request.form.get("nfahub_variant_id", "").strip() or None,
     )
     db.session.add(tier)
     db.session.commit()
@@ -885,6 +887,8 @@ def edit_tier(tier_id):
     bundle_count = request.form.get("bundle_count", type=int)
     if bundle_count and bundle_count >= 1:
         tier.bundle_count = bundle_count
+    if "nfahub_variant_id" in request.form:
+        tier.nfahub_variant_id = request.form.get("nfahub_variant_id", "").strip() or None
     db.session.commit()
     flash("Tier updated.", "success")
     return redirect(url_for("admin.product_tiers", product_id=tier.product_id))
@@ -972,6 +976,27 @@ def fulfill_order(order_id):
             flash(f"Order #{order.id} fulfilled via License API ({len(key_values)} key(s)). Buyer emailed.", "success")
             return redirect(url_for("admin.orders"))
         flash(f"License API failed: {err}", "error")
+
+    # 1b) NFAHub — account storefront products fulfil per-tier variants
+    if getattr(tier, "nfahub_variant_id", None):
+        from routes.checkout import try_nfahub
+        credentials, nfahub_order_id, nfahub_err = try_nfahub(order, product, tier)
+        if credentials:
+            created = []
+            for kv in credentials:
+                # Accounts do not expire: no expires_at on NFAHub keys.
+                key = Key(user_id=order.user_id, order_id=order.id, product_id=product_id,
+                          tier_id=tier_id, key_value=kv, expires_at=None, is_active=True,
+                          is_subscription=False, nfahub_order_id=nfahub_order_id or None)
+                db.session.add(key)
+                created.append(key)
+            order.status = "completed"
+            db.session.commit()
+            from routes.checkout import _notify_buyer
+            _notify_buyer(order, product, tier, created)
+            flash(f"Order #{order.id} fulfilled via NFAHub ({len(credentials)} account(s)). Buyer emailed.", "success")
+            return redirect(url_for("admin.orders"))
+        flash(f"NFAHub failed: {nfahub_err}", "error")
 
     # 2) Fall back to pool key
     pool_key = (
@@ -1336,6 +1361,25 @@ def test_chairfbi():
     return redirect(url_for("admin.settings"))
 
 
+@admin_bp.route("/settings/nfahub-test", methods=["POST"])
+@admin_required
+def test_nfahub():
+    """Validate the NFAHub reseller key against GET /me (mirrors chairfbi-test)."""
+    api_key = request.form.get("nfahub_api_key", "").strip()
+    api_base = request.form.get("nfahub_api_base", "").strip()
+    if not api_key:
+        flash("Please enter an NFAHub API key first.", "error")
+        return redirect(url_for("admin.settings"))
+    try:
+        from utils.nfahub import NFAHub
+        me = NFAHub(api_key=api_key, base_url=api_base or None).me()
+        status = ""
+        if isinstance(me, dict):
+            status = str(me.get("status") or me.get("approval") or me.get("account_status") or "")
+        flash(f"NFAHub connection successful{f' (status: {status})' if status else ''}.", "success")
+    except Exception as exc:  # noqa: BLE001 - admin-facing diagnostics only
+        flash(f"NFAHub connection failed: {exc}", "error")
+    return redirect(url_for("admin.settings"))
 @admin_bp.route("/settings", methods=["GET", "POST"])
 @admin_required
 def settings():
@@ -1346,6 +1390,8 @@ def settings():
             "chairfbi_api_base": "ChairFBI API Base URL",
             "ivno_api_key": "Ivno API Key",
             "ivno_api_secret": "Ivno API Secret",
+            "nfahub_api_key": "NFAHub API Key",
+            "nfahub_api_base": "NFAHub API Base URL",
             "payfast_merchant_id": "PayFast Merchant ID",
             "payfast_merchant_key": "PayFast Merchant Key",
             "payfast_passphrase": "PayFast Passphrase",
@@ -1412,6 +1458,7 @@ def settings():
     loader_cfg = get_loader_config()
     discord_cfg = get_discord_config()
     ivno_cfg = get_ivno_config()
+    nfahub_cfg = get_nfahub_config()
     license_cfg = get_license_api_config()
     mailer_cfg = get_mailer_config()
     return render_template("admin/settings.html",
@@ -1420,6 +1467,8 @@ def settings():
         chairfbi_api_base=cf_cfg["api_base"],
         ivno_api_key=ivno_cfg["api_key"],
         ivno_api_secret=ivno_cfg["api_secret"],
+        nfahub_api_key=nfahub_cfg["api_key"],
+        nfahub_api_base=nfahub_cfg["api_base"],
         payfast_merchant_id=Setting.get("payfast_merchant_id") or "",
         payfast_merchant_key=Setting.get("payfast_merchant_key") or "",
         payfast_passphrase=Setting.get("payfast_passphrase") or "",

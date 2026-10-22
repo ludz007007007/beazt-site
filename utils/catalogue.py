@@ -19,6 +19,9 @@ STATUS_LABELS = {
     "risky": "Risky",
     "detected": "Detected",
     "down": "Down",
+    # Risk taxonomy plus the neutral storefront status for NFA/account
+    # products (no detection lifecycle to claim either way).
+    "account": "Account",
 }
 # Order used by the "featured" sort and the status filter select.
 STATUS_ORDER = list(STATUS_LABELS)

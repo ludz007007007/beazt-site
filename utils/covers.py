@@ -42,6 +42,8 @@ STATUS_COLORS = {
     "detected": (240, 87, 95),
     "down": (152, 160, 172),
     "unknown": (152, 160, 172),
+    # Neutral violet for NFA/account products (no detection lifecycle).
+    "account": (167, 139, 250),
 }
 
 _FONT_CACHE = {}

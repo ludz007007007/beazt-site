@@ -2,7 +2,7 @@
 {% block admin_content %}
 <div class="page-header-admin">
   <h1>Settings</h1>
-  <p>Configure Ivno + NOWPayments + ChairFBI. Values save to the database and override <code>.env</code> settings.</p>
+  <p>Configure Ivno + NOWPayments + ChairFBI + NFAHub. Values save to the database and override <code>.env</code> settings.</p>
 </div>
 
 <div x-data="{ reveal: {} }" class="admin-settings">
@@ -79,6 +79,27 @@
         </div>
         <div class="admin-actions">
           <button type="submit" form="chairfbi-test-form" class="btn-xs btn-secondary">Test Connection</button>
+        </div>
+      </section>
+
+      <!-- ===== NFAHUB SECTION ===== -->
+      <section class="admin-card" aria-labelledby="settings-nfahub">
+        <h3 class="admin-card-title" id="settings-nfahub"><span class="icon icon-sm" data-lucide="users"></span> NFAHub (Accounts)</h3>
+        <div class="form-group">
+          <label class="form-label" for="nfahub_api_key">API Key</label>
+          <div class="input-group">
+            <input class="form-input" :type="reveal.nfahub_key ? 'text' : 'password'" id="nfahub_api_key" name="nfahub_api_key" value="{{ nfahub_api_key }}" placeholder="nfh_reseller_live_...">
+            <button type="button" class="input-reveal" @click="reveal.nfahub_key = !reveal.nfahub_key" x-text="reveal.nfahub_key ? 'Hide' : 'Show'"></button>
+          </div>
+          {% if nfahub_api_key %}<span class="form-hint form-hint--ok">Set ({{ nfahub_api_key[:16] }}...)</span>{% else %}<span class="form-hint">From nfahub.cc reseller dashboard. Required for NFA account auto-delivery.</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="nfahub_api_base">API Base URL</label>
+          <input class="form-input" type="text" id="nfahub_api_base" name="nfahub_api_base" value="{{ nfahub_api_base }}" placeholder="https://nfahub.cc/api/reseller/v2">
+          <span class="form-hint">NFAHub reseller API endpoint.</span>
+        </div>
+        <div class="admin-actions">
+          <button type="submit" form="nfahub-test-form" class="btn-xs btn-secondary">Test Connection</button>
         </div>
       </section>
 
@@ -220,6 +241,11 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="chairfbi_api_token" :value="document.querySelector('input[name=chairfbi_api_token]').value">
       <input type="hidden" name="chairfbi_api_base" :value="document.querySelector('input[name=chairfbi_api_base]').value">
+    </form>
+    <form id="nfahub-test-form" method="POST" action="{{ url_for('admin.test_nfahub') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="nfahub_api_key" :value="document.querySelector('input[name=nfahub_api_key]').value">
+      <input type="hidden" name="nfahub_api_base" :value="document.querySelector('input[name=nfahub_api_base]').value">
     </form>
   </div>
 {% endblock %}

@@ -140,6 +140,9 @@ class PricingTier(db.Model):
     bundle_count = db.Column(db.Integer, default=1)
     is_subscription = db.Column(db.Boolean, default=False)
     sellix_product_id = db.Column(db.String(64), nullable=True)
+    # NFAHub reseller catalog variant this tier fulfils from (utils/nfahub.py).
+    # Empty means the tier is not backed by NFAHub even on nfahub products.
+    nfahub_variant_id = db.Column(db.String(64), nullable=True)
 
     orders = db.relationship("Order", backref="tier", lazy="dynamic")
     keys = db.relationship("Key", backref="pricing_tier", lazy="dynamic")
@@ -180,6 +183,8 @@ class Key(db.Model):
     is_subscription = db.Column(db.Boolean, default=False)
     chairfbi_key_id = db.Column(db.String(64), nullable=True, index=True)
     chairfbi_cheat_id = db.Column(db.String(32), nullable=True)
+    # NFAHub purchase this key was fulfilled from (for warranty/support lookups).
+    nfahub_order_id = db.Column(db.String(64), nullable=True, index=True)
 
     product = db.relationship("Product")
     tier = db.relationship("PricingTier", overlaps="keys,pricing_tier")

@@ -218,6 +218,11 @@
   --pill-bg: var(--status-risky-bg);
   --pill-border: var(--status-risky-border);
 }
+.status-pill--account {
+  --pill-color: var(--status-account);
+  --pill-bg: var(--status-account-bg);
+  --pill-border: var(--status-account-border);
+}
 
 /* ---- Pills / chips (neutral labels and filters) -------------------------- */
 .pill,

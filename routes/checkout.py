@@ -398,6 +398,54 @@ def try_license_api(order, product, tier):
         return [], f"API call failed (HTTP {status}): {exc}"
 
 
+def try_nfahub(order, product, tier):
+    """Attempt to buy accounts from NFAHub for the tier's variant.
+
+    Shared by automatic fulfillment (``handle_fulfillment``) and the admin
+    per-order "Fulfill" retry action.
+
+    Does NOT mutate the database or commit — the caller creates ``Key`` rows
+    and sets ``order.status``.
+
+    Returns a tuple ``(credentials, nfahub_order_id, error)``:
+      * On success: ``credentials`` is a non-empty list of account
+        credential strings, ``error`` is ``None``.
+      * On failure: ``credentials`` is ``[]`` and ``error`` describes why
+        (no variant bound, missing config, API failure, empty delivery).
+      * When the tier has no NFAHub variant: ``([], "", None)`` — not an
+        error, the tier simply is not NFAHub-backed.
+    """
+    variant = (getattr(tier, "nfahub_variant_id", "") or "").strip() if tier else ""
+    if not variant:
+        return [], "", None
+
+    from config import get_nfahub_config
+    cfg = get_nfahub_config()
+    if not cfg["api_key"]:
+        logger.warning("NFAHub API key not configured — cannot fulfill order %s", order.id)
+        return [], "", "NFAHub API key is not configured."
+
+    total_accounts = (getattr(tier, "bundle_count", 1) or 1) * (getattr(order, "quantity", 1) or 1)
+    try:
+        from utils.nfahub import NFAHub, extract_credentials
+        api = NFAHub(api_key=cfg["api_key"], base_url=cfg["api_base"])
+        result = api.buy(variant, quantity=total_accounts)
+        credentials = extract_credentials(result)
+        order_id = ""
+        if isinstance(result, dict):
+            order_id = str(result.get("id") or result.get("orderId")
+                           or result.get("order_id") or "")
+        if not credentials:
+            logger.error("NFAHub buy returned no credentials for order %s "
+                         "(variant=%s) — raw keys=%r", order.id, variant, result)
+            return [], order_id, "NFAHub delivered no credentials (see server log)."
+        logger.info("NFAHub bought %d account(s) (variant=%s) for order %s",
+                    len(credentials), variant, order.id)
+        return credentials, order_id, None
+    except Exception as exc:  # noqa: BLE001 - surfaced to admin for diagnosis
+        logger.exception("NFAHub buy failed for order %s", order.id)
+        return [], "", f"NFAHub purchase failed: {exc}"
+
 def handle_fulfillment(order):
     tier = order.tier
     if not tier:
@@ -435,7 +483,27 @@ def handle_fulfillment(order):
             return
         logger.warning("License API path failed for order %s — falling back. Reason: %s", order.id, err)
 
-    # 2) Pool key — pre-uploaded unassigned key
+    # 2) NFAHub — account storefront products fulfil per-tier variant purchases
+    nfahub_variant = (getattr(tier, "nfahub_variant_id", "") or "").strip()
+    if nfahub_variant:
+        credentials, nfahub_order_id, err = try_nfahub(order, product, tier)
+        if credentials:
+            order.status = "completed"
+            created = []
+            for kv in credentials:
+                # Accounts do not expire: no expires_at on NFAHub keys.
+                key = Key(user_id=order.user_id, order_id=order.id, product_id=product_id,
+                          tier_id=tier.id, key_value=kv, expires_at=None, is_active=True,
+                          is_subscription=False, nfahub_order_id=nfahub_order_id or None)
+                db.session.add(key)
+                created.append(key)
+            db.session.commit()
+            logger.info("NFAHub delivered %d account(s) for order %s", len(credentials), order.id)
+            _notify_buyer(order, product, tier, created)
+            return
+        logger.warning("NFAHub path failed for order %s — falling back. Reason: %s", order.id, err)
+
+    # 3) Pool key — pre-uploaded unassigned key
     pool_key = (Key.query.filter_by(product_id=product_id, tier_id=tier.id, user_id=None, is_active=False)
                 .order_by(Key.created_at.asc()).first())
     if pool_key:
@@ -451,7 +519,7 @@ def handle_fulfillment(order):
         _notify_buyer(order, product, tier, [pool_key])
         return
 
-    # 3) ChairFBI — for resold/catalog products with a cheat_id
+    # 4) ChairFBI — for resold/catalog products with a cheat_id
     if product and product.chairfbi_cheat_id:
         from config import get_chairfbi_config
         cfg = get_chairfbi_config()
@@ -486,7 +554,7 @@ def handle_fulfillment(order):
             _notify_buyer(order, product, tier, created)
             return
 
-    # 4) No key source available — NEVER generate fake keys
+    # 5) No key source available — NEVER generate fake keys
     logger.warning("No key source available for order %s (product=%s, app_id=%s, key_source=%s) — marking awaiting_keys",
                   order.id, product.name if product else "?",
                   product.license_api_app_id if product else "none",

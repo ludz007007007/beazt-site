@@ -57,7 +57,7 @@ def _script():
 def test_status_pill_is_the_single_risk_taxonomy(app):
     from utils.catalogue import STATUS_LABELS
 
-    assert set(STATUS_LABELS) == {"undetected", "updating", "risky", "detected", "down"}
+    assert set(STATUS_LABELS) == {"undetected", "updating", "risky", "detected", "down", "account"}
     for status, label in STATUS_LABELS.items():
         html = _render_partial(app, "partials/status_pill.html", status=status, label=label)
         assert 'class="status-pill status-pill--%s"' % status in html
