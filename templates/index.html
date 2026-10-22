@@ -19,6 +19,7 @@
       <p class="home-hero__lede">Every product shows its current detection status and when it last changed. {{ delivery_promise() }}</p>
       <div class="home-hero__actions">
         <a href="{{ url_for('main.cheats') }}" class="btn btn-primary btn-lg">Browse cheats</a>
+        <a href="{{ url_for('main.nfa_accounts') }}" class="btn btn-secondary btn-lg">Buy NFA accounts</a>
         <a href="{{ url_for('main.status_page') }}" class="btn btn-ghost btn-lg">Check status</a>
       </div>
       {% if from_price is not none %}

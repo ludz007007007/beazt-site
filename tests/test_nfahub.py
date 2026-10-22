@@ -240,6 +240,9 @@ def test_nfa_nav_link_present(client, db, make_product):
     for path in ("/", "/cheats"):
         body = client.get(path).data.decode("utf-8")
         assert "NFA Accounts" in body, f"nav link missing on {path}"
+    home = client.get("/").data.decode("utf-8")
+    assert "Buy NFA accounts" in home, "homepage hero CTA missing"
+    assert "site-header__nfa" in home, "always-visible header CTA missing"
 
 
 # --- Seed script -------------------------------------------------------------------
