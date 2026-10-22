@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}NFA Accounts — instant delivery | BEAZT{% endblock %}
+{% block meta_description %}Full-access game accounts (NFA) for Rust, CS2, ARC Raiders, DayZ and Wardogs. Credentials delivered to your BEAZT account seconds after payment.{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ url_for('main.index') }}">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">NFA Accounts</span>
+    </nav>
+
+    <header class="page-header">
+      <p class="section-eyebrow">NFA &middot; Full-access accounts</p>
+      <h1 class="t-h1">NFA Accounts</h1>
+      <p class="text-secondary">Full-access game accounts sourced through our reseller stock. Credentials land on your <a href="{{ url_for('main.my_keys') }}">My Keys</a> page and in your email seconds after payment — fully automated, no waiting on staff.</p>
+      {% if nfahub_redemption_url %}
+      <div class="loader-step-actions">
+        <a href="{{ nfahub_redemption_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          <span class="icon icon-sm" data-lucide="zap" aria-hidden="true"></span> Activate on NFAHub
+        </a>
+      </div>
+      {% endif %}
+    </header>
+
+    {% if cards %}
+    {% for g in games %}
+    <section class="game-products" aria-labelledby="nfa-game-{{ g.slug }}">
+      <div class="section-row">
+        <h2 class="t-h2" id="nfa-game-{{ g.slug }}">{{ g.name }}</h2>
+        <p class="filter-bar__count" role="status">{{ g.count }} account {{ 'type' if g.count == 1 else 'types' }}{% if g.price_min is not none %} · from £{{ "%.2f"|format(g.price_min) }}{% endif %}</p>
+      </div>
+      <div class="product-grid">
+        {% for c in g.cards %}{% include "partials/product_card.html" %}{% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+
+    <div class="page-footer-actions">
+      <a href="{{ url_for('main.cheats') }}" class="btn btn-ghost">Browse software instead</a>
+    </div>
+    {% else %}
+    {% set empty_title = "No NFA accounts listed yet" %}
+    {% set empty_text = "Account products appear here as soon as stock goes on sale." %}
+    {% set empty_action_href = url_for('main.cheats') %}
+    {% set empty_action_label = "Browse software" %}
+    {% include "partials/empty_state.html" %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

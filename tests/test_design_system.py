@@ -375,6 +375,7 @@ def test_header_and_footer_on_every_page(client, path):
     )
     assert pairs == [
         ("/cheats", "Cheats"),
+        ("/nfa", "NFA Accounts"),
         ("/games", "Games"),
         ("/status", "Status"),
         ("/faq", "FAQ"),

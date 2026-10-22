@@ -567,6 +567,13 @@ def games_index():
     """Index of all games that have products (crawlable category hub)."""
     games = catalogue.group_games(_all_cards())
     return render_template("games.html", games=games)
+@main_bp.route("/nfa")
+def nfa_accounts():
+    """NFA account storefront: every key_source='nfahub' product, grouped by game."""
+    cards = [c for c in _all_cards() if c["product"].key_source == "nfahub"]
+    catalogue.sort_cards(cards, "featured")
+    games = catalogue.group_games(cards)
+    return render_template("nfa.html", cards=cards, games=games)
 
 
 @main_bp.route("/games/<game_slug>")
@@ -605,6 +612,7 @@ def sitemap():
     static_pages = [
         ("/", 1.0, "daily"),
         ("/cheats", 0.9, "daily"),
+        ("/nfa", 0.9, "daily"),
         ("/games", 0.8, "daily"),
         ("/status", 0.6, "hourly"),
         ("/faq", 0.5, "monthly"),

@@ -223,6 +223,25 @@ def test_my_keys_non_nfa_keeps_loader_button(buyer_client, db, make_product):
     assert "Activate on NFAHub" not in body
 
 
+# --- NFA storefront page + nav -----------------------------------------------------
+
+def test_nfa_page_lists_only_nfa_products(client, db, make_product):
+    make_product("nfahub-page-rust", name="Rust NFA Accounts", key_source="nfahub",
+                 status="account", game="Rust")
+    make_product("plain-page-cheat", name="Plain Cheat", key_source="pool")
+    resp = client.get("/nfa")
+    assert resp.status_code == 200
+    body = resp.data.decode("utf-8")
+    assert "Rust NFA Accounts" in body
+    assert "Plain Cheat" not in body
+
+def test_nfa_nav_link_present(client, db, make_product):
+    make_product("nfahub-nav", key_source="nfahub", status="account")
+    for path in ("/", "/cheats"):
+        body = client.get(path).data.decode("utf-8")
+        assert "NFA Accounts" in body, f"nav link missing on {path}"
+
+
 # --- Seed script -------------------------------------------------------------------
 
 def test_seed_nfahub_products(db, monkeypatch, capsys):

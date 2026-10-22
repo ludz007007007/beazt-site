@@ -3,6 +3,7 @@
 {%- set ep = request.endpoint or '' -%}
 {%- set nav_items = [
   ('Cheats', url_for('main.cheats'), ep in ('main.cheats', 'main.product_detail', 'main.plan_detail')),
+  ('NFA Accounts', url_for('main.nfa_accounts'), ep == 'main.nfa_accounts'),
   ('Games', url_for('main.games_index'), ep in ('main.games_index', 'main.game_page')),
   ('Status', url_for('main.status_page'), ep == 'main.status_page'),
   ('FAQ', url_for('main.faq'), ep == 'main.faq'),
