@@ -78,9 +78,9 @@ DESCRIPTION = (
 )
 
 BUYER_NOTES = (
-    "Delivered instantly after payment — no waiting on staff\n"
-    "Account credentials appear under My Keys and are emailed to you\n"
+    "Credentials delivered instantly to My Keys and your email after payment\n"
     "Full account access; change the password on first login\n"
+    "Redeem or manage the account on the NFAHub shop page (button on My Keys)\n"
     "Issues with an account? Open a support ticket with your order number"
 )
 
@@ -139,6 +139,13 @@ def main():
     args = parser.parse_args()
 
     with app.app_context():
+        # Redemption URL for the "Activate on NFAHub" buttons (My Keys,
+        # product page, loader guide). Only set when not already configured.
+        from models import Setting
+        if not (Setting.get("nfahub_redemption_url") or "").strip():
+            Setting.set("nfahub_redemption_url", "https://nfahub.cc/reseller/beaztprivate")
+            print("Redemption URL set to https://nfahub.cc/reseller/beaztprivate")
+
         api_key = args.api_key or os.getenv("NFAHUB_API_KEY", "")
         if not api_key:
             # Key may be configured via Admin > Settings (database) rather

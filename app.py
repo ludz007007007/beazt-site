@@ -227,6 +227,17 @@ def inject_discord():
     except Exception:
         return {"discord_public_url": "https://discord.gg/X8yQuMYsxp"}
 
+@app.context_processor
+def inject_nfahub():
+    # NFA account products point buyers at the reseller shop page where they
+    # activate/redeem their purchase. Empty string means "not configured" —
+    # templates hide the activation button rather than linking nowhere.
+    try:
+        from models import Setting
+        return {"nfahub_redemption_url": (Setting.get("nfahub_redemption_url") or "").strip()}
+    except Exception:
+        return {"nfahub_redemption_url": ""}
+
 
 @app.context_processor
 def inject_honest_stats():

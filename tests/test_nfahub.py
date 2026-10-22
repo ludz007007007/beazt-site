@@ -181,6 +181,48 @@ def test_account_product_card_uses_account_label(db, make_product):
     assert card["status_label"] == "Account"
 
 
+# --- My Keys activation surface ----------------------------------------------------
+
+def test_my_keys_shows_activate_on_nfahub(buyer_client, db, make_product):
+    """NFA account key cards show the redemption button, not a loader link."""
+    from datetime import datetime
+    from models import Key, Setting, User
+    Setting.set("nfahub_redemption_url", "https://nfahub.example/redeem")
+    product = make_product("nfahub-keys", key_source="nfahub", status="account")
+    tier = product.tiers.first()
+    buyer = User.query.filter_by(username="buyer").first()
+    db.session.add(Key(user_id=buyer.id, product_id=product.id, tier_id=tier.id,
+                       key_value="user@mail.com:pw", expires_at=None, is_active=True,
+                       assigned_at=datetime.utcnow()))
+    db.session.commit()
+
+    resp = buyer_client.get("/my-keys")
+    assert resp.status_code == 200
+    body = resp.data.decode("utf-8")
+    assert "Activate on NFAHub" in body
+    assert "https://nfahub.example/redeem" in body
+    assert "Account credentials" in body
+    assert "Download Loader" not in body
+
+def test_my_keys_non_nfa_keeps_loader_button(buyer_client, db, make_product):
+    from datetime import datetime, timedelta
+    from models import Key, Setting, User
+    Setting.set("nfahub_redemption_url", "https://nfahub.example/redeem")
+    product = make_product("plain-keys", key_source="pool")
+    tier = product.tiers.first()
+    buyer = User.query.filter_by(username="buyer").first()
+    db.session.add(Key(user_id=buyer.id, product_id=product.id, tier_id=tier.id,
+                       key_value="POOL-KEY-1234-5678", expires_at=datetime.utcnow() + timedelta(days=7),
+                       is_active=True, assigned_at=datetime.utcnow()))
+    db.session.commit()
+
+    resp = buyer_client.get("/my-keys")
+    assert resp.status_code == 200
+    body = resp.data.decode("utf-8")
+    assert "Download Loader" in body
+    assert "Activate on NFAHub" not in body
+
+
 # --- Seed script -------------------------------------------------------------------
 
 def test_seed_nfahub_products(db, monkeypatch, capsys):

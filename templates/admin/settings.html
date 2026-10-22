@@ -98,6 +98,11 @@
           <input class="form-input" type="text" id="nfahub_api_base" name="nfahub_api_base" value="{{ nfahub_api_base }}" placeholder="https://nfahub.cc/api/reseller/v2">
           <span class="form-hint">NFAHub reseller API endpoint.</span>
         </div>
+        <div class="form-group">
+          <label class="form-label" for="nfahub_redemption_url">Redemption / Activation URL</label>
+          <input class="form-input" type="text" id="nfahub_redemption_url" name="nfahub_redemption_url" value="{{ nfahub_redemption_url }}" placeholder="https://nfahub.cc/reseller/beaztprivate">
+          <span class="form-hint">Shown as the "Activate on NFAHub" button on My Keys, product pages and loader guides for NFA account products.</span>
+        </div>
         <div class="admin-actions">
           <button type="submit" form="nfahub-test-form" class="btn-xs btn-secondary">Test Connection</button>
         </div>

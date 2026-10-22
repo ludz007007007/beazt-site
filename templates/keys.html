@@ -128,6 +128,7 @@
             {% set kv = key.key_value %}
             {% set masked_kv = kv[:4] ~ ('•' * (kv|length - 8)) ~ kv[-4:] if kv|length > 8 else '•' * kv|length %}
             {% set is_new = key.assigned_at and ((kv_now - key.assigned_at).total_seconds() < 86400) %}
+            {% set is_nfa = key.product and key.product.key_source == 'nfahub' %}
             <article class="card keys-card reveal" data-key-state="{{ state }}"
                      x-show="filter === 'all' || filter === '{{ filter_key }}'">
               <header class="keys-card__head">
@@ -161,7 +162,7 @@
 
               <div class="keys-card__key" x-data="{ revealed: false }">
                 <div class="keys-card__key-head">
-                  <span class="keys-card__key-label">License key</span>
+                  <span class="keys-card__key-label">{{ 'Account credentials' if is_nfa else 'License key' }}</span>
                   <div class="keys-card__tools">
                     <button type="button" class="btn btn-ghost btn-compact" @click="revealed = !revealed"
                             :aria-pressed="revealed" :aria-label="revealed ? 'Hide license key' : 'Show license key'">
@@ -221,9 +222,15 @@
                   {% set prod_loader = key.product.loader_url if key.product else none %}
                   {% set global_loader = (loader_private_url if (key.product and key.product.visibility == 'private') else loader_public_url) or loader_url %}
                   {% set loader_href = prod_loader or global_loader or url_for('main.loader') %}
+                  {% if is_nfa and nfahub_redemption_url %}
+                  <a href="{{ nfahub_redemption_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-compact">
+                    <span class="icon icon-sm" data-lucide="zap" aria-hidden="true"></span> Activate on NFAHub
+                  </a>
+                  {% else %}
                   <a href="{{ loader_href }}" class="btn btn-primary btn-compact">
                     <span class="icon icon-sm" data-lucide="download" aria-hidden="true"></span> Download Loader
                   </a>
+                  {% endif %}
                   <a href="{{ url_for('main.loader_product', slug=key.product.slug) if key.product else url_for('main.loader') }}" class="btn btn-secondary btn-compact">
                     <span class="icon icon-sm" data-lucide="book-open" aria-hidden="true"></span> Setup guide
                   </a>

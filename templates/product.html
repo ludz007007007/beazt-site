@@ -416,6 +416,7 @@
               <p>Keys are digital goods — sales are final once generated. See <a href="{{ url_for('main.faq') }}#faq-answer-9">FAQ: Do you refund?</a></p>
               <p>No product guarantees zero enforcement risk. Use responsibly.</p>
             </div>
+            {% if product.key_source == 'nfahub' %}{% include "partials/nfa_delivery_card.html" %}{% endif %}
           </div>
         </div>
       </div>

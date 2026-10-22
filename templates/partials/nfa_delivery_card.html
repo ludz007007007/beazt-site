@@ -1,0 +1,13 @@
+{# NFA account products only (product.key_source == 'nfahub'): delivery
+   explainer + optional "Activate on NFAHub" button. The URL comes from the
+   global nfahub_redemption_url context processor (app.py); when unset the
+   button is hidden, never a dead link. Expects `product`. #}
+<div class="card">
+  <h3>Account delivery</h3>
+  <p>Full account credentials are delivered to your <a href="{{ url_for('main.my_keys') }}">My Keys</a> page and email right after payment — no waiting on staff.</p>
+  {% if nfahub_redemption_url %}
+  <p><a href="{{ nfahub_redemption_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-compact">
+    <span class="icon icon-sm" data-lucide="zap" aria-hidden="true"></span> Activate on NFAHub
+  </a></p>
+  {% endif %}
+</div>

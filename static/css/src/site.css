@@ -3069,12 +3069,15 @@ html.js .keys-content:not(.is-hydrated) {
   margin-bottom: 0;
 }
 
-.loader-step-body a {
+/* Prose links only — :not(.btn) keeps .btn/.btn-primary colors intact
+   (0,1,1 here would otherwise out-specify .btn-primary and paint
+   amber link text on the amber button background). */
+.loader-step-body a:not(.btn) {
   color: var(--link);
   font-weight: var(--font-semibold);
 }
 
-.loader-step-body a:hover {
+.loader-step-body a:not(.btn):hover {
   color: var(--link-hover);
 }
 

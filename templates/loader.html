@@ -57,12 +57,17 @@
         <h2 class="loader-card-title"><span class="icon" data-lucide="download"></span>Download for {{ product.name }}</h2>
         <p class="loader-note text-muted">Loaders are attached to each product. After purchasing, the loader for {{ product.name }} appears on your key card{% if loader_href %} — a direct download is also configured below{% endif %}.</p>
         <div class="loader-step-actions loader-step-actions--flush">
-          {% if loader_href %}
+          {% if loader_href and product.key_source != 'nfahub' %}
           <a href="{{ loader_href }}" class="btn btn-primary">
             <span class="icon icon-sm" data-lucide="download"></span> Download {{ product.name }} Loader
           </a>
           {% endif %}
-          <a href="{{ url_for('main.my_keys') }}" class="btn {% if not loader_href %}btn-primary{% else %}btn-ghost{% endif %}">
+          {% if product.key_source == 'nfahub' and nfahub_redemption_url %}
+          <a href="{{ nfahub_redemption_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            <span class="icon icon-sm" data-lucide="zap"></span> Activate {{ product.name }} on NFAHub
+          </a>
+          {% endif %}
+          <a href="{{ url_for('main.my_keys') }}" class="btn {% if not loader_href and not (product.key_source == 'nfahub' and nfahub_redemption_url) %}btn-primary{% else %}btn-ghost{% endif %}">
             <span class="icon icon-sm" data-lucide="key-round"></span> Go to My Keys
           </a>
           {% if not current_user.is_authenticated %}
@@ -104,12 +109,17 @@
                 <div class="loader-download-icon"><span class="icon" data-lucide="package"></span></div>
                 <div class="loader-download-name">{% if product %}{{ product.name }} Loader{% else %}BEAZT Loader{% endif %}</div>
                 <p class="loader-download-desc">{% if product %}Product build for {{ product.name }}. Grab it from your key card{% if loader_href %} or via direct download{% endif %}.{% else %}Product builds are attached to each purchase. Download yours from your key card after checkout.{% endif %}</p>
-                {% if loader_href %}
+                {% if loader_href and product.key_source != 'nfahub' %}
                 <a href="{{ loader_href }}" class="btn btn-primary">
                   <span class="icon icon-sm" data-lucide="download"></span> Download Loader
                 </a>
                 {% endif %}
-                <a href="{{ url_for('main.my_keys') }}" class="btn {% if loader_href %}btn-ghost{% else %}btn-primary{% endif %}">
+                {% if product.key_source == 'nfahub' and nfahub_redemption_url %}
+                <a href="{{ nfahub_redemption_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                  <span class="icon icon-sm" data-lucide="zap"></span> Activate on NFAHub
+                </a>
+                {% endif %}
+                <a href="{{ url_for('main.my_keys') }}" class="btn {% if loader_href and product.key_source != 'nfahub' %}btn-ghost{% elif product.key_source == 'nfahub' and nfahub_redemption_url %}btn-ghost{% else %}btn-primary{% endif %}">
                   <span class="icon icon-sm" data-lucide="key-round"></span> Go to My Keys
                 </a>
                 {% if not current_user.is_authenticated %}
