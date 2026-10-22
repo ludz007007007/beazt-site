@@ -44,11 +44,13 @@ class NFAHubError(RuntimeError):
 
 
 # Node keys whose value holds (a list of) credential strings, and keys that
-# make up a "login:password" line. Ordered by specificity.
+# make up a "login:password" line. Ordered by specificity. "Weak" keys are
+# only accepted when their value looks like an actual credential line.
 _CREDENTIAL_KEYS = (
     "credentials", "credential", "account_credentials", "combo",
     "account_string", "login_string", "key", "keys", "code", "token",
 )
+_WEAK_CREDENTIAL_KEYS = ("content", "text", "account_details", "details", "value")
 _IDENTITY_KEYS = ("email", "username", "user", "login", "mail")
 _SECRET_KEYS = ("password", "passwd", "pass")
 # Nodes to descend into when nothing above matched (response envelopes).
@@ -56,15 +58,44 @@ _CONTAINER_KEYS = ("data", "order", "result", "accounts", "account",
                    "items", "item", "products", "product", "variants",
                    "keys", "keys_data")
 
+import re as _re
+
+# email:password (the dominant NFA account format) found anywhere in a JSON dump.
+_EMAIL_COMBO_RE = _re.compile(
+    r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}:[^\s\"',:]{1,128}"
+)
+# username:password without an email; rejects URLs (no ://) and stray junk.
+_COMBO_RE = _re.compile(r"(?<!\S)([A-Za-z0-9._@-]{2,64}):([^\s:\"',/][^\s:\"',]{0,127})")
+_PROTOCOL_RE = _re.compile(r"://")
+
+
+def _looks_like_combo(line):
+    """A credential line: 'user:pass' (never a URL, never prose)."""
+    if not line or len(line) > 200 or _PROTOCOL_RE.search(line):
+        return False
+    user, _, pw = line.partition(":")
+    return bool(user and pw and " " not in line and user.lower() not in ("http", "https", "ftp"))
+
+
+def _weak_value_ok(val):
+    """Weak keys only count when every line looks like a credential/token."""
+    if not isinstance(val, str) or not val.strip():
+        return False
+    lines = [ln.strip() for ln in val.splitlines() if ln.strip()]
+    return bool(lines) and all(
+        _looks_like_combo(ln) or _re.fullmatch(r"[A-Za-z0-9_\-]{10,}", ln) for ln in lines
+    )
+
 
 def extract_credentials(payload):
     """Pull account credential strings out of an arbitrary API payload.
 
     Handles the shapes NFAHub plausibly returns (documented schemas do not
     pin the exact fields): a bare string, a list of strings, a dict with a
-    credentials-ish field (multiline allowed), or a dict with identity +
-    password fields that get joined as ``identity:password``. Returns a
-    de-duplicated list; never raises.
+    credentials-ish field (multiline allowed), identity + password fields
+    joined as ``identity:password``, generic content/text fields that hold
+    credential lines, and — as a last resort — an email:password scan of the
+    whole payload. Returns a de-duplicated list; never raises.
     """
     out = []
 
@@ -99,6 +130,12 @@ def extract_credentials(payload):
                     _walk(val)
                     return
 
+        for key in _WEAK_CREDENTIAL_KEYS:
+            val = node.get(key)
+            if isinstance(val, str) and _weak_value_ok(val):
+                _add_text(val)
+                return
+
         identity = _first_str(node, _IDENTITY_KEYS)
         secret = _first_str(node, _SECRET_KEYS)
         if identity and secret:
@@ -113,6 +150,24 @@ def extract_credentials(payload):
                 return
 
     _walk(payload)
+
+    if not out and payload is not None:
+        # Last resort: scan the raw payload text for credential-looking
+        # strings. Email combos first (highest confidence), then generic
+        # user:pass pairs that are not URLs.
+        import json as _json
+        try:
+            blob = payload if isinstance(payload, str) else _json.dumps(payload)
+        except (TypeError, ValueError):
+            blob = str(payload)
+        for match in _EMAIL_COMBO_RE.findall(blob):
+            if match not in out:
+                out.append(match)
+        if not out:
+            for user, pw in _COMBO_RE.findall(blob):
+                line = f"{user}:{pw}"
+                if _looks_like_combo(line) and line not in out:
+                    out.append(line)
     return out
 
 
@@ -274,13 +329,15 @@ class NFAHub:
     def buy(self, variant_id, quantity=1):
         """Purchase ``quantity`` of a variant; returns the parsed JSON body.
 
-        Raises NFAHubError on any non-2xx (409 covers insufficient balance
-        and out-of-stock). Callers should run the result through
-        ``extract_credentials`` — and treat an empty result as a failure,
-        never inventing keys.
+        Sends both camelCase and snake_case keys — the undocumented /buy
+        contract may expect either. Raises NFAHubError on any non-2xx (409
+        covers insufficient balance and out-of-stock). Callers should run the
+        result through ``extract_credentials`` — and treat an empty result as
+        a failure, never inventing keys.
         """
+        vid = str(variant_id)
         resp = self._request("POST", "/buy", json={
-            "variantId": str(variant_id),
+            "variantId": vid, "variant_id": vid,
             "quantity": max(1, int(quantity)),
         })
         self._raise_for_status(resp, "buy")

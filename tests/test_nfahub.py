@@ -29,6 +29,22 @@ def test_extract_credentials_empty_payload():
     assert extract_credentials({"status": "ok"}) == []
     assert extract_credentials(None) == []
 
+def test_extract_credentials_content_field():
+    assert extract_credentials({"data": {"content": "user1:pw1\nuser2:pw2"}}) == \
+        ["user1:pw1", "user2:pw2"]
+
+def test_extract_credentials_email_combo_fallback():
+    payload = {"success": True, "note": "delivered user@mail.com:Str0ngPass!"}
+    assert extract_credentials(payload) == ["user@mail.com:Str0ngPass!"]
+
+def test_extract_credentials_fallback_rejects_urls():
+    payload = {"url": "https://nfahub.cc/api/reseller/v2/order?id=5", "status": "ok"}
+    assert extract_credentials(payload) == []
+
+def test_extract_credentials_generic_combo_fallback():
+    payload = {"result": {"note": "combo -> johndoeYT:p@ssw0rd9"}}
+    assert extract_credentials(payload) == ["johndoeYT:p@ssw0rd9"]
+
 
 # --- Catalog flattening -------------------------------------------------------
 
