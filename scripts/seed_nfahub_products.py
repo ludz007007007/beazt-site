@@ -7,17 +7,18 @@ fulfil via the NFAHub reseller API (utils/nfahub.py) using the tier's
 nfahub_variant_id.
 
 Run inside the app environment:
-    python scripts/seed_nfahub_products.py [--markup 1.0] [--api-key KEY]
+    python scripts/seed_nfahub_products.py [--markup 1.15] [--api-key KEY]
 
 Pricing: EUR cents from the catalog below are converted with the live EUR->GBP
 rate (fallback 0.86) times --markup, rounded UP to the nearest 5p so a price
 never sells below supplier cost. --markup 1.0 (default) is cost price — add
 margin with e.g. --markup 2.5.
 
-If NFAHUB_API_KEY (env or --api-key) is set, the script also fetches the live
-GET /catalog and binds each tier's nfahub_variant_id by name match so
-purchases fulfil automatically. Without a key, products are seeded with
-prices only and variants must be bound later (admin tier editor).
+If NFAHUB_API_KEY (env, --api-key, or Admin > Settings) is set, the script
+also fetches the live GET /catalog and binds each tier's nfahub_variant_id by
+name match so purchases fulfil automatically. Without a key, products are
+seeded with prices only and variants must be bound later (admin tier editor
+or a re-run with a key).
 """
 
 import argparse
@@ -139,6 +140,14 @@ def main():
 
     with app.app_context():
         api_key = args.api_key or os.getenv("NFAHUB_API_KEY", "")
+        if not api_key:
+            # Key may be configured via Admin > Settings (database) rather
+            # than the process env — same precedence as get_nfahub_config().
+            try:
+                from models import Setting
+                api_key = Setting.get("nfahub_api_key") or ""
+            except Exception:
+                pass
         variant_map = {}
         if api_key:
             try:
