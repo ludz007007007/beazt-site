@@ -412,6 +412,13 @@ with app.app_context():
             _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN nfahub_variant_id VARCHAR(64)")
             _conn.commit()
 
+        # Ensure pricing_tiers table has nfahub_stock (live variant stock)
+        _cursor.execute("PRAGMA table_info(pricing_tiers)")
+        _cols = [r[1] for r in _cursor.fetchall()]
+        if "nfahub_stock" not in _cols:
+            _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN nfahub_stock INTEGER")
+            _conn.commit()
+
         # Ensure orders table has stripe_subscription_id
         _cursor.execute("PRAGMA table_info(orders)")
         _cols = [r[1] for r in _cursor.fetchall()]
@@ -478,6 +485,7 @@ with app.app_context():
             ("billing_type", "VARCHAR(16) DEFAULT 'one_time'"),
             ("is_subscription", "BOOLEAN DEFAULT 0"),
             ("nfahub_variant_id", "VARCHAR(64)"),
+            ("nfahub_stock", "INTEGER"),
         ]:
             try:
                 mc.execute("ALTER TABLE pricing_tiers ADD COLUMN {} {}".format(col, ddl))

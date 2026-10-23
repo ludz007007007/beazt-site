@@ -1,8 +1,8 @@
 """NFAHub reseller API client (https://nfahub.cc/api/reseller/v2).
 
 BEAZT acts as a reseller: a paid order triggers ``buy()`` for the tier's
-NFAHub variant, and the returned account credentials are stored as the
-buyer's Key and emailed to them.
+NFAHub variant, and the returned activation key(s) are stored as the buyer's
+Key and emailed to them.
 
 API surface (bearer auth, amounts in EUR cents):
     GET  /me                  account + approval status
@@ -11,20 +11,31 @@ API surface (bearer auth, amounts in EUR cents):
     GET  /keys                activation keys + status
     GET  /orders              purchase history
     GET  /order?id=...        order status and account credentials
-    POST /buy                 purchase a variant
+    POST /buy                 purchase a variant (REQUIRES Idempotency-Key)
     POST /order-warranty      warranty check {"id": ..., "index": 0}
+
+Observed contract (from production responses):
+  * POST /buy without an ``Idempotency-Key`` header is rejected with
+    400 "Supply an Idempotency-Key and quantity from 1 to 10." The same key
+    returns the same purchase, so per-order keys make webhook retries safe.
+  * The delivery artifact is an ``activationKey`` (nfh_activate_...) the
+    buyer redeems on the shop/claim page; new purchases may sit in a short
+    ``status: "review"`` window before the key appears.
 
 Errors: 401 invalid key - 403 access denied - 404 unknown order -
 409 balance/stock/order conflict - 429 too many requests -
 503 temporarily unavailable.
 
-The exact /buy and /order response schemas are not published, so response
-parsing is deliberately liberal (``extract_credentials``/``iter_variants``)
-and every failure logs the raw body server-side for diagnosis. Credentials
-never end up in logs or buyer-facing error messages.
+The /buy and /order response schemas are otherwise not published, so
+response parsing is deliberately liberal (``extract_credentials``/
+``iter_variants``) and every failure logs the raw body server-side for
+diagnosis. Credentials never end up in logs or buyer-facing error messages.
 """
 
 import logging
+import re as _re
+import time
+import uuid
 
 import requests
 
@@ -43,10 +54,13 @@ class NFAHubError(RuntimeError):
         self.status = status
 
 
-# Node keys whose value holds (a list of) credential strings, and keys that
-# make up a "login:password" line. Ordered by specificity. "Weak" keys are
-# only accepted when their value looks like an actual credential line.
+# Node keys whose value holds (a list of) credential strings. Ordered by
+# specificity: NFAHub's observed delivery artifact is ``activationKey``
+# (redeemed on the shop/claim page), followed by generic credential
+# containers. "Weak" keys are only accepted when their value looks like an
+# actual credential line.
 _CREDENTIAL_KEYS = (
+    "activationKey", "activation_key", "claimUrl", "claim_url",
     "credentials", "credential", "account_credentials", "combo",
     "account_string", "login_string", "key", "keys", "code", "token",
 )
@@ -57,8 +71,6 @@ _SECRET_KEYS = ("password", "passwd", "pass")
 _CONTAINER_KEYS = ("data", "order", "result", "accounts", "account",
                    "items", "item", "products", "product", "variants",
                    "keys", "keys_data")
-
-import re as _re
 
 # email:password (the dominant NFA account format) found anywhere in a JSON dump.
 _EMAIL_COMBO_RE = _re.compile(
@@ -78,7 +90,7 @@ def _looks_like_combo(line):
 
 
 def _weak_value_ok(val):
-    """Weak keys only count when every line looks like a credential/token."""
+    """Weak keys only count when every line looks like an actual credential."""
     if not isinstance(val, str) or not val.strip():
         return False
     lines = [ln.strip() for ln in val.splitlines() if ln.strip()]
@@ -88,14 +100,13 @@ def _weak_value_ok(val):
 
 
 def extract_credentials(payload):
-    """Pull account credential strings out of an arbitrary API payload.
+    """Pull account credential/activation-key strings from an API payload.
 
-    Handles the shapes NFAHub plausibly returns (documented schemas do not
-    pin the exact fields): a bare string, a list of strings, a dict with a
-    credentials-ish field (multiline allowed), identity + password fields
-    joined as ``identity:password``, generic content/text fields that hold
-    credential lines, and — as a last resort — an email:password scan of the
-    whole payload. Returns a de-duplicated list; never raises.
+    Handles the observed NFAHub shapes (``activationKey`` on order objects)
+    plus defensive fallbacks for undocumented ones: bare strings, lists,
+    credentials-ish fields, identity+password pairs, generic content fields
+    holding credential lines, and — last resort — an email:password scan of
+    the whole payload. Returns a de-duplicated list; never raises.
     """
     out = []
 
@@ -223,6 +234,108 @@ def iter_variants(catalog):
     return found
 
 
+# --- Activation-key lookup in /orders payloads -------------------------------
+
+_ORDER_ID_KEYS = ("id", "orderId", "order_id")
+_VARIANT_KEYS = ("variantId", "variant_id")
+
+
+def _pick(payload, keys):
+    if not isinstance(payload, dict):
+        return None
+    for key in keys:
+        val = payload.get(key)
+        if val is not None:
+            return val
+    return None
+
+
+def find_activation(orders_payload, variant_id, exclude_ids=()):
+    """Find the newest activation key for ``variant_id`` in GET /orders data.
+
+    Returns ``(activation_key, nfahub_order_id)`` or ``(None, None)``.
+    Fresh purchases sit in NFAHub's ``status: "review"`` window (key absent)
+    for up to about a minute; polling this until it hits delivers without
+    admin action. ``exclude_ids`` skips orders already delivered locally so
+    a second buyer can never receive the same key.
+    """
+    items = None
+    if isinstance(orders_payload, dict):
+        for key in ("orders", "data", "items", "result"):
+            if isinstance(orders_payload.get(key), list):
+                items = orders_payload[key]
+                break
+        if items is None:
+            items = [orders_payload]
+    elif isinstance(orders_payload, list):
+        items = orders_payload
+
+    best = None
+    for item in items or []:
+        if not isinstance(item, dict):
+            continue
+        vid = str(_pick(item, _VARIANT_KEYS) or "")
+        if vid != str(variant_id):
+            continue
+        oid = str(_pick(item, _ORDER_ID_KEYS) or "")
+        if oid and oid in set(exclude_ids):
+            continue
+        creds = extract_credentials(item)
+        if creds:
+            created = _pick(item, ("createdAt", "created_at")) or 0
+            try:
+                created = int(created)
+            except (TypeError, ValueError):
+                created = 0
+            if best is None or created >= best[2]:
+                best = (creds[0], oid, created)
+    if best:
+        return best[0], best[1]
+    return None, None
+
+
+# --- Live stock map (short TTL cache) ----------------------------------------
+
+_STOCK_TTL = 60  # seconds
+_stock_cache = {"data": None, "at": 0.0}
+
+
+def stock_map(api_key=None, base_url=None, max_age=_STOCK_TTL):
+    """variant_id -> live stock, cached for ``max_age`` seconds.
+
+    Used by checkout to block out-of-stock purchases in real time and by the
+    sync service to refresh PricingTier.nfahub_stock. Returns {} on any
+    failure (callers treat unknown stock as available — the API still
+    rejects the buy with 409 if stock ran out).
+    """
+    now = time.time()
+    if _stock_cache["data"] is not None and (now - _stock_cache["at"]) < max_age:
+        return _stock_cache["data"]
+    if not api_key:
+        # Fall back to configured credentials (env -> Settings), mirroring
+        # get_nfahub_config() without a circular import.
+        from config import Config
+        api_key = api_key or Config.NFAHUB_API_KEY
+        base_url = base_url or Config.NFAHUB_API_BASE
+        try:
+            from models import Setting
+            api_key = Setting.get("nfahub_api_key") or api_key
+            base_url = Setting.get("nfahub_api_base") or base_url
+        except Exception:
+            pass
+    if not api_key:
+        return {}
+    try:
+        rows = iter_variants(NFAHub(api_key=api_key, base_url=base_url).catalog())
+    except Exception:  # noqa: BLE001 - stock display is best-effort
+        logger.warning("NFAHub stock_map refresh failed", exc_info=True)
+        return _stock_cache["data"] or {}
+    data = {row["variant_id"]: row["stock"] for row in rows if row.get("variant_id")}
+    _stock_cache["data"] = data
+    _stock_cache["at"] = now
+    return data
+
+
 class NFAHub:
     """Thin reseller API client. One instance per request; not thread-safe."""
 
@@ -256,7 +369,6 @@ class NFAHub:
                                    method, path, resp.status_code,
                                    attempt + 1, self.RETRIES + 1)
                     resp = None
-                    import time
                     time.sleep(1)
             except requests.RequestException as exc:
                 last_exc = exc
@@ -275,6 +387,7 @@ class NFAHub:
         if 200 <= resp.status_code < 300:
             return
         detail = {
+            400: "bad request (missing Idempotency-Key or invalid quantity?)",
             401: "invalid API key",
             403: "access denied",
             404: "not found",
@@ -326,17 +439,24 @@ class NFAHub:
         return resp.json()
 
     # -- Purchasing ----------------------------------------------------------
-    def buy(self, variant_id, quantity=1):
+    def buy(self, variant_id, quantity=1, idempotency_key=None):
         """Purchase ``quantity`` of a variant; returns the parsed JSON body.
 
-        Sends both camelCase and snake_case keys — the undocumented /buy
-        contract may expect either. Raises NFAHubError on any non-2xx (409
-        covers insufficient balance and out-of-stock). Callers should run the
-        result through ``extract_credentials`` — and treat an empty result as
-        a failure, never inventing keys.
+        The API requires an ``Idempotency-Key`` header (observed: HTTP 400
+        "Supply an Idempotency-Key and quantity from 1 to 10"); callers pass
+        a stable per-order key so a webhook retry returns the SAME order/key
+        instead of double-purchasing. Both camelCase and snake_case variant
+        keys are sent — the undocumented /buy contract may expect either.
+
+        On success the response carries an ``activationKey`` the buyer
+        redeems on the NFAHub shop/claim page. Raises NFAHubError on any
+        non-2xx (409 covers insufficient balance and out-of-stock). Callers
+        should run the result through ``extract_credentials`` — and treat an
+        empty result as a failure, never inventing keys.
         """
         vid = str(variant_id)
-        resp = self._request("POST", "/buy", json={
+        headers = {"Idempotency-Key": idempotency_key or uuid.uuid4().hex}
+        resp = self._request("POST", "/buy", headers=headers, json={
             "variantId": vid, "variant_id": vid,
             "quantity": max(1, int(quantity)),
         })

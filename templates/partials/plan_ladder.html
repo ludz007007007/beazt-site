@@ -1,0 +1,21 @@
+{# Plan ladder for the product page purchase panel: one radio row per tier
+   with duration/stock info. Expects `plan_rows` (utils/catalogue.plan_rows),
+   `tier_stock` (nfahub variant stock per tier id, may be empty), and the
+   Alpine `selectedVariantId` scope from product.html. Sold-out NFA plans
+   are disabled in markup; the server guard in create-session backs it up. #}
+<div class="plan-ladder" role="radiogroup" aria-labelledby="plan-picker-label">
+  {% for r in plan_rows %}
+  {% set _stock = tier_stock.get(r.tier.id) if tier_stock else none %}
+  <label class="plan-row{% if r.is_best %} plan-row--best{% endif %}{% if _stock == 0 %} plan-row--soldout{% endif %}" :class="{ 'is-selected': selectedVariantId === {{ r.tier.id }} }">
+    <input type="radio" name="variant_picker" class="sr-only" value="{{ r.tier.id }}"
+           x-model.number="selectedVariantId"{% if selected_tier and r.tier.id == selected_tier.id %} checked{% endif %}{% if _stock == 0 %} disabled{% endif %}>
+    <span class="plan-row__body">
+      <span class="plan-row__label">{{ r.tier.label }}{% if r.is_best %} <span class="plan-row__flag">Best value</span>{% endif %}</span>
+      <span class="plan-row__meta">{{ 'Recurring' if r.recurring else ('One-time · ' ~ r.tier.duration_days ~ (' day' if r.tier.duration_days == 1 else ' days') if r.tier.duration_days else 'One-time') }}</span>
+      {% if _stock is not none and product.key_source == 'nfahub' %}<span class="plan-row__stock tabular">{{ 'Sold out' if _stock == 0 else (_stock ~ ' in stock') }}</span>{% endif %}
+      {% if r.per_day is not none %}<span class="plan-row__perday tabular">£{{ "%.2f"|format(r.per_day) }}/day</span>{% endif %}
+    </span>
+    <span class="plan-row__price tabular">&pound;{{ "%.2f"|format(r.tier.price_pounds) }}</span>
+  </label>
+  {% endfor %}
+</div>

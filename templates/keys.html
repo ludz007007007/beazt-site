@@ -158,11 +158,15 @@
               <p class="keys-card__note keys-card__note--danger">
                 This license was revoked and will not run. If you believe this is a mistake, contact support.
               </p>
+              {% elif is_nfa %}
+              <p class="keys-card__note">
+                Redeem this activation key on NFAHub to receive your account. Use the button below.
+              </p>
               {% endif %}
 
               <div class="keys-card__key" x-data="{ revealed: false }">
                 <div class="keys-card__key-head">
-                  <span class="keys-card__key-label">{{ 'Account credentials' if is_nfa else 'License key' }}</span>
+                  <span class="keys-card__key-label">{{ 'NFAHub activation key' if is_nfa else 'License key' }}</span>
                   <div class="keys-card__tools">
                     <button type="button" class="btn btn-ghost btn-compact" @click="revealed = !revealed"
                             :aria-pressed="revealed" :aria-label="revealed ? 'Hide license key' : 'Show license key'">

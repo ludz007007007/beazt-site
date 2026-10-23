@@ -1378,6 +1378,18 @@
   font-weight: var(--font-semibold);
   white-space: nowrap;
 }
+.plan-row__stock {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+/* Sold-out NFA plan: dimmed, radio disabled in markup */
+.plan-row--soldout {
+  opacity: 0.55;
+}
+.plan-row--soldout .plan-row__stock {
+  color: var(--status-risky, #F59A4A);
+}
 
 .pd-empty-plans {
   margin-top: var(--space-2);

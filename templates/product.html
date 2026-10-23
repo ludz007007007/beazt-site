@@ -66,12 +66,13 @@
       get buyLabel() {
         if (!d.isAuthenticated) return 'Sign in to Buy';
         var v = this.currentVariant, gw = this.selectedGateway === 'payfast' ? 'PayFast' : 'Card';
+        if (v && v.out_of_stock) return 'Sold out — pick another plan';
         if (!v) return 'Buy with ' + gw;
         if (v.billing_type === 'subscription') return 'Subscribe - ' + v.label;
         if (!this.meetsMinimum) return 'Min £' + this.gatewayMin + ' for ' + gw + ' — total £' + this.cartTotal.toFixed(2);
         return 'Buy ' + this.quantity + ' × ' + v.label + ' — £' + this.cartTotal.toFixed(2) + ' via ' + gw;
       },
-      get canBuy() { if (this.selectedGateway === 'ivno' && this.cardUnavailable) return false; return d.isAuthenticated && this.meetsMinimum; },
+      get canBuy() { var v = this.currentVariant; if (v && v.out_of_stock) return false; if (this.selectedGateway === 'ivno' && this.cardUnavailable) return false; return d.isAuthenticated && this.meetsMinimum; },
       get isSubscription() { var v = this.currentVariant; return v ? v.billing_type === 'subscription' : false; },
       get subscriptionLink() { var v = this.currentVariant; return v ? v.subscription_link : ''; },
       get hasExternalSub() { return this.isSubscription && !!this.subscriptionLink; },
@@ -214,20 +215,7 @@
              best-value marker on the cheapest per-day one-time plan. #}
           <div class="purchase-variants">
             <span class="purchase-variants-label" id="plan-picker-label">Plan</span>
-              <div class="plan-ladder" role="radiogroup" aria-labelledby="plan-picker-label">
-                {% for r in plan_rows %}
-                <label class="plan-row{% if r.is_best %} plan-row--best{% endif %}" :class="{ 'is-selected': selectedVariantId === {{ r.tier.id }} }">
-                  <input type="radio" name="variant_picker" class="sr-only" value="{{ r.tier.id }}"
-                         x-model.number="selectedVariantId"{% if selected_tier and r.tier.id == selected_tier.id %} checked{% endif %}>
-                  <span class="plan-row__body">
-                    <span class="plan-row__label">{{ r.tier.label }}{% if r.is_best %} <span class="plan-row__flag">Best value</span>{% endif %}</span>
-                    <span class="plan-row__meta">{{ 'Recurring' if r.recurring else ('One-time · ' ~ r.tier.duration_days ~ (' day' if r.tier.duration_days == 1 else ' days') if r.tier.duration_days else 'One-time') }}</span>
-                    {% if r.per_day is not none %}<span class="plan-row__perday tabular">£{{ "%.2f"|format(r.per_day) }}/day</span>{% endif %}
-                  </span>
-                  <span class="plan-row__price tabular">&pound;{{ "%.2f"|format(r.tier.price_pounds) }}</span>
-                </label>
-                {% endfor %}
-              </div>
+              {% include "partials/plan_ladder.html" %}
             <div class="pd-empty-plans" :class="variants.length === 0 ? '' : 'is-hidden'"{% if tiers %} hidden{% endif %}>
               {% set empty_title = "No plans on sale yet" %}
               {% set empty_text = "This product has no licence plans at the moment. Ask in Discord for restock news." %}

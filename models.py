@@ -143,6 +143,9 @@ class PricingTier(db.Model):
     # NFAHub reseller catalog variant this tier fulfils from (utils/nfahub.py).
     # Empty means the tier is not backed by NFAHub even on nfahub products.
     nfahub_variant_id = db.Column(db.String(64), nullable=True)
+    # Live stock for the bound variant, refreshed by the sync service
+    # (utils/sync.py). NULL = unknown (never synced) — treated as in stock.
+    nfahub_stock = db.Column(db.Integer, nullable=True)
 
     orders = db.relationship("Order", backref="tier", lazy="dynamic")
     keys = db.relationship("Key", backref="pricing_tier", lazy="dynamic")

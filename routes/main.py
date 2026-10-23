@@ -435,7 +435,21 @@ def product_detail(slug):
         pass
 
     variants = []
+    tier_stock = {}
+    smap = {}
+    if product.key_source == "nfahub":
+        from utils.nfahub import stock_map
+        smap = stock_map()
     for t in tiers:
+        stock = None
+        if smap:
+            nfahub_variant = (t.nfahub_variant_id or "").strip()
+            if nfahub_variant:
+                stock = smap.get(nfahub_variant)
+                if stock is None:
+                    stock = t.nfahub_stock  # fall back to last synced value
+        if stock is not None:
+            tier_stock[t.id] = stock
         variants.append({
             "id": t.id,
             "label": t.label,
@@ -444,6 +458,8 @@ def product_detail(slug):
             "price_pounds": t.price_pounds,
             "billing_type": t.billing_type,
             "subscription_link": t.ivno_subscription_link or "",
+            "stock": stock,
+            "out_of_stock": (stock == 0),
         })
 
     # Verified reviews: approved only, aggregated only when at least one exists.
@@ -500,6 +516,7 @@ def product_detail(slug):
         product_features=product_features,
         cheat_status=cheat_status,
         variants=variants,
+        tier_stock=tier_stock,
         plan_rows=catalogue.plan_rows(tiers),
         card=card,
         ivno_configured=ivno_configured,

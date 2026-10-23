@@ -92,6 +92,17 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
         loader_url = product.loader_url if (product and getattr(product, "loader_url", None)) else ""
         buyer_notes = product.buyer_notes if (product and getattr(product, "buyer_notes", None)) else ""
 
+        # NFA account products deliver an activation key redeemed on NFAHub
+        # (no loader, no expiry) — copy and buttons differ accordingly.
+        is_nfa = bool(product and getattr(product, "key_source", "") == "nfahub")
+        redemption_url = ""
+        if is_nfa:
+            try:
+                from models import Setting as _Setting
+                redemption_url = (_Setting.get("nfahub_redemption_url") or "").strip()
+            except Exception:
+                redemption_url = ""
+
         rows_html = ""
         rows_text = ""
         for k in keys:
@@ -107,7 +118,10 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
 
         my_keys_url = (site_url.rstrip("/") + "/my-keys") if site_url else "/my-keys"
         loader_block_html = ""
-        if loader_url:
+        if is_nfa and redemption_url:
+            loader_block_html = f"""
+              <a href="{redemption_url}" style="display:inline-block;background:#7c3aed;color:#fff;text-decoration:none;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;margin-top:14px;">Activate on NFAHub</a>"""
+        elif loader_url:
             loader_block_html = f"""
               <a href="{loader_url}" style="display:inline-block;background:#7c3aed;color:#fff;text-decoration:none;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;margin-top:14px;">Download Loader</a>"""
         discord_block_html = ""
@@ -127,6 +141,18 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
                 + "</div>"
             )
 
+        # NFA-specific copy (activation key redeemed on NFAHub — no loader,
+        # no RTSS/antivirus footer).
+        heading = "Your NFAHub activation key is ready" if is_nfa else "Your key is ready"
+        col_label = "Activation Key" if is_nfa else "License Key"
+        intro_action = (
+            "Redeem the activation key below on NFAHub to claim your full account."
+            if is_nfa else "Find your key(s) below and activate them in the loader."
+        )
+        footer_pre = "" if is_nfa else (
+            'Before running: install <a href="https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/" style="color:#06b6d4;">RivaTuner Statistics Server</a> and temporarily disable antivirus real-time protection. '
+        )
+
         html = f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0b1020;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#eaf0ff;">
@@ -134,14 +160,14 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
     <div style="font-size:20px;font-weight:800;letter-spacing:.06em;color:#fff;margin-bottom:6px;">BEAZT</div>
     <div style="height:3px;width:60px;background:linear-gradient(90deg,#7c3aed,#06b6d4);border-radius:2px;margin-bottom:22px;"></div>
 
-    <h1 style="font-size:22px;margin:0 0 8px;color:#fff;">Your key is ready</h1>
+    <h1 style="font-size:22px;margin:0 0 8px;color:#fff;">{heading}</h1>
     <p style="color:#94a3b8;font-size:15px;line-height:1.6;margin:0 0 22px;">
-      Hi {user.username}, your license for <strong style="color:#eaf0ff;">{product_name}</strong>{(' — ' + tier_label) if tier_label else ''} has been assigned.
-      Find your key(s) below and activate them in the loader.
+      Hi {user.username}, your {('account for' if is_nfa else 'license for')} <strong style="color:#eaf0ff;">{product_name}</strong>{(' — ' + tier_label) if tier_label else ''} has been assigned.
+      {intro_action}
     </p>
 
     <table style="width:100%;border-collapse:separate;border-spacing:0 8px;">
-      <thead><tr><th style="text-align:left;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:0 14px 4px;">License Key</th><th style="text-align:left;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:0 14px 4px;">Expires</th></tr></thead>
+      <thead><tr><th style="text-align:left;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:0 14px 4px;">{col_label}</th><th style="text-align:left;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:0 14px 4px;">Expires</th></tr></thead>
       <tbody>{rows_html}</tbody>
     </table>
 
@@ -152,22 +178,24 @@ def notify_key_assigned(user, order, product, tier, keys, site_url=""):
     {buyer_notes_html}
 
     <p style="color:#475569;font-size:12px;line-height:1.6;margin-top:26px;border-top:1px solid #1f2a4a;padding-top:16px;">
-      Before running: install <a href="https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/" style="color:#06b6d4;">RivaTuner Statistics Server</a> and temporarily disable antivirus real-time protection. If you didn't make this purchase, please ignore this email.
+      {footer_pre}If you didn't make this purchase, please ignore this email.
     </p>
   </div>
 </body></html>"""
 
         text = (
-            f"BEAZT — Your key is ready\n\n"
-            f"Hi {user.username}, your license for {product_name}"
+            f"BEAZT — {heading}\n\n"
+            f"Hi {user.username}, your {('account' if is_nfa else 'license')} for {product_name}"
             f"{(' — ' + tier_label) if tier_label else ''} has been assigned.\n\n"
-            f"Key(s):\n{rows_text}\n"
-            + (f"Download loader: {loader_url}\n" if loader_url else "")
+            f"{col_label}(s):\n{rows_text}\n"
+            + (f"Activate on NFAHub: {redemption_url}\n" if (is_nfa and redemption_url) else "")
+            + (f"Download loader: {loader_url}\n" if (loader_url and not is_nfa) else "")
             + (f"Discord: {discord_url}\n" if discord_url else "")
             + f"\nView on My Keys: {my_keys_url}\n"
         )
 
-        subject = f"Your {product_name} license key is ready"
+        subject = f"Your {product_name} activation key is ready" if is_nfa \
+            else f"Your {product_name} license key is ready"
         return send_email(user.email, subject, html, text_body=text)
     except Exception as exc:  # noqa: BLE001
         logger.exception("notify_key_assigned failed: %s", exc)
