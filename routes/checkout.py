@@ -115,14 +115,6 @@ def create_session():
     if not tier:
         return jsonify({"error": "Invalid tier"}), 400
 
-    # Real-time NFA stock guard: a variant that just hit 0 on NFAHub cannot
-    # be bought (the API would 409 after payment — far worse for the buyer).
-    nfahub_variant = (getattr(tier, "nfahub_variant_id", "") or "").strip()
-    if nfahub_variant:
-        from utils.nfahub import stock_map
-        if stock_map().get(nfahub_variant) == 0:
-            return jsonify({"error": "This plan just sold out. Pick another tier or check back soon."}), 409
-
     order_total = tier.price_pounds * quantity
 
     if gateway == "ivno":
@@ -406,87 +398,6 @@ def try_license_api(order, product, tier):
         return [], f"API call failed (HTTP {status}): {exc}"
 
 
-def try_nfahub(order, product, tier):
-    """Attempt to buy accounts from NFAHub for the tier's variant.
-
-    Shared by automatic fulfillment (``handle_fulfillment``) and the admin
-    per-order "Fulfill" retry action.
-
-    Does NOT mutate the database or commit — the caller creates ``Key`` rows
-    and sets ``order.status``.
-
-    Returns a tuple ``(credentials, nfahub_order_id, error)``:
-      * On success: ``credentials`` is a non-empty list of account
-        credential strings, ``error`` is ``None``.
-      * On failure: ``credentials`` is ``[]`` and ``error`` describes why
-        (no variant bound, missing config, API failure, empty delivery).
-      * When the tier has no NFAHub variant: ``([], "", None)`` — not an
-        error, the tier simply is not NFAHub-backed.
-    """
-    variant = (getattr(tier, "nfahub_variant_id", "") or "").strip() if tier else ""
-    if not variant:
-        return [], "", None
-
-    from config import get_nfahub_config
-    cfg = get_nfahub_config()
-    if not cfg["api_key"]:
-        logger.warning("NFAHub API key not configured — cannot fulfill order %s", order.id)
-        return [], "", "NFAHub API key is not configured."
-
-    total_accounts = (getattr(tier, "bundle_count", 1) or 1) * (getattr(order, "quantity", 1) or 1)
-    if total_accounts > 10:
-        # NFAHub /buy accepts quantity 1-10; NFA tiers are single-bundle so
-        # this only triggers on unusual admin configs. Deliver a safe amount
-        # rather than failing the whole purchase.
-        logger.warning("NFAHub quantity %d exceeds the API limit for order %s — clamping to 10",
-                       total_accounts, order.id)
-        total_accounts = 10
-    # Idempotency per order: a PayFast ITN retry re-runs fulfillment for a
-    # non-completed order — the same key must make NFAHub return the SAME
-    # purchase instead of charging twice.
-    idempotency_key = f"beazt-order-{order.id}"
-    try:
-        from utils.nfahub import NFAHub, extract_credentials, find_activation
-        api = NFAHub(api_key=cfg["api_key"], base_url=cfg["api_base"])
-        result = api.buy(variant, quantity=total_accounts, idempotency_key=idempotency_key)
-        credentials = extract_credentials(result)
-        order_id = ""
-        if isinstance(result, dict):
-            order_id = str(result.get("id") or result.get("orderId")
-                           or result.get("order_id") or "")
-        if not credentials:
-            # Fresh purchases sit in NFAHub's status:"review" window (the
-            # activation key appears ~30-60s later). Poll briefly so the
-            # buyer gets the key in the SAME request; if still pending the
-            # background sync delivers it within minutes.
-            import time as _time
-            used = {row[0] for row in db.session.query(Key.nfahub_order_id)
-                    .filter(Key.nfahub_order_id.isnot(None)).all() if row[0]}
-            deadline = _time.time() + 30
-            while not credentials and _time.time() < deadline:
-                _time.sleep(5)
-                try:
-                    if order_id:
-                        detail = api.order(order_id)
-                        credentials = extract_credentials(detail)
-                    else:
-                        credentials, _oid = find_activation(api.orders(), variant, exclude_ids=used)
-                except Exception:  # noqa: BLE001 - keep polling through hiccups
-                    logger.warning("NFAHub activation poll failed for order %s", order.id,
-                                   exc_info=True)
-            logger.info("NFAHub buy for order %s: activation key %s after review-window poll",
-                        order.id, "delivered" if credentials else "still pending")
-        if not credentials:
-            logger.error("NFAHub buy returned no activation key for order %s "
-                         "(variant=%s) — raw keys=%r", order.id, variant, result)
-            return [], order_id, "NFAHub delivered no activation key (see server log)."
-        logger.info("NFAHub bought variant=%s for order %s (activation key delivered)",
-                    variant, order.id)
-        return credentials, order_id, None
-    except Exception as exc:  # noqa: BLE001 - surfaced to admin for diagnosis
-        logger.exception("NFAHub buy failed for order %s", order.id)
-        return [], "", f"NFAHub purchase failed: {exc}"
-
 def handle_fulfillment(order):
     tier = order.tier
     if not tier:
@@ -524,27 +435,7 @@ def handle_fulfillment(order):
             return
         logger.warning("License API path failed for order %s — falling back. Reason: %s", order.id, err)
 
-    # 2) NFAHub — account storefront products fulfil per-tier variant purchases
-    nfahub_variant = (getattr(tier, "nfahub_variant_id", "") or "").strip()
-    if nfahub_variant:
-        credentials, nfahub_order_id, err = try_nfahub(order, product, tier)
-        if credentials:
-            order.status = "completed"
-            created = []
-            for kv in credentials:
-                # Accounts do not expire: no expires_at on NFAHub keys.
-                key = Key(user_id=order.user_id, order_id=order.id, product_id=product_id,
-                          tier_id=tier.id, key_value=kv, expires_at=None, is_active=True,
-                          is_subscription=False, nfahub_order_id=nfahub_order_id or None)
-                db.session.add(key)
-                created.append(key)
-            db.session.commit()
-            logger.info("NFAHub delivered %d account(s) for order %s", len(credentials), order.id)
-            _notify_buyer(order, product, tier, created)
-            return
-        logger.warning("NFAHub path failed for order %s — falling back. Reason: %s", order.id, err)
-
-    # 3) Pool key — pre-uploaded unassigned key
+    # 2) Pool key — pre-uploaded unassigned key
     pool_key = (Key.query.filter_by(product_id=product_id, tier_id=tier.id, user_id=None, is_active=False)
                 .order_by(Key.created_at.asc()).first())
     if pool_key:

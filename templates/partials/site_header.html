@@ -3,7 +3,6 @@
 {%- set ep = request.endpoint or '' -%}
 {%- set nav_items = [
   ('Cheats', url_for('main.cheats'), ep in ('main.cheats', 'main.product_detail', 'main.plan_detail')),
-  ('NFA Accounts', url_for('main.nfa_accounts'), ep == 'main.nfa_accounts'),
   ('Games', url_for('main.games_index'), ep in ('main.games_index', 'main.game_page')),
   ('Status', url_for('main.status_page'), ep == 'main.status_page'),
   ('FAQ', url_for('main.faq'), ep == 'main.faq'),
@@ -34,10 +33,6 @@
         <a href="{{ url_for('auth.login') }}" class="btn btn-ghost btn-sm">Sign in</a>
       {% endif %}
     </div>
-
-    {# Always-visible NFA CTA: lives outside .site-header__actions so it
-       survives the <900px collapse (nav/actions hide into the burger). #}
-    <a href="{{ url_for('main.nfa_accounts') }}" class="btn btn-primary btn-sm site-header__nfa"{% if ep == 'main.nfa_accounts' %} aria-current="page"{% endif %}>NFA Accounts</a>
 
     <button type="button" class="nav-burger" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">

@@ -436,20 +436,7 @@ def product_detail(slug):
 
     variants = []
     tier_stock = {}
-    smap = {}
-    if product.key_source == "nfahub":
-        from utils.nfahub import stock_map
-        smap = stock_map()
     for t in tiers:
-        stock = None
-        if smap:
-            nfahub_variant = (t.nfahub_variant_id or "").strip()
-            if nfahub_variant:
-                stock = smap.get(nfahub_variant)
-                if stock is None:
-                    stock = t.nfahub_stock  # fall back to last synced value
-        if stock is not None:
-            tier_stock[t.id] = stock
         variants.append({
             "id": t.id,
             "label": t.label,
@@ -458,8 +445,8 @@ def product_detail(slug):
             "price_pounds": t.price_pounds,
             "billing_type": t.billing_type,
             "subscription_link": t.ivno_subscription_link or "",
-            "stock": stock,
-            "out_of_stock": (stock == 0),
+            "stock": None,
+            "out_of_stock": False,
         })
 
     # Verified reviews: approved only, aggregated only when at least one exists.
@@ -584,13 +571,6 @@ def games_index():
     """Index of all games that have products (crawlable category hub)."""
     games = catalogue.group_games(_all_cards())
     return render_template("games.html", games=games)
-@main_bp.route("/nfa")
-def nfa_accounts():
-    """NFA account storefront: every key_source='nfahub' product, grouped by game."""
-    cards = [c for c in _all_cards() if c["product"].key_source == "nfahub"]
-    catalogue.sort_cards(cards, "featured")
-    games = catalogue.group_games(cards)
-    return render_template("nfa.html", cards=cards, games=games)
 
 
 @main_bp.route("/games/<game_slug>")
@@ -629,7 +609,6 @@ def sitemap():
     static_pages = [
         ("/", 1.0, "daily"),
         ("/cheats", 0.9, "daily"),
-        ("/nfa", 0.9, "daily"),
         ("/games", 0.8, "daily"),
         ("/status", 0.6, "hourly"),
         ("/faq", 0.5, "monthly"),

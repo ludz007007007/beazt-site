@@ -35,7 +35,6 @@ RETIRED_WORDS = ("operator", "ref")
 # Header furniture (architecture §4): label -> destination.
 NAV_PAIRS = [
     ("Cheats", "/cheats"),
-    ("NFA Accounts", "/nfa"),
     ("Games", "/games"),
     ("Status", "/status"),
     ("FAQ", "/faq"),

@@ -160,19 +160,6 @@
   min-height: var(--tap-target);
 }
 
-/* Always-visible NFA accounts CTA. On mobile the nav and account actions
-   collapse into the burger; this button stays out (44px tap target kept). */
-.site-header__nfa {
-  min-height: var(--tap-target);
-  white-space: nowrap;
-}
-@media (max-width: 900px) {
-  .site-header__nfa {
-    display: inline-flex;
-    margin-left: auto; /* pushes right beside the burger once actions hide */
-  }
-}
-
 /* Burger + mobile panel (behaviour in script.js: .is-active/.is-open/.is-visible) */
 .nav-burger {
   display: none;
@@ -1383,12 +1370,9 @@
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
-/* Sold-out NFA plan: dimmed, radio disabled in markup */
+/* Sold-out plan: dimmed, radio disabled in markup */
 .plan-row--soldout {
   opacity: 0.55;
-}
-.plan-row--soldout .plan-row__stock {
-  color: var(--status-risky, #F59A4A);
 }
 
 .pd-empty-plans {

@@ -228,18 +228,6 @@ def inject_discord():
         return {"discord_public_url": "https://discord.gg/X8yQuMYsxp"}
 
 @app.context_processor
-def inject_nfahub():
-    # NFA account products point buyers at the reseller shop page where they
-    # activate/redeem their purchase. Empty string means "not configured" —
-    # templates hide the activation button rather than linking nowhere.
-    try:
-        from models import Setting
-        return {"nfahub_redemption_url": (Setting.get("nfahub_redemption_url") or "").strip()}
-    except Exception:
-        return {"nfahub_redemption_url": ""}
-
-
-@app.context_processor
 def inject_honest_stats():
     # Exposed as a callable so only templates that show stats run the queries.
     from utils.catalogue import format_date, honest_stats
@@ -405,20 +393,6 @@ with app.app_context():
             _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN sellix_product_id VARCHAR(64)")
             _conn.commit()
 
-        # Ensure pricing_tiers table has nfahub_variant_id
-        _cursor.execute("PRAGMA table_info(pricing_tiers)")
-        _cols = [r[1] for r in _cursor.fetchall()]
-        if "nfahub_variant_id" not in _cols:
-            _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN nfahub_variant_id VARCHAR(64)")
-            _conn.commit()
-
-        # Ensure pricing_tiers table has nfahub_stock (live variant stock)
-        _cursor.execute("PRAGMA table_info(pricing_tiers)")
-        _cols = [r[1] for r in _cursor.fetchall()]
-        if "nfahub_stock" not in _cols:
-            _cursor.execute("ALTER TABLE pricing_tiers ADD COLUMN nfahub_stock INTEGER")
-            _conn.commit()
-
         # Ensure orders table has stripe_subscription_id
         _cursor.execute("PRAGMA table_info(orders)")
         _cols = [r[1] for r in _cursor.fetchall()]
@@ -431,13 +405,6 @@ with app.app_context():
         _cols = [r[1] for r in _cursor.fetchall()]
         if "is_subscription" not in _cols:
             _cursor.execute("ALTER TABLE keys ADD COLUMN is_subscription BOOLEAN DEFAULT 0")
-            _conn.commit()
-
-        # Ensure keys table has nfahub_order_id
-        _cursor.execute("PRAGMA table_info(keys)")
-        _cols = [r[1] for r in _cursor.fetchall()]
-        if "nfahub_order_id" not in _cols:
-            _cursor.execute("ALTER TABLE keys ADD COLUMN nfahub_order_id VARCHAR(64)")
             _conn.commit()
 
         # Ensure keys table has tier_id, assigned_at
@@ -484,8 +451,6 @@ with app.app_context():
             ("ivno_subscription_link", "VARCHAR(512)"),
             ("billing_type", "VARCHAR(16) DEFAULT 'one_time'"),
             ("is_subscription", "BOOLEAN DEFAULT 0"),
-            ("nfahub_variant_id", "VARCHAR(64)"),
-            ("nfahub_stock", "INTEGER"),
         ]:
             try:
                 mc.execute("ALTER TABLE pricing_tiers ADD COLUMN {} {}".format(col, ddl))
@@ -495,7 +460,6 @@ with app.app_context():
             ("is_subscription", "BOOLEAN DEFAULT 0"),
             ("tier_id", "INTEGER REFERENCES pricing_tiers(id)"),
             ("assigned_at", "DATETIME"),
-            ("nfahub_order_id", "VARCHAR(64)"),
         ]:
             try:
                 mc.execute("ALTER TABLE keys ADD COLUMN {} {}".format(col, ddl))
