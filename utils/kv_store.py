@@ -158,6 +158,10 @@ def restore_products_to_db():
             slug = p_data.get("slug", "")
             if not slug:
                 continue
+            # Never restore retired NFA/account products (removed from the
+            # storefront). Old backups may still contain them.
+            if p_data.get("key_source") == "nfahub":
+                continue
             existing = Product.query.filter_by(slug=slug).first()
             if existing:
                 continue
